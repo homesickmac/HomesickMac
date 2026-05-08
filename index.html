@@ -1,37 +1,242 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Guitar Retreat Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <style>
-      body {
-        font-family: 'Inter', sans-serif;
-        background-color: #0f172a;
-        color: #f8fafc;
-      }
-      .font-serif {
-        font-family: 'Playfair Display', serif;
-      }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
-    "lucide-react": "https://esm.sh/lucide-react@^0.564.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Homesick Mac — Performer, teacher and storyteller. Blues, country and folk guitar from southern Sweden. Home of the annual Guitar Retreat on the Island of Ven.">
+  <title>Homesick Mac — Performer · Teacher · Storyteller</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-  <body>
-    <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Homesick Mac</a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Mac</a></li>
+        <li><a href="retreat.html">Guitar Retreat</a></li>
+        <li><a href="testimonials.html">Testimonials</a></li>
+        <li class="nav-cta"><a href="contact.html" class="btn btn-primary">Join the Retreat</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-bg" style="background-image: url('https://images.spr.so/cdn-cgi/imagedelivery/j42No7y-dcokJuNgXeA0ig/99f5d583-9fb9-4049-b70c-ba7456074f58/Mac-Promo-photo1-StepanKiyanov/w=1920,quality=90,fit=scale-down');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content hero-content-left">
+      <div class="hero-eyebrow">Blues · Country · Folk · Slide</div>
+      <h1 style="font-size:clamp(1.8rem,4vw,2.8rem);margin:0 0 0.4rem;">Homesick Mac</h1>
+      <p class="hero-tagline" style="margin:0 0 2rem;width:fit-content;">Performer &nbsp;·&nbsp; Teacher &nbsp;·&nbsp; Storyteller</p>
+      <p style="max-width:480px;margin:0 0 2.5rem;">
+        Forty-three years of living the music dream — performing the great stories 
+        of early blues, hillbilly, country and traditional styles across Scandinavia 
+        and beyond.
+      </p>
+      <div class="btn-group">
+        <a href="retreat.html" class="btn btn-primary">Guitar Retreat 2026</a>
+        <a href="about.html" class="btn btn-outline">About Mac</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 15th Anniversary Banner ── -->
+  <div class="anniversary-banner">
+    <div class="anniversary-inner">
+      <div class="anniversary-badge">
+        <span class="roman">XV</span>
+        <span class="anno">Years</span>
+      </div>
+      <div class="anniversary-text">
+        <h2>The Guitar Retreat is Turning 15!</h2>
+        <p>Est. 2012 &nbsp;·&nbsp; Island of Ven, Sweden &nbsp;·&nbsp; July 2026</p>
+      </div>
+      <a href="retreat.html" class="btn btn-primary" style="margin-left:auto;">the 2026 Dates</a>
+    </div>
+  </div>
+
+  <!-- ── Three Feature Cards ── -->
+  <section class="section-cream">
+    <div class="container">
+      <div class="text-center mb-4 fade-in">
+        <span class="section-label">What Mac Does</span>
+        <h2>Music, Teaching &amp; Community</h2>
+      </div>
+      <div class="card-grid">
+
+        <article class="card fade-in">
+          <img class="card-image lb-trigger"
+               src="Karlstad-clinic-Mac_RG_fotografering.jpg"
+               alt="Homesick Mac performing at a clinic in Karlstad, Sweden"
+               loading="lazy"
+               style="object-position:center top;">
+          <div class="card-body">
+            <span class="section-label">Performer</span>
+            <h3>Live Music &amp; Workshops</h3>
+            <p>Performing solo at blues festivals, trade shows and intimate venues across Scandinavia. Known for acoustic slide guitar, fingerpicking and storytelling that transports you straight to the American South.</p>
+            <a href="about.html" class="btn btn-outline-dark">About Mac</a>
+          </div>
+        </article>
+
+        <article class="card fade-in">
+          <img class="card-image lb-trigger"
+               src="Retreat-room.jpg"
+               alt="Mac teaching the retreat group on Ven island"
+               loading="lazy">
+          <div class="card-body">
+            <span class="section-label">Guitar Retreat</span>
+            <h3>Annual Retreat on Ven Island</h3>
+            <p>Fifteen years of gathering players of all levels on a magical Swedish island. Three days of songs, slide technique, jam sessions and the rare feeling of leaving every worry on the mainland.</p>
+            <a href="retreat.html" class="btn btn-outline-dark">2026 Retreat Info</a>
+          </div>
+        </article>
+
+        <article class="card fade-in">
+          <img class="card-image lb-trigger"
+               src="Livestream-screenshotMac.png"
+               alt="Homesick Mac — Blue Monday livestream on YouTube"
+               loading="lazy"
+               style="object-position:center top;">
+          <div class="card-body">
+            <span class="section-label">YouTube &amp; Instruction</span>
+            <h3>Mac Attack — Video Lessons</h3>
+            <p>Over 100 guitar instructional videos and livestreams on YouTube, covering blues, slide, fingerpicking and the music theory that actually matters — because a lick only has meaning when it serves the song.</p>
+            <a href="https://www.youtube.com/@HomesickMac" target="_blank" rel="noopener" class="btn btn-outline-dark">YouTube Channel ↗</a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Bio Split ── -->
+  <section>
+    <div class="container">
+      <div class="split">
+        <div class="fade-in">
+          <img class="bio-photo"
+               src="https://images.spr.so/cdn-cgi/imagedelivery/j42No7y-dcokJuNgXeA0ig/99f5d583-9fb9-4049-b70c-ba7456074f58/Mac-Promo-photo1-StepanKiyanov/w=1920,quality=90,fit=scale-down"
+               alt="Homesick Mac — portrait by Stepan Kiyanov"
+               loading="lazy">
+        </div>
+        <div class="bio-text fade-in">
+          <span class="section-label">Who is Mac?</span>
+          <h2>A Life Spent Playing the Blues</h2>
+          <div class="ornament"></div>
+          <p>
+            I've been fortunate to live my music dream for many years now. Playing the guitar 
+            and singing great stories from the early days of blues, hillbilly, country and other 
+            traditional styles has taught me a great deal about the world — and about myself.
+          </p>
+          <p>
+            Born in former Yugoslavia, I found my musical home in Scandinavia in 1992, and 
+            have spent the decades since performing, teaching and sharing the love for real, 
+            honest guitar music.
+          </p>
+          <p>
+            Nowadays I especially enjoy helping players of all ages find their way back to 
+            the guitar — or deeper into it — through my retreats, workshops, and one-on-one sessions.
+          </p>
+          <a href="about.html" class="btn btn-outline-dark mt-3">Read Mac's Full Story</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Landscape Strip ── -->
+  <div style="overflow:hidden;line-height:0;margin:0;">
+    <img src="Island-Ven-landscape.jpg"
+         alt="Golden sunset over the fields of Ven island"
+         loading="lazy"
+         style="width:100%;height:220px;object-fit:cover;object-position:center 55%;display:block;">
+  </div>
+
+  <!-- ── Testimonial Pull Quote ── -->
+  <section class="section-dark">
+    <div class="container text-center">
+      <span class="section-label">What Participants Say</span>
+      <blockquote style="font-family:var(--font-display);font-size:clamp(1.3rem,2.5vw,1.9rem);color:var(--cream-text);max-width:760px;margin:0 auto 1.5rem;line-height:1.5;">
+        "Mac is a skilled 'professor' that listens to everyone and gives the right advice. 
+        Haven't had so much fun for a long time. I will surely return next summer."
+      </blockquote>
+      <cite style="font-family:var(--font-label);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber-light);">— Johnny, Guitar Retreat Participant</cite>
+      <div class="ornament mt-4"></div>
+      <a href="testimonials.html" class="btn btn-outline mt-2">Read All Testimonials</a>
+    </div>
+  </section>
+
+  <!-- ── Final CTA ── -->
+  <section class="section-cream text-center">
+    <div class="container fade-in" style="max-width:640px;">
+      <span class="section-label">Guitar Retreat 2026</span>
+      <h2>Join Us for the 15th Annual Gathering</h2>
+      <div class="ornament"></div>
+      <p style="color:var(--warm-muted);margin-bottom:2rem;">
+        Three days on the Island of Ven. All skill levels welcome — beginners to returning 
+        veterans. Come for the music, stay for the community. 
+        <strong style="color:var(--brown);">July 17–19 or July 20–22, 2026.</strong>
+      </p>
+      <div class="btn-group" style="justify-content:center;">
+        <a href="retreat.html" class="btn btn-primary">See Retreat Details</a>
+        <a href="contact.html" class="btn btn-outline-dark">Express Your Interest</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-logo-area">
+          <img src="Mac-Logo_FINAL_transparent-bg.svg" alt="Homesick Mac" style="height:130px;width:auto;display:block;margin:0 auto 1rem;">
+          <div class="footer-logo-text">Homesick Mac</div>
+        </div>
+        <div class="footer-brand">
+          <p>Blues, country, folk and slide guitar from southern Sweden. Performer, Teacher and host of the annual Homesick Mac's Guitar Retreat on the Island of Ven since 2012.</p>
+          <div class="social-links mt-3" style="display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;">
+            <a href="https://www.facebook.com/homesickmac" target="_blank" rel="noopener">Facebook</a>
+            <a href="https://www.instagram.com/draganhomesickmacruzicmacan/" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.linkedin.com/in/homesickmac/" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://www.youtube.com/@HomesickMac" target="_blank" rel="noopener">YouTube</a>
+          </div>
+        </div>
+        <nav class="footer-nav" aria-label="Footer navigation">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Mac</a></li>
+            <li><a href="retreat.html">Guitar Retreat</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="footer-nav">
+          <h4>Guitar Retreat 2026</h4>
+          <ul>
+            <li><a href="retreat.html">What to Expect</a></li>
+            <li><a href="retreat.html#dates">Dates &amp; Pricing</a></li>
+            <li><a href="testimonials.html">Past Participants</a></li>
+            <li><a href="contact.html">Apply Now</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Mac's Acoustics &nbsp;·&nbsp; All Rights Reserved</p>
+        <p>homesickmac@gmail.com</p>
+        <p style="color:rgba(251,244,224,0.25);">Graphics: Lari Niehl &copy;</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
 </body>
 </html>
