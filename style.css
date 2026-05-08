@@ -629,7 +629,7 @@ section { padding: var(--section-pad); }
 
 /* ── Footer ── */
 .site-footer {
-  background: #3D1A08;
+  background: #6B3318;
   color: var(--cream-text);
   padding: 4rem 2rem 2rem;
   border-top: 1px solid rgba(193,123,24,0.3);
@@ -656,6 +656,9 @@ section { padding: var(--section-pad); }
   padding-bottom: 2rem;
   border-bottom: 1px solid rgba(200,164,100,0.1);
   margin-bottom: 1rem;
+}
+.footer-logo-area img {
+  filter: invert(1) brightness(0.88);
 }
 .footer-brand { padding-top: 0; }
 
