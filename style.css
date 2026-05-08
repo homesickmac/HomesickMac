@@ -658,7 +658,7 @@ section { padding: var(--section-pad); }
   margin-bottom: 1rem;
 }
 .footer-logo-area img {
-  filter: invert(1) brightness(0.88);
+  filter: brightness(1.4) contrast(0.9);
 }
 .footer-brand { padding-top: 0; }
 
