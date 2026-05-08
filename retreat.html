@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Homesick Mac's Guitar Retreat 2026 — 15th annual gathering on the Island of Ven, Sweden. Three days of blues, slide guitar, jam sessions and community. July 2026.">
+  <title>Guitar Retreat 2026 — Homesick Mac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav class="site-nav nav-solid" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Homesick Mac</a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Mac</a></li>
+        <li><a href="retreat.html" class="active">Guitar Retreat</a></li>
+        <li><a href="testimonials.html">Testimonials</a></li>
+        <li class="nav-cta"><a href="contact.html" class="btn btn-primary">Join the Retreat</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Page Hero ── -->
+  <section class="hero" style="min-height:70vh;">
+    <div class="hero-bg" style="background-image: url('images/Island-Ven-landscape.jpg'); opacity:0.55; background-position: center 40%;"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content" style="text-align:center;padding-top:calc(var(--nav-height) + 0.5rem);">
+      <div class="anniversary-badge" style="width:110px;height:110px;margin:0 auto 1.2rem;">
+        <span class="roman" style="font-size:2.2rem;">XV</span>
+        <span class="anno">Years</span>
+      </div>
+      <div class="hero-eyebrow" style="justify-content:center;">Guitar Retreat · Island of Ven · Sweden</div>
+      <h1 style="font-size:clamp(1.9rem,4vw,3rem);margin-bottom:0.5rem;line-height:1.3;">
+        The Guitar Retreat<br>is Turning 15
+      </h1>
+      <p class="hero-tagline">Est. 2012 &nbsp;&middot;&nbsp; Annual Gathering &nbsp;&middot;&nbsp; July 2026</p>
+      <p style="max-width:560px;margin:0 auto 2.5rem;">
+        Three days of music, community and unforgettable moments on a magical Swedish island — 
+        for players of all levels who dare to leave the mainland behind.
+      </p>
+      <a href="contact.html" class="btn btn-primary">Express Your Interest</a>
+    </div>
+  </section>
+
+  <!-- ── About the Retreat ── -->
+  <section>
+    <div class="container">
+      <div class="split" style="align-items:start;">
+        <div class="bio-text fade-in">
+          <span class="section-label">What Is the Retreat?</span>
+          <h2 style="text-align:center;">More Than Guitar Lessons.<br>A Community.</h2>
+          <p>
+            Since 2012, players from all walks of life have been gathering on the 
+            Island of Ven in southern Sweden for three days that feel unlike anything else 
+            in a musician's year. Mac teaches through songs — real songs with grooves 
+            and stories — not meaningless licks in isolation.
+          </p>
+          <p>
+            With over 85% of participants returning year after year, the Retreat has become 
+            something rare: a genuine community. People come for the guitar, but they keep 
+            coming back for each other.
+          </p>
+          <p>
+            All skill levels are welcome. Whether you played seriously in your youth 
+            and are returning after a long hiatus, or you've always wanted to explore the 
+            blues and other acoustic styles (including slide guitar) — you belong here.
+          </p>
+        </div>
+        <div class="fade-in">
+          <img class="bio-photo"
+               src="images/Island-Ven-air-view.jpg"
+               alt="Aerial view of the Island of Ven, Sweden"
+               loading="lazy"
+               style="aspect-ratio:4/3;object-position:center;">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Stats Bar ── -->
+  <section class="section-dark" style="padding:0;">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(200,164,100,0.12);" class="fade-in">
+      <div style="background:var(--mahogany-mid);padding:1.8rem;text-align:center;">
+        <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--amber);">2012</div>
+        <div style="font-family:var(--font-label);font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(251,244,224,0.45);margin-top:0.3rem;">First retreat</div>
+      </div>
+      <div style="background:var(--mahogany-mid);padding:1.8rem;text-align:center;">
+        <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--amber);">85%</div>
+        <div style="font-family:var(--font-label);font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(251,244,224,0.45);margin-top:0.3rem;">Return year after year</div>
+      </div>
+      <div style="background:var(--mahogany-mid);padding:1.8rem;text-align:center;">
+        <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--amber);">100+</div>
+        <div style="font-family:var(--font-label);font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(251,244,224,0.45);margin-top:0.3rem;">Video lessons included</div>
+      </div>
+      <div style="background:var(--mahogany-mid);padding:1.8rem;text-align:center;">
+        <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--amber);">2026</div>
+        <div style="font-family:var(--font-label);font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(251,244,224,0.45);margin-top:0.3rem;">The 15th year</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Dates ── -->
+  <section class="section-alt" id="dates">
+    <div class="container text-center">
+      <span class="section-label">2026 Dates</span>
+      <h2 class="mb-4">Choose Your Week</h2>
+      <div class="date-cards-wrapper" style="max-width:700px;margin:0 auto;">
+        <div class="date-card fade-in">
+          <p class="month">July 2026</p>
+          <p class="days">17–19</p>
+          <p class="year">Friday to Sunday</p>
+          <p style="font-size:0.85rem;color:var(--warm-muted);margin-top:1rem;">Weekend session — ideal if you can't take time off midweek</p>
+        </div>
+        <div class="or-divider fade-in">or</div>
+        <div class="date-card fade-in">
+          <p class="month">July 2026</p>
+          <p class="days">20–22</p>
+          <p class="year">Monday to Wednesday</p>
+          <p style="font-size:0.85rem;color:var(--warm-muted);margin-top:1rem;">Weekday session — a quieter island, a more relaxed pace</p>
+        </div>
+      </div>
+      <p style="color:var(--warm-muted);margin-top:2rem;font-size:0.95rem;">
+        Prices and full programme details available on application. 
+        <a href="contact.html">Express your interest with no commitment →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ── 15-Year Story ── -->
+  <section class="section-dark">
+    <div class="container">
+      <div class="text-center mb-4 fade-in">
+        <span class="section-label">Est. 2012</span>
+        <h2>Fifteen Years of the Same Question</h2>
+        <div class="ornament"></div>
+        <p style="color:rgba(251,244,224,0.75);max-width:640px;margin:0 auto 1rem;">
+          It started with a small group on a Swedish island. The idea was simple: 
+          gather guitar players, teach through real songs, and see what happens. 
+          What happened was people didn't want to leave.
+        </p>
+        <p style="color:rgba(251,244,224,0.75);max-width:640px;margin:0 auto;">
+          Fifteen retreats later, the question Mac hears most hasn't changed:
+          <em style="color:var(--amber-pale);font-family:var(--font-display);font-size:1.1rem;display:block;margin:1.2rem auto;max-width:560px;line-height:1.5;">
+            "När du vill hitta tillbaka till din gitarr, men ej stå på scen."
+          </em>
+          <span style="font-family:var(--font-label);font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(251,244,224,0.4);">
+            "When you want to find your way back to your guitar — but not stand on stage."<br>
+            — Tommie Magnusson, participant 2021
+          </span>
+        </p>
+      </div>
+
+
+      <!-- Peter Dahlgren's letter -->
+      <div class="fade-in" style="margin-top:3.5rem;border:1px solid rgba(193,123,24,0.25);border-left:4px solid var(--amber);padding:2.5rem;border-radius:0 4px 4px 0;background:rgba(251,244,224,0.04);">
+        <span class="section-label" style="color:var(--amber-light);">A Letter from Peter Dahlgren · 2022</span>
+        <blockquote style="color:rgba(251,244,224,0.82);font-size:1rem;line-height:1.8;margin:1rem 0;">
+          <p style="margin-bottom:1.2rem;">
+            "Your fine pedagogy as well as a particular generosity of spirit solidified my decision. 
+            You are always encouraging, emphasizing the positive, while always being clear about 
+            how to go about playing whatever music is at hand."
+          </p>
+          <p style="margin-bottom:1.2rem;">
+            "My take-aways are usually not whole songs, but ideas, concepts, riffs that I can 
+            apply to my own tunes — and that help me connect the dots musically. Plus I also 
+            take home a renewed sense of the possible. Inspiration."
+          </p>
+          <p style="margin-bottom:1.2rem;">
+            "The small scale of the operation, and by extension the ease of bonding with others, 
+            was also very attractive — not least I met a group of fellow players there, and our 
+            Friday sessions have become an important part of my life."
+          </p>
+          <p>
+            "Over my long life I have started — and given up — learning guitar several times. 
+            I'm pretty certain that had we not met, I wouldn't still be at it. Not that the world 
+            would suffer much from my not playing, but I sure would: it's just such an amazing 
+            pleasure; it would have been a real loss."
+          </p>
+        </blockquote>
+        <cite style="font-family:var(--font-label);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--amber-light);font-style:normal;">— Peter Dahlgren, Guitar Retreat 2022</cite>
+      </div>
+
+      <!-- The Friday Jam story -->
+      <div class="fade-in" style="margin-top:2rem;background:rgba(193,123,24,0.08);border:1px solid rgba(193,123,24,0.2);border-radius:4px;padding:2.5rem;display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:start;">
+        <div style="font-size:2.5rem;line-height:1;">🎸</div>
+        <div>
+          <span class="section-label" style="color:var(--amber-light);">What the Retreat Creates</span>
+          <h3 style="color:var(--cream-text);margin-bottom:0.8rem;font-size:1.2rem;">A Friday Jam That Refuses to Stop</h3>
+          <p style="color:rgba(251,244,224,0.75);font-size:0.93rem;line-height:1.75;margin-bottom:1rem;">
+            Two participants who came to the Retreat together had already been meeting on Fridays to play guitar together. During a Retreat, they mentioned their weekly sessions to a fellow participant Arne, who had just moved to that area and didn't know anybody he could maybe play with. They invited him to join, and he did.
+          </p>
+          <p style="color:rgba(251,244,224,0.75);font-size:0.93rem;line-height:1.75;margin-bottom:1rem;">
+            The year after, a participant named Peter joined. Then Håkan. Then, through a later retreat, a participant Gert found his way into the group. Most recently, a participant Olle joined after moving back to the area.
+          </p>
+          <p style="color:rgba(251,244,224,0.75);font-size:0.93rem;line-height:1.75;margin-bottom:1rem;">
+            They now have what they call a "hiring freeze" — when everyone shows up at once, there's barely room to fit all the guitars in.
+          </p>
+          <p style="color:rgba(251,244,224,0.75);font-size:0.93rem;line-height:1.75;margin-bottom:1rem;">
+            The group has been meeting every Friday for over 10 years. They play by the same principles Mac teaches at the Retreat: keep the volume considerate, encourage each other to play solid backup or a solo, choose songs that work for everyone.
+          </p>
+          <p style="color:var(--amber-pale);font-size:0.93rem;line-height:1.75;margin-bottom:0;font-family:var(--font-display);">
+            A community that Retreat inspired, and there are no signs anybody's quitting anytime soon.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── What to Expect ── -->
+  <section class="section-dark">
+    <div class="container">
+      <div class="text-center mb-4 fade-in">
+        <span class="section-label">The Experience</span>
+        <h2>What Happens on Ven</h2>
+      </div>
+      <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
+
+        <div class="fade-in" style="padding:1.5rem;border:1px solid rgba(193,123,24,0.2);border-radius:4px;">
+          <div style="font-size:1.8rem;margin-bottom:1rem;">🎸</div>
+          <h3 style="margin-bottom:0.7rem;">Song-Based Tuition</h3>
+          <p style="color:rgba(251,244,224,0.7);font-size:0.95rem;">Mac teaches through complete songs and real grooves. Every lick has a context. Every lesson builds something you can take home and actually play.</p>
+        </div>
+
+        <div class="fade-in" style="padding:1.5rem;border:1px solid rgba(193,123,24,0.2);border-radius:4px;">
+          <div style="font-size:1.8rem;margin-bottom:1rem;">🎵</div>
+          <h3 style="margin-bottom:0.7rem;">Jam Sessions</h3>
+          <p style="color:rgba(251,244,224,0.7);font-size:0.95rem;">Evening jams where the music never stops. Porch playing, group sessions, spontaneous collaborations. The magic that happens between lessons is half the retreat.</p>
+        </div>
+
+        <div class="fade-in" style="padding:1.5rem;border:1px solid rgba(193,123,24,0.2);border-radius:4px;">
+          <div style="font-size:1.8rem;margin-bottom:1rem;">🏝️</div>
+          <h3 style="margin-bottom:0.7rem;">Life on Ven Island</h3>
+          <p style="color:rgba(251,244,224,0.7);font-size:0.95rem;">Backafallsbyn — a beautiful venue in an extraordinary setting. Leave the mainland and most of your worries behind. Three days that reset something important.</p>
+        </div>
+
+        <div class="fade-in" style="padding:1.5rem;border:1px solid rgba(193,123,24,0.2);border-radius:4px;">
+          <div style="font-size:1.8rem;margin-bottom:1rem;">📹</div>
+          <h3 style="margin-bottom:0.7rem;">Lifetime Video Library</h3>
+          <p style="color:rgba(251,244,224,0.7);font-size:0.95rem;">Every participant gets permanent access to Mac's Retreat Video Portal — over 100 detailed instructional videos, song sheets and backing tracks to keep the progress alive at home.</p>
+        </div>
+
+        <div class="fade-in" style="padding:1.5rem;border:1px solid rgba(193,123,24,0.2);border-radius:4px;">
+          <div style="font-size:1.8rem;margin-bottom:1rem;">🩺</div>
+          <h3 style="margin-bottom:0.7rem;">Ergonomics &amp; Posture</h3>
+          <p style="color:rgba(251,244,224,0.7);font-size:0.95rem;">Mac is a trained physiotherapist who gives hands-on guidance on posture, warm-up routines and body mechanics — protecting your playing for years to come.</p>
+        </div>
+
+        <div class="fade-in" style="padding:1.5rem;border:1px solid rgba(193,123,24,0.2);border-radius:4px;">
+          <div style="font-size:1.8rem;margin-bottom:1rem;">🤝</div>
+          <h3 style="margin-bottom:0.7rem;">All Levels Welcome</h3>
+          <p style="color:rgba(251,244,224,0.7);font-size:0.95rem;">Three chords or thirty years behind you — it doesn't matter. Mac adapts to everyone. The group spans complete beginners to experienced players, and it works beautifully.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Gallery ── -->
+  <section class="section-cream" style="padding-bottom:0;">
+    <div class="container">
+      <div class="text-center mb-4 fade-in">
+        <span class="section-label">Life on Ven</span>
+        <h2>Moments from Past Retreats</h2>
+        <p style="color:var(--warm-muted);max-width:560px;margin:0.8rem auto 0;">Fifteen years of music, community and memories on a Swedish island.</p>
+      </div>
+    </div>
+
+    <!-- Row 1: The full group + the island -->
+    <div class="gallery-editorial" style="margin-bottom:6px;">
+      <div class="ge-cell ge-span-3">
+        <img src="images/Retreat-room.jpg" alt="The full retreat group playing in a circle" loading="lazy">
+      </div>
+      <div class="ge-cell ge-span-1">
+        <img src="images/Island-Ven-air-view.jpg" alt="Aerial view of the Island of Ven" loading="lazy">
+      </div>
+    </div>
+
+    <!-- Row 2: Community life -->
+    <div class="gallery-editorial" style="margin-bottom:6px;">
+      <div class="ge-cell ge-span-1">
+        <img src="images/Evening-jams.jpg" alt="Evening jam session on the porch" loading="lazy">
+      </div>
+      <div class="ge-cell ge-span-2">
+        <img src="images/Walking-gang.jpg" alt="The retreat group walking on Ven island" loading="lazy" style="object-position:center 30%;">
+      </div>
+      <div class="ge-cell ge-span-1">
+        <img src="images/Retreat-eating.jpg" alt="Group dinner at the retreat" loading="lazy" style="object-position:center top;">
+      </div>
+    </div>
+
+    <!-- Banner: Many slides — full width, cinematic strip -->
+    <div style="margin-bottom:6px;overflow:hidden;line-height:0;">
+      <img src="images/Many-slides.jpg"
+           alt="Many hands with guitar slides on the fretboard"
+           loading="lazy"
+           style="width:100%;height:160px;object-fit:cover;object-position:center 40%;display:block;">
+    </div>
+
+    <!-- Row 3: The music in detail -->
+    <div class="gallery-editorial" style="margin-bottom:6px;">
+      <div class="ge-cell ge-span-2">
+        <img src="images/Tomas-singing-jam.jpg" alt="Evening jam — singing with eyes closed" loading="lazy">
+      </div>
+      <div class="ge-cell ge-span-1">
+        <img src="images/Olle-Hans-playing.jpg" alt="Two players practicing together" loading="lazy">
+      </div>
+      <div class="ge-cell ge-span-1">
+        <img src="images/Tommy-concentrated.jpg" alt="Tommy concentrated on his Sandén guitar" loading="lazy">
+      </div>
+    </div>
+
+    <!-- Row 4: Where you stay + the venue + personality -->
+    <div class="gallery-editorial">
+      <div class="ge-cell ge-span-1">
+        <img src="images/Backafallsby.jpg" alt="Backafallsbyn — the retreat venue" loading="lazy">
+      </div>
+      <div class="ge-cell ge-span-2">
+        <img src="images/Ven-bungalows.jpg" alt="The bungalow accommodation at Backafallsbyn" loading="lazy">
+      </div>
+      <div class="ge-cell ge-span-1">
+        <img src="images/Retreat-kazoo.jpg" alt="Guitar and kazoo — because why not" loading="lazy" style="object-position:center top;">
+      </div>
+    </div>
+
+    <!-- Row 5: Individual practice spaces — with explanation -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;">
+      <div class="ge-cell" style="overflow:hidden;line-height:0;">
+        <img src="images/Solitude-playing.jpg"
+             alt="Individual practice spaces by the windows"
+             loading="lazy"
+             style="width:100%;height:280px;object-fit:cover;object-position:center top;display:block;transition:transform 0.5s ease;">
+      </div>
+      <div style="background:var(--mahogany);padding:2.5rem;display:flex;flex-direction:column;justify-content:center;">
+        <span class="section-label" style="color:var(--amber-light);">Individual Practice</span>
+        <h3 style="color:var(--cream-text);margin-bottom:1rem;font-size:1.3rem;">Your Own Space Within the Group</h3>
+        <p style="color:rgba(251,244,224,0.75);font-size:0.92rem;line-height:1.7;margin:0;">
+          The retreat room is designed with dedicated practice spots along the windows. 
+          Facing outward gives you natural acoustic separation from the rest of the group — 
+          ideal for working through a tricky passage on your own, or making the most of a 
+          break while others grab a coffee. Individual focus, collective energy.
+        </p>
+      </div>
+    </div>
+
+  </section>
+
+  <style>
+    .gallery-editorial {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .ge-cell { overflow: hidden; line-height: 0; }
+    .ge-cell img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .ge-cell:hover img { transform: scale(1.03); }
+    .ge-span-1 { grid-column: span 1; }
+    .ge-span-2 { grid-column: span 2; }
+    .ge-span-3 { grid-column: span 3; }
+    .ge-span-4 { grid-column: span 4; }
+    .ge-span-3 img { height: 320px; }
+
+    @media (max-width: 900px) {
+      .gallery-editorial { grid-template-columns: repeat(2, 1fr); }
+      .ge-span-3 { grid-column: span 2; }
+      .ge-span-3 img { height: 260px; }
+    }
+    @media (max-width: 550px) {
+      .gallery-editorial { grid-template-columns: 1fr; }
+      .ge-span-1, .ge-span-2, .ge-span-3 { grid-column: span 1; }
+      .ge-cell img, .ge-span-3 img { height: 220px; }
+    }
+  </style>
+
+  <!-- ── Pull Quote ── -->
+  <section class="section-dark text-center">
+    <div class="container" style="max-width:760px;">
+      <span class="section-label">From a Participant</span>
+      <blockquote style="font-family:var(--font-display);font-size:clamp(1.2rem,2.2vw,1.7rem);font-style:italic;color:var(--cream-text);line-height:1.55;margin:1rem 0 1.5rem;">
+        "The retreat was a prime summer experience for me. Interesting people, a very 
+        well prepared programme that fit me like a glove, and a credible leadership made 
+        it a real hit!"
+      </blockquote>
+      <cite style="font-family:var(--font-label);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber-light);">— Tommy Falonius, Guitar Retreat Participant</cite>
+      <div class="ornament mt-4"></div>
+      <a href="testimonials.html" class="btn btn-outline">Read All Testimonials</a>
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <section class="text-center">
+    <div class="container fade-in" style="max-width:620px;">
+      <span class="section-label">Ready to Join?</span>
+      <h2>Reserve Your Spot for July 2026</h2>
+      <div class="ornament"></div>
+      <p style="color:var(--warm-muted);margin-bottom:2rem;">
+        Fill in a quick expression of interest — no commitment, no payment required at this stage. 
+        Mac will be in touch with full details, pricing and available spots.
+      </p>
+      <a href="contact.html" class="btn btn-primary">Express My Interest</a>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-logo-area">
+          <img src="images/Mac-Logo_FINAL_transparent-bg.svg" alt="Homesick Mac" style="height:130px;width:auto;display:block;margin:0 auto 1rem;">
+          <div class="footer-logo-text">Homesick Mac</div>
+        </div>
+        <div class="footer-brand">
+          <p>Blues, country, folk and slide guitar from southern Sweden. Performer, Teacher and host of the annual Homesick Mac's Guitar Retreat on the Island of Ven since 2012.</p>
+          <div class="social-links mt-3" style="display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;">
+            <a href="https://www.facebook.com/homesickmac" target="_blank" rel="noopener">Facebook</a>
+            <a href="https://www.instagram.com/draganhomesickmacruzicmacan/" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.linkedin.com/in/homesickmac/" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://www.youtube.com/@HomesickMac" target="_blank" rel="noopener">YouTube</a>
+          </div>
+        </div>
+        <nav class="footer-nav" aria-label="Footer navigation">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Mac</a></li>
+            <li><a href="retreat.html">Guitar Retreat</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="footer-nav">
+          <h4>Guitar Retreat 2026</h4>
+          <ul>
+            <li><a href="retreat.html">What to Expect</a></li>
+            <li><a href="retreat.html#dates">Dates &amp; Pricing</a></li>
+            <li><a href="testimonials.html">Past Participants</a></li>
+            <li><a href="contact.html">Apply Now</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Mac's Acoustics &nbsp;·&nbsp; All Rights Reserved</p>
+        <p>homesickmac@gmail.com</p>
+        <p style="color:rgba(251,244,224,0.25);">Graphics: Lari Niehl &copy;</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>

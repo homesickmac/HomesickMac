@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Get in touch with Homesick Mac — Guitar Retreat applications, one-on-one sessions, workshop bookings and general enquiries.">
+  <title>Contact — Homesick Mac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .contact-card {
+      background: var(--cream);
+      border: 1px solid rgba(200,164,100,0.3);
+      border-top: 4px solid var(--amber);
+      padding: 2.5rem;
+      border-radius: 4px;
+    }
+    .contact-card h3 {
+      margin-bottom: 0.8rem;
+      font-size: 1.3rem;
+    }
+    .contact-card p {
+      color: var(--warm-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+    .contact-email {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      
+      color: var(--amber);
+      display: inline-block;
+      margin-bottom: 1.5rem;
+    }
+    .contact-email:hover { color: var(--amber-light); }
+    @media (max-width: 700px) {
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav class="site-nav nav-solid" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Homesick Mac</a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Mac</a></li>
+        <li><a href="retreat.html">Guitar Retreat</a></li>
+        <li><a href="testimonials.html">Testimonials</a></li>
+        <li class="nav-cta"><a href="contact.html" class="btn btn-primary active">Join the Retreat</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Page Hero ── -->
+  <section style="background:var(--mahogany);padding:calc(var(--nav-height) + 4rem) 2rem 4.5rem;text-align:center;">
+    <div style="max-width:600px;margin:0 auto;">
+      <span class="section-label">Get in Touch</span>
+      <h1 style="color:var(--cream-text);margin-bottom:1rem;">Let's Talk Music</h1>
+      <p style="color:rgba(251,244,224,0.7);font-size:1.05rem;">
+        Guitar Retreat applications, one-on-one sessions, workshop bookings — 
+        Mac reads every message personally.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Contact Cards ── -->
+  <section>
+    <div class="container">
+      <div class="contact-grid">
+
+        <div class="contact-card fade-in">
+          <span class="section-label">Guitar Retreat 2026</span>
+          <h3>Express Your Interest</h3>
+          <p>
+            Fill in a short form to express your interest in the Guitar Retreat — July 17–19 
+            or July 20–22, 2026 on the Island of Ven. No commitment, no payment required. 
+            Mac will follow up with full details and available spots.
+          </p>
+          <p style="font-size:0.88rem;color:var(--warm-muted);">
+            Or just send an email directly — that works perfectly too.
+          </p>
+          <div class="btn-group">
+            <a href="https://www.notion.so/homesickmac/Application-Form-no-binding-commitment-yet-13817c629df880fc9ecdf9a22722a09f?pvs=4"
+               target="_blank" rel="noopener"
+               class="btn btn-primary">Application Form ↗</a>
+            <a href="mailto:homesickmac@gmail.com" class="btn btn-outline-dark">Email Mac</a>
+          </div>
+        </div>
+
+        <div class="contact-card fade-in">
+          <span class="section-label">Private Sessions</span>
+          <h3>One-on-One &amp; Group Workshops</h3>
+          <p>
+            Mac is sometimes available for private "Mac Attack" sessions — either 
+            one-on-one or in small groups. If you have a specific song, technique 
+            or style you want to dig into, get in touch.
+          </p>
+          <p>
+            Also available for guitar workshops at events, festivals, and music organisations.
+          </p>
+          <a href="mailto:homesickmac@gmail.com" class="contact-email">homesickmac@gmail.com</a>
+          <br>
+          <a href="mailto:homesickmac@gmail.com" class="btn btn-outline-dark">Send a Message</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Social ── -->
+  <section class="section-alt">
+    <div class="container">
+      <div class="text-center mb-4 fade-in">
+        <span class="section-label">Follow Along</span>
+        <h2>Find Mac Online</h2>
+        <div class="ornament"></div>
+      </div>
+      <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem;">
+
+        <a href="https://www.facebook.com/homesickmac" target="_blank" rel="noopener"
+           style="display:block;background:var(--cream);border:1px solid rgba(200,164,100,0.3);border-radius:4px;padding:2rem;text-align:center;text-decoration:none;transition:all 0.3s ease;"
+           onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 10px 30px rgba(28,10,4,0.1)'"
+           onmouseout="this.style.transform='';this.style.boxShadow=''">
+          <div style="font-size:2rem;margin-bottom:0.8rem;">f</div>
+          <div style="font-family:var(--font-label);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);">Facebook</div>
+          <div style="font-family:var(--font-display);font-size:0.95rem;color:var(--brown);margin-top:0.4rem;">Homesick Mac</div>
+        </a>
+
+        <a href="https://www.instagram.com/draganhomesickmacruzicmacan/" target="_blank" rel="noopener"
+           style="display:block;background:var(--cream);border:1px solid rgba(200,164,100,0.3);border-radius:4px;padding:2rem;text-align:center;text-decoration:none;transition:all 0.3s ease;"
+           onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 10px 30px rgba(28,10,4,0.1)'"
+           onmouseout="this.style.transform='';this.style.boxShadow=''">
+          <div style="font-size:2rem;margin-bottom:0.8rem;">◎</div>
+          <div style="font-family:var(--font-label);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);">Instagram</div>
+          <div style="font-family:var(--font-display);font-size:0.95rem;color:var(--brown);margin-top:0.4rem;">@homesickmac</div>
+        </a>
+
+        <a href="https://www.youtube.com/@HomesickMac" target="_blank" rel="noopener"
+           style="display:block;background:var(--cream);border:1px solid rgba(200,164,100,0.3);border-radius:4px;padding:2rem;text-align:center;text-decoration:none;transition:all 0.3s ease;"
+           onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 10px 30px rgba(28,10,4,0.1)'"
+           onmouseout="this.style.transform='';this.style.boxShadow=''">
+          <div style="font-size:2rem;margin-bottom:0.8rem;">▶</div>
+          <div style="font-family:var(--font-label);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);">YouTube</div>
+          <div style="font-family:var(--font-display);font-size:0.95rem;color:var(--brown);margin-top:0.4rem;">Homesick Mac</div>
+        </a>
+
+        <a href="https://www.linkedin.com/in/homesickmac/" target="_blank" rel="noopener"
+           style="display:block;background:var(--cream);border:1px solid rgba(200,164,100,0.3);border-radius:4px;padding:2rem;text-align:center;text-decoration:none;transition:all 0.3s ease;"
+           onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 10px 30px rgba(28,10,4,0.1)'"
+           onmouseout="this.style.transform='';this.style.boxShadow=''">
+          <div style="font-size:2rem;margin-bottom:0.8rem;">in</div>
+          <div style="font-family:var(--font-label);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);">LinkedIn</div>
+          <div style="font-family:var(--font-display);font-size:0.95rem;color:var(--brown);margin-top:0.4rem;">Homesick Mac</div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Retreat reminder ── -->
+  <section class="section-dark text-center">
+    <div class="container fade-in" style="max-width:600px;">
+      <div class="anniversary-badge" style="width:80px;height:80px;margin:0 auto 2rem;">
+        <span class="roman" style="font-size:1.6rem;">XV</span>
+        <span class="anno">Years</span>
+      </div>
+      <h2 style="">Don't Miss the 15th Retreat</h2>
+      <div class="ornament"></div>
+      <p style="color:rgba(251,244,224,0.7);margin-bottom:2rem;">
+        July 17–19 or July 20–22, 2026 · Island of Ven, Sweden<br>
+        All levels welcome · No commitment to express interest
+      </p>
+      <a href="https://www.notion.so/homesickmac/Application-Form-no-binding-commitment-yet-13817c629df880fc9ecdf9a22722a09f?pvs=4"
+         target="_blank" rel="noopener"
+         class="btn btn-primary">Express My Interest ↗</a>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-logo-area">
+          <img src="images/Mac-Logo_FINAL_transparent-bg.svg" alt="Homesick Mac" style="height:130px;width:auto;display:block;margin:0 auto 1rem;">
+          <div class="footer-logo-text">Homesick Mac</div>
+        </div>
+        <div class="footer-brand">
+          <p>Blues, country, folk and slide guitar from southern Sweden. Performer, Teacher and host of the annual Homesick Mac's Guitar Retreat on the Island of Ven since 2012.</p>
+          <div class="social-links mt-3" style="display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;">
+            <a href="https://www.facebook.com/homesickmac" target="_blank" rel="noopener">Facebook</a>
+            <a href="https://www.instagram.com/draganhomesickmacruzicmacan/" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.linkedin.com/in/homesickmac/" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://www.youtube.com/@HomesickMac" target="_blank" rel="noopener">YouTube</a>
+          </div>
+        </div>
+        <nav class="footer-nav" aria-label="Footer navigation">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Mac</a></li>
+            <li><a href="retreat.html">Guitar Retreat</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="footer-nav">
+          <h4>Guitar Retreat 2026</h4>
+          <ul>
+            <li><a href="retreat.html">What to Expect</a></li>
+            <li><a href="retreat.html#dates">Dates &amp; Pricing</a></li>
+            <li><a href="testimonials.html">Past Participants</a></li>
+            <li><a href="contact.html">Apply Now</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Mac's Acoustics &nbsp;·&nbsp; All Rights Reserved</p>
+        <p>homesickmac@gmail.com</p>
+        <p style="color:rgba(251,244,224,0.25);">Graphics: Lari Niehl &copy;</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
