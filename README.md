@@ -1,14 +1,14 @@
 # Homesick Mac — Website
 
 Blues, country, folk and slide guitar from southern Sweden.  
-Built as a static HTML site for GitHub Pages hosting.
+Built as a static HTML site, hosted on GitHub Pages at [homesickmac.github.io/HomesickMac](https://homesickmac.github.io/HomesickMac/).
 
 ---
 
 ## File Structure
 
 ```
-homesickmac-site/
+HomesickMac/
 ├── index.html          ← Homepage
 ├── about.html          ← About Mac
 ├── retreat.html        ← Guitar Retreat 2026
@@ -16,82 +16,49 @@ homesickmac-site/
 ├── contact.html        ← Contact & application
 ├── style.css           ← All styles (shared across pages)
 ├── main.js             ← Navigation & scroll animations
-└── README.md           ← This file
+├── README.md           ← This file
+└── (all images in root folder)
 ```
-
----
-
-## How to Deploy to GitHub Pages
-
-### One-time setup (do this once)
-
-1. Push all these files to the **root** of your GitHub repository  
-   (the repo you already have set up)
-
-2. Go to your repo on GitHub → **Settings** → **Pages**
-
-3. Under "Source", select **main** branch → **/ (root)** → click Save
-
-4. GitHub will give you a URL like `https://yourusername.github.io/your-repo-name/`
-
-5. To use your custom domain (homesickmac.com):
-   - Add a file called `CNAME` in the root of your repo containing just: `homesickmac.com`
-   - In your domain registrar (wherever you bought the domain), update the DNS:
-     - Add 4 A records pointing to GitHub's IPs:
-       - `185.199.108.153`
-       - `185.199.109.153`
-       - `185.199.110.153`
-       - `185.199.111.153`
-   - DNS changes take up to 48 hours to propagate
-
----
-
-## Updating the Site
-
-To make any change to the site in the future:
-
-1. Edit the relevant file (e.g. `retreat.html` to update dates)
-2. Commit and push to GitHub
-3. GitHub Pages automatically rebuilds — usually live within 1–2 minutes
-
-Ask Claude for help with any specific changes and paste in the current file content.
 
 ---
 
 ## Images
 
-⚠️ **Important:** The site currently uses image URLs from the old Super.so hosting.  
-Once you cancel Super.so, these images may stop working.
-
-**To fix this:**
-1. Download your photos from the old site
-2. Add them to a folder in this repo (e.g. `/images/`)
-3. Update the `src` attributes in the HTML to use `/images/your-photo.jpg`
-
-The images to replace are in `index.html`, `retreat.html`, and `about.html`.
+All images are hosted directly in this repository — no external image hosting dependencies.
 
 ---
 
-## Fonts
+## Connecting Your Custom Domain
 
-The site uses Google Fonts (loaded automatically):
-- **Playfair Display** — headings
-- **Lora** — body text
-- **Josefin Sans** — navigation, labels
+When ready to point `homesickmac.com` here:
 
-These load from Google's servers with no setup required.
+1. Add a file called `CNAME` in the root of this repo containing just:
+   ```
+   homesickmac.com
+   ```
+
+2. In Namecheap, update the DNS with 4 A records pointing to GitHub's IPs:
+   - `185.199.108.153`
+   - `185.199.109.153`
+   - `185.199.110.153`
+   - `185.199.111.153`
+
+3. In GitHub repo Settings → Pages → Custom domain, type `homesickmac.com` and click Save
+
+4. DNS changes take up to 48 hours to propagate
 
 ---
 
-## Colours (for reference)
+## Updating the Site
 
-| Name         | Hex       | Used for                    |
-|--------------|-----------|-----------------------------|
-| Parchment    | `#F4E5C0` | Page background             |
-| Mahogany     | `#1C0A04` | Header, footer, dark sections |
-| Amber        | `#C17B18` | Accent colour, links, buttons |
-| Cream        | `#FBF4E0` | Card backgrounds            |
-| Warm Muted   | `#7A5C35` | Body text (secondary)       |
+To make any change:
+
+1. Go to the file in this repo on GitHub
+2. Click the pencil icon (Edit)
+3. Make your change
+4. Click Commit changes
+
+GitHub Pages rebuilds automatically — live within 1–2 minutes.
 
 ---
 
