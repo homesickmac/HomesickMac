@@ -934,3 +934,18 @@ section { padding: var(--section-pad); }
     height: 260px;
   }
 }
+@media (max-width: 768px) {
+  .hero-content-left {
+    text-align: center;
+    align-items: center;
+  }
+  .hero-tagline {
+    width: 100% !important;
+  }
+  .btn-group {
+    justify-content: center;
+  }
+  .hero-bg {
+    background-position: center center;
+  }
+}
