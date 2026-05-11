@@ -815,7 +815,7 @@ section { padding: var(--section-pad); }
   .gallery-grid .g-wide { grid-column: span 1; }
   .date-cards { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; text-align: center; }
-  .btn-group { flex-direction: column; align-items: center; }
+  .btn-group { flex-direction: column; align-items: flex-start; }
 }
 
 /* ── Lightbox ── */
@@ -923,6 +923,7 @@ section { padding: var(--section-pad); }
   .hero-content-left p { text-align: center; }
   .hero-content-left .btn-group { justify-content: center; }
   .hero-content-left .hero-tagline { margin: 0 auto 2rem; }
+  .hero-bg { background-position: 35% 20%; }
 }
 
 /* Solo practice panel — stack on mobile, image first */
@@ -932,5 +933,20 @@ section { padding: var(--section-pad); }
   }
   .solo-practice-panel .ge-cell img {
     height: 260px;
+  }
+}
+@media (max-width: 768px) {
+  .hero-content-left {
+    text-align: center;
+    align-items: center;
+  }
+  .hero-tagline {
+    width: 100% !important;
+  }
+  .btn-group {
+    justify-content: center;
+  }
+  .hero-bg {
+    background-position: center center;
   }
 }
