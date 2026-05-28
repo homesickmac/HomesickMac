@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Homesick Mac — Discography. All releases in chronological order, from the first Blues Trio cassette in 1987 to the 35th anniversary double CD.">
+  <title>Discography — Homesick Mac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ── Booklet Modal ── -->
+  <div id="booklet-modal" role="dialog" aria-modal="true" aria-label="Booklet viewer">
+    <button class="booklet-modal-close" onclick="closeBooklet()" aria-label="Close">&times;</button>
+    <button class="booklet-modal-prev" id="modal-prev" onclick="prevBooklet()" aria-label="Previous">&#8249;</button>
+    <img id="booklet-modal-img" src="" alt="CD booklet">
+    <p id="booklet-modal-caption"></p>
+    <p id="booklet-modal-counter"></p>
+    <button class="booklet-modal-next" id="modal-next" onclick="nextBooklet()" aria-label="Next">&#8250;</button>
+  </div>
+
+  <!-- ── Navigation ── -->
+  <nav class="site-nav nav-solid" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Homesick Mac</a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li class="nav-dropdown">
+          <a href="about.html" class="active">About Mac</a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-has-sub">
+              <a href="collaborations.html">Collaborations</a>
+              <ul class="dropdown-sub">
+                <li><a href="blues-trio.html">Blues Trio</a></li>
+                <li><a href="sam-mitchell.html">Sam Mitchell</a></li>
+                <li><a href="delmore-sessions.html">Delmore Sessions</a></li>
+                <li><a href="prohibition-jazz.html">Prohibition Jazz &amp; Blues</a></li>
+              </ul>
+            </li>
+            <li><a href="discography.html" class="active">Discography</a></li>
+            <li><a href="guitars.html">Guitars &amp; Gear</a></li>
+            <li class="dropdown-has-sub">
+              <a>Gallery</a>
+              <ul class="dropdown-sub">
+                <li><a href="gallery-live.html">Live Photos</a></li>
+                <li><a href="gallery-35years.html">35th Anniversary Concert</a></li>
+              </ul>
+            </li>
+            <li><a href="press.html">Press</a></li>
+          </ul>
+        </li>
+        <li><a href="retreat.html">Guitar Retreat</a></li>
+        <li><a href="testimonials.html">Testimonials</a></li>
+        <li class="nav-cta"><a href="contact.html" class="btn btn-primary">Join the Retreat</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Page Header ── -->
+  <section style="background:var(--mahogany);padding:calc(var(--nav-height) + 4rem) 2rem 4rem;text-align:center;">
+    <div style="max-width:640px;margin:0 auto;">
+      <span class="section-label">The Recordings</span>
+      <h1 style="color:var(--cream-text);font-size:clamp(2rem,4vw,3.2rem);margin-bottom:1rem;">Discography</h1>
+      <div class="ornament"></div>
+      <p style="color:rgba(251,244,224,0.7);font-size:1.02rem;line-height:1.8;">
+        Homesick Mac has released quite many records on different labels over the years. 
+        Listed here in chronological order.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Releases ── -->
+  <section style="background:var(--mahogany);padding:var(--section-pad);">
+    <div class="container">
+
+      <!-- 1. Koper Kaseta 1987 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Trio-Koper-Kaseta-1987-DSC03097.jpeg"
+               onclick="openCover('images/discography/CD-covers/Trio-Koper-Kaseta-1987-DSC03097.jpeg')" alt="Blues Trio — Koper Kaseta 1987" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Slovenija Koper · 1987</span>
+          <h3>Blues Trio — Live in Koper (Cassette)</h3>
+          <p>
+            Recorded during a tour through Slovenia and Croatia — then still parts of the 
+            former Yugoslavia — this was the very first release for Blues Trio.
+          </p>
+        </div>
+      </div>
+
+      <!-- 2. LP Smallest Trio 1991 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/LP-Smallest-Trio-1991-DSC03096.jpeg"
+               onclick="openCover('images/discography/CD-covers/LP-Smallest-Trio-1991-DSC03096.jpeg')" alt="Blues Trio — The Smallest Trio in the World LP" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">PGP RTB · 1991</span>
+          <h3>The Smallest Trio in the World (LP)</h3>
+          <p>
+            In the summer of 1990, after a German tour and appearance at the Bluest festival 
+            in Trieste, Italy, Blues Trio played a couple of gigs for Radio Belgrade 202 in 
+            the centre of Belgrade and made a few recording sessions in the radio studios. 
+            The whole idea was to finish the formative period of the band and move to a new 
+            stage with our first official LP for a major label.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-CD-cover.jpg" alt="Booklet" onclick="openBooklet('smallest-trio')">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-inside1.jpg" alt="Booklet" onclick="openBooklet('smallest-trio',1)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-inside2.jpg" alt="Booklet" onclick="openBooklet('smallest-trio',2)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-inside3.jpg" alt="Booklet" onclick="openBooklet('smallest-trio',3)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Belgrade Blues Today 1994 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/LP-BelgradeBlues-Today-DSC03102.jpeg"
+               onclick="openCover('images/discography/CD-covers/LP-BelgradeBlues-Today-DSC03102.jpeg')" alt="Belgrade Blues Today — Compilation" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">PGP RTS · 1994</span>
+          <h3>Belgrade Blues Today (Compilation)</h3>
+          <p>
+            A compilation of music played by blues bands from Belgrade at the time. 
+            A snapshot of a scene we had spent years building.
+          </p>
+        </div>
+      </div>
+
+      <!-- 4. Mac Steady Stomping 1994 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Mac-Steady-Stomping-DSC03081.jpeg"
+               onclick="openCover('images/discography/CD-covers/Mac-Steady-Stomping-DSC03081.jpeg')" alt="Homesick Mac — Steady Stomping" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Mafioso Records · 1994</span>
+          <h3>Steady Stomping</h3>
+          <p>
+            The very first release for Homesick Mac as a solo act. 
+            Issued both as a cassette and as a CD.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/SteadyStomping/SteadyStomping-cover.jpg" alt="Booklet" onclick="openBooklet('steady-stomping',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/SteadyStomping/SteadyStomping-inside.jpg" alt="Booklet" onclick="openBooklet('steady-stomping',1)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. This Train 1994 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Trio-ThisTrain-DSC03085.jpeg"
+               onclick="openCover('images/discography/CD-covers/Trio-ThisTrain-DSC03085.jpeg')" alt="Blues Trio — This Train" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">ITV Melomarket · 1994</span>
+          <h3>Blues Trio — This Train</h3>
+          <p>
+            Recorded live in 1990 during a live broadcast — the 10th anniversary of 
+            Radio Belgrade's show "All That Jazz — Good Morning Bluesmen."
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-ThisTrain/TrisTrain-cover.jpg" alt="Booklet" onclick="openBooklet('this-train',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-ThisTrain/ThisTrain-inside1.jpg" alt="Booklet" onclick="openBooklet('this-train',1)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-ThisTrain/ThisTrain-inside2.jpg" alt="Booklet" onclick="openBooklet('this-train',2)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-ThisTrain/ThisTrain-inside3.jpg" alt="Booklet" onclick="openBooklet('this-train',3)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Sam Mac Two Long From Home 1996 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Sam-Mac-CD-DSC03083.jpeg"
+               onclick="openCover('images/discography/CD-covers/Sam-Mac-CD-DSC03083.jpeg')" alt="Sam Mitchell & Homesick Mac — Two Long From Home" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Mafioso Records &amp; Wolf Records · 1996</span>
+          <h3>Two Long From Home <span style="font-size:0.8em;font-weight:400;">— with Sam Mitchell</span></h3>
+          <p>
+            We recorded and mixed this CD over 9.5 hours at the Musikhuset in Helsingborg, 
+            Sweden. The idea came from my agent Podlovics Péter from Mafioso Records — 
+            the same label that had released my solo CD in 1994. He thought it was great 
+            that I started playing with Sam, so he said: "Go to the studio and record — 
+            I'll release anything you end up with."
+          </p>
+          <p>
+            We went in with our mutual friend Bo Wilson — a musician himself but also a 
+            sound engineer — and rigged a very humble setup. Although in a real studio, 
+            Bo suggested we skip the high-end condenser microphones and use simple dynamic 
+            mics like the Shure SM58 and SM57. Sam's guitar was also lined in directly.
+          </p>
+          <p>
+            We sat close, facing each other — and just played. Sam would suggest a song, 
+            then I'd go with one. There were no planned overdubs — except for Sam's 
+            harmony vocal in "Sitting On Top Of The World" and my solo part in 
+            "Come On In My Kitchen." All the rest was live to tape.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/TwoLongFromHome/Sam-Mac-inside1.jpg" alt="Booklet" onclick="openBooklet('two-long',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/TwoLongFromHome/Sam-Mac-inside2.jpg" alt="Booklet" onclick="openBooklet('two-long',1)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/TwoLongFromHome/Sam-Mac-inside3.jpg" alt="Booklet" onclick="openBooklet('two-long',2)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Balkan Blues 2001 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Trio-BalkanBlues-DSC03094.jpeg"
+               onclick="openCover('images/discography/CD-covers/Trio-BalkanBlues-DSC03094.jpeg')" alt="Blues Trio — Balkan Blues" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Sorabia Disc · 2001</span>
+          <h3>Blues Trio — Balkan Blues</h3>
+          <p>
+            A special release — only 500 copies were made. Recorded live at the 
+            KST Club in Belgrade.
+          </p>
+        </div>
+      </div>
+
+      <!-- 8. Blues Summit Pancevo 2001 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Trio-BLuesSummit-2001-DSC03090.jpeg"
+               onclick="openCover('images/discography/CD-covers/Trio-BLuesSummit-2001-DSC03090.jpeg')" alt="Blues Trio — Blues Summit Pancevo 2001" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Round Records · 2001</span>
+          <h3>Blues Summit Pancevo 2001</h3>
+          <p>
+            Blues Trio was invited to play at this event in the city of Pancevo, which had 
+            a lively blues scene. I was having a terrible cold and was close to cancelling 
+            the gig — I'm happy I didn't. The reaction from the audience when we started 
+            playing "Today Today Blues" by Jimmy Rodgers was so wonderful that it became 
+            one of our most treasured memories from all the concerts we've done over the years.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-BluesSummit-Pancevo2001/BluesSummit-Pancevo-cover.jpg" alt="Booklet" onclick="openBooklet('blues-summit',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-BluesSummit-Pancevo2001/BluesSummit-Pancevo-bands.jpg" alt="Booklet" onclick="openBooklet('blues-summit',1)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-BluesSummit-Pancevo2001/BluesSummit-Pancevo-inside.jpg" alt="Booklet" onclick="openBooklet('blues-summit',2)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. Pera Sessionman 2002 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Pera-Sessionman-DSC03079.jpeg"
+               onclick="openCover('images/discography/CD-covers/Pera-Sessionman-DSC03079.jpeg')" alt="Pera Joe — Sessionman" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Vertical Jazz · 2002</span>
+          <h3>Pera Joe — Sessionman</h3>
+          <span class="disco-featured">Featuring Homesick Mac</span>
+          <p>
+            Pera Joe was — and still is — one of the hardest working studio musicians 
+            in Belgrade. He played harmonica parts for various bands, jammed with colleagues 
+            and recorded. Over the years there were many songs to choose from when the time 
+            came for the "Sessionman" release. This was his first one.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Sessionman/Sessionman-cover.jpg" alt="Booklet" onclick="openBooklet('sessionman',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Sessionman/Sessionman-inside1.jpg" alt="Booklet" onclick="openBooklet('sessionman',1)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Sessionman/Sessionman-inside2.jpg" alt="Booklet" onclick="openBooklet('sessionman',2)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Sessionman/Sessionman-inside3.jpg" alt="Booklet" onclick="openBooklet('sessionman',3)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Sessionman/Sessionman-inside4.jpg" alt="Booklet" onclick="openBooklet('sessionman',4)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Sessionman/Sessionman-inside5.jpg" alt="Booklet" onclick="openBooklet('sessionman',5)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. Mac Leaving 2003 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Mac-Leaving-2003-DSC03089.jpeg"
+               onclick="openCover('images/discography/CD-covers/Mac-Leaving-2003-DSC03089.jpeg')" alt="Homesick Mac — Leaving" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Vertical Jazz · 2003</span>
+          <h3>Leaving</h3>
+          <p>
+            Almost 10 years from my first solo CD, the time felt right for this new 
+            recording. The title reflects my experimentation with other styles — moving 
+            a little away from country blues. Songs like "Johnny B. Goode" and "Blue Moon 
+            Of Kentucky" were a nice challenge, specially the Chuck Berry song that's 
+            usually played fast. I turned it into a slow take of this great song, with help 
+            from singer Frida Möller and piano player from Hungary Szabolcs Nagy. 
+            I also took a leap into recording my own instrumentals.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/HomesickMac-Leaving/Leaving-cover.jpg" alt="Booklet" onclick="openBooklet('leaving',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/HomesickMac-Leaving/Leaving-inside.jpg" alt="Booklet" onclick="openBooklet('leaving',1)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 11. Copenhagen Sessions 2003 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Copenhagen-Sessions-DSC03076.jpeg"
+               onclick="openCover('images/discography/CD-covers/Copenhagen-Sessions-DSC03076.jpeg')" alt="Copenhagen Blues Sessions" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Copenhagen Blues Festival · 2003</span>
+          <h3>Copenhagen Blues Sessions</h3>
+          <p>
+            I used to play a lot in Denmark — participating in festivals and working at 
+            clubs like Mojo in Copenhagen. I got an invitation to play at a gathering of 
+            Danish blues musicians at the Bar Blues club in Copenhagen, where everybody 
+            would perform one song to be recorded for the CD release. The CD was 
+            technically a self-released festival showcase, distributed without a traditional 
+            commercial label imprint on the jacket.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/CopenhagenBluesSessions/Copenhagen-sessions-inside.jpg" alt="Booklet" onclick="openBooklet('copenhagen',0)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 12. Guitar Art 2003 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Trio-GuitarArt-2002-DSC03088.jpeg"
+               onclick="openCover('images/discography/CD-covers/Trio-GuitarArt-2002-DSC03088.jpeg')" alt="Blues Trio — Guitar Art Festival 2002" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Belgrade Cultural Centre · 2003</span>
+          <h3>Guitar Art Festival Belgrade 2002</h3>
+          <p>
+            The Guitar Art Festival in Belgrade was established in the year 2000. Over 
+            the decades it has grown from the first professional guitar festival in the 
+            Balkan region into one of the largest and most prestigious classical guitar 
+            festivals in the world. Blues Trio participated in 2002 and we have one song 
+            featured on this CD — our version of Bo Diddley's "Who Do You Love."
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-GuitarArtFest2002/GuitarArt-cover.jpg" alt="Booklet" onclick="openBooklet('guitar-art',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-GuitarArtFest2002/GuitarArt-inside.jpg" alt="Booklet" onclick="openBooklet('guitar-art',1)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-GuitarArtFest2002/GuitarArt-inside1.jpg" alt="Booklet" onclick="openBooklet('guitar-art',2)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-GuitarArtFest2002/GuitarArt-Ana-Hill.jpg" alt="Booklet" onclick="openBooklet('guitar-art',3)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-GuitarArtFest2002/GuitarArt-Pera-Macan.jpg" alt="Booklet" onclick="openBooklet('guitar-art',4)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 13. Sometimes 2004 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Trio-Sometimes-DSC03084.jpeg"
+               onclick="openCover('images/discography/CD-covers/Trio-Sometimes-DSC03084.jpeg')" alt="Blues Trio — Sometimes" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Vertical Jazz · 2004</span>
+          <h3>Blues Trio — Sometimes</h3>
+          <p>
+            A compilation of live recordings from various clubs and festivals 
+            between 1994 and 2002.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-Sometimes/Sometimes-cover.jpg" alt="Booklet" onclick="openBooklet('sometimes',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-Sometimes/Sometimes-inside.jpg" alt="Booklet" onclick="openBooklet('sometimes',1)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 14. Smallest Trio CD 2010 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Trio-CD-Smallest-Trio-1991-DSC03087.jpeg"
+               onclick="openCover('images/discography/CD-covers/Trio-CD-Smallest-Trio-1991-DSC03087.jpeg')" alt="Blues Trio — The Smallest Trio in the World CD reissue" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Blues Time · 2010</span>
+          <h3>The Smallest Trio in the World (CD Reissue)</h3>
+          <p>
+            The original LP recordings from 1991 — the Radio Belgrade sessions after our 
+            German tour and the Trieste festival — reissued on CD by the label Blues Time 
+            (Vladislav Pejak), since the LP had gone out of print. The CD added two 
+            bonus recordings.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-CD-cover.jpg" alt="Booklet" onclick="openBooklet('smallest-trio-cd',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-inside1.jpg" alt="Booklet" onclick="openBooklet('smallest-trio-cd',1)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-inside2.jpg" alt="Booklet" onclick="openBooklet('smallest-trio-cd',2)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-inside3.jpg" alt="Booklet" onclick="openBooklet('smallest-trio-cd',3)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 15. You All Dunn Sven 2012 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Trio-YouAll-Dunn-Sven-DSC03080.jpeg"
+               onclick="openCover('images/discography/CD-covers/Trio-YouAll-Dunn-Sven-DSC03080.jpeg')" alt="Blues Trio — You All" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Vertical Jazz · 2012</span>
+          <h3>Blues Trio — You All</h3>
+          <p>
+            Recorded live at the Youth Center in Kragujevac, Serbia in 2003. Blues Trio 
+            was celebrating 20 years in existence and our promoter Milorad Stojaković-Dača 
+            organised a mini tour in Serbia. One of the cities we visited was Kragujevac — 
+            where one of the most famous rock bands of the former Yugoslavia, SMAK, had 
+            been formed. All young guitar players of that time were influenced and inspired 
+            by the band, especially their guitar player Radomir Mihajlović-Točak. 
+            I was around 15 when they became known.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-YouAll/YouAll-cover.jpg" alt="Booklet" onclick="openBooklet('you-all',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-YouAll/YouAll-inside1.jpg" alt="Booklet" onclick="openBooklet('you-all',1)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-YouAll/YouAll-inside2.jpg" alt="Booklet" onclick="openBooklet('you-all',2)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-YouAll/YouAll-inside3.jpg" alt="Booklet" onclick="openBooklet('you-all',3)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 16. Pera Joe Harmonica 2012 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/PeraJoe-harmonica-DSC03075.jpeg"
+               onclick="openCover('images/discography/CD-covers/PeraJoe-harmonica-DSC03075.jpeg')" alt="Pera Joe — Harmonica, Blues and Friends" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Vertical Jazz · 2012</span>
+          <h3>Pera Joe — Harmonica, Blues and Friends</h3>
+          <span class="disco-featured">Featuring Homesick Mac</span>
+          <p>
+            Another compilation of recordings where Pera Joe performed with many 
+            well-known artists from Serbia and abroad. A testament to just how much 
+            ground that harmonica has covered over the decades.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside1.jpg" alt="Booklet" onclick="openBooklet('pera-harmonica',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside2.jpg" alt="Booklet" onclick="openBooklet('pera-harmonica',1)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside3.jpg" alt="Booklet" onclick="openBooklet('pera-harmonica',2)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside4.jpg" alt="Booklet" onclick="openBooklet('pera-harmonica',3)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside5.jpg" alt="Booklet" onclick="openBooklet('pera-harmonica',4)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside6.jpg" alt="Booklet" onclick="openBooklet('pera-harmonica',5)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside7.jpg" alt="Booklet" onclick="openBooklet('pera-harmonica',6)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside8.jpg" alt="Booklet" onclick="openBooklet('pera-harmonica',7)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 17. Koper 1987 CD Edition 2017 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Trio-Koper-1987-CD-edition-DSC03091.jpeg"
+               onclick="openCover('images/discography/CD-covers/Trio-Koper-1987-CD-edition-DSC03091.jpeg')" alt="Blues Trio — Live in Koper 1987 CD edition" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Vertical Jazz · 2017</span>
+          <h3>Blues Trio — Live in Koper 1987 (CD Edition)</h3>
+          <p>
+            Digitally remastered recordings originally on the Blues Trio first ever release — 
+            the cassette tape from Slovenija Koper in 1987. This CD was released exactly 
+            30 years after the cassette came out. It included 8 previously unreleased songs 
+            and a rich booklet with the complete story about that first tour.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-LIVE-in-Koper1987/Koper-Cover-CD.jpg" alt="Booklet" onclick="openBooklet('koper-cd',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-LIVE-in-Koper1987/Koper-Booklet1.jpg" alt="Booklet" onclick="openBooklet('koper-cd',1)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-LIVE-in-Koper1987/Koper-Booklet2.jpg" alt="Booklet" onclick="openBooklet('koper-cd',2)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-LIVE-in-Koper1987/Koper-Booklet3.jpg" alt="Booklet" onclick="openBooklet('koper-cd',3)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-LIVE-in-Koper1987/Koper-Booklet4.jpg" alt="Booklet" onclick="openBooklet('koper-cd',4)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-LIVE-in-Koper1987/Koper-Booklet5.jpg" alt="Booklet" onclick="openBooklet('koper-cd',5)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 18. The Big Light 2018 -->
+      <div class="disco-entry fade-in">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Trio-TheBigLight-DSC03092.jpeg"
+               onclick="openCover('images/discography/CD-covers/Trio-TheBigLight-DSC03092.jpeg')" alt="Blues Trio — The Big Light" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Vertical Jazz · 2018</span>
+          <h3>Blues Trio — The Big Light (Bootleg Vol. 2)</h3>
+          <p>
+            "Belgrade Blues Days" in 1988 marked the first official meeting between 
+            Belgrade blues musicians and international guests. During a week-long festival, 
+            local musicians shared the stage and jammed with Louisiana Red, John Hammond, 
+            DeLuxe Blues Band, Johnny Mars, William Boyd and others. This was a true 
+            live school for all of us — having the chance to talk, hang out and play 
+            with amazing musicians from abroad.
+          </p>
+          <p>
+            The festival was recorded and Blues Trio issued an official Bootleg Vol. 2 
+            on cassette tape — the easiest format to print and distribute at the time. 
+            We sold these at concerts and used the money to finance playing accessories 
+            and new bootlegs. This release is a compiled CD edition of those recordings, 
+            with 2 bonus tracks.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-TheBigLight-Bootleg/BigLight-cover.jpg" alt="Booklet" onclick="openBooklet('big-light',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-TheBigLight-Bootleg/BigLight-inside1.jpg" alt="Booklet" onclick="openBooklet('big-light',1)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-TheBigLight-Bootleg/BigLight-inside2.jpg" alt="Booklet" onclick="openBooklet('big-light',2)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-TheBigLight-Bootleg/BigLight-inside3.jpg" alt="Booklet" onclick="openBooklet('big-light',3)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-TheBigLight-Bootleg/BigLight-inside4.jpg" alt="Booklet" onclick="openBooklet('big-light',4)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrio-TheBigLight-Bootleg/BigLight-inside5.jpg" alt="Booklet" onclick="openBooklet('big-light',5)">
+          </div>
+        </div>
+      </div>
+
+      <!-- 19. 35 Years Anniversary 2019 -->
+      <div class="disco-entry fade-in" id="35years">
+        <div class="disco-cover">
+          <img src="images/discography/CD-covers/Trio-35-years-annivers-DSC03086.jpeg"
+               onclick="openCover('images/discography/CD-covers/Trio-35-years-annivers-DSC03086.jpeg')" alt="Blues Trio — 35th Anniversary Live" loading="lazy">
+        </div>
+        <div class="disco-text">
+          <span class="disco-meta">Vertical Jazz · 2019</span>
+          <h3>Blues Trio — Live with Friends (35th Anniversary)</h3>
+          <p>
+            Exactly 30 years after recording our first cassette in 1987, and almost 35 years 
+            after Blues Trio started playing together, the label Vertical Jazz — 
+            Dragoljub Stojaković-Dača — suggested we gathered our original lineup with 
+            Zoran Katrinka-Kuki and bring in guests we'd been playing with over the years. 
+            A night at one of the best venues in Belgrade — SKC, the Student Cultural 
+            Center — saw seven distinguished guests joining us on stage, sharing great 
+            songs from different periods of blues history.
+          </p>
+          <p>
+            We played a lot — and so it became a double CD. Due to the production size 
+            and many musicians on stage at the same time, recording and producing all of 
+            this was quite tricky. Big kudos to co-producer Dejan Aksić, and to Pera Joe 
+            for supervising the whole thing. We cannot thank Vertical Jazz enough for 
+            releasing so many of our CDs and organising tours over so many years.
+          </p>
+          <div class="booklet-thumbs">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrioLiveWithFriends-35years/Trio-35-years-cover.jpg" alt="Booklet" onclick="openBooklet('35-years',0)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrioLiveWithFriends-35years/Trio-35-years-inside1.jpg" alt="Booklet" onclick="openBooklet('35-years',1)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrioLiveWithFriends-35years/Trio-35-years-inside2.jpg" alt="Booklet" onclick="openBooklet('35-years',2)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrioLiveWithFriends-35years/Trio-35-years-inside3.jpg" alt="Booklet" onclick="openBooklet('35-years',3)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrioLiveWithFriends-35years/Trio-35-years-inside4.jpg" alt="Booklet" onclick="openBooklet('35-years',4)">
+            <img class="booklet-thumb" src="images/discography/CDs-Booklets/BluesTrioLiveWithFriends-35years/Trio-35-years-inside5.jpg" alt="Booklet" onclick="openBooklet('35-years',5)">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-logo-area">
+          <img src="Mac-Logo_FINAL_transparent-bg.svg" alt="Homesick Mac" style="height:130px;width:auto;display:block;margin:0 auto 1rem;">
+          <div class="footer-logo-text">Homesick Mac</div>
+        </div>
+        <div class="footer-brand">
+          <p>Blues, country, folk and slide guitar from southern Sweden. Performer, teacher and host of the annual Guitar Retreat on the Island of Ven since 2012.</p>
+          <div class="social-links mt-3" style="display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;">
+            <a href="https://www.facebook.com/homesickmac" target="_blank" rel="noopener">Facebook</a>
+            <a href="https://www.instagram.com/draganhomesickmacruzicmacan/" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.linkedin.com/in/homesickmac/" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://www.youtube.com/@HomesickMac" target="_blank" rel="noopener">YouTube</a>
+          </div>
+        </div>
+        <nav class="footer-nav" aria-label="Footer navigation">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Mac</a></li>
+            <li><a href="retreat.html">Guitar Retreat</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+                    <div class="footer-nav">
+          <h4>About Mac</h4>
+          <ul>
+            <li class="dropdown-has-sub">
+              <a href="collaborations.html">Collaborations</a>
+              <ul class="dropdown-sub">
+                <li><a href="blues-trio.html">Blues Trio</a></li>
+                <li><a href="sam-mitchell.html">Sam Mitchell</a></li>
+                <li><a href="delmore-sessions.html">Delmore Sessions</a></li>
+                <li><a href="prohibition-jazz.html">Prohibition Jazz &amp; Blues</a></li>
+              </ul>
+            </li>
+            <li><a href="discography.html">Discography</a></li>
+            <li><a href="guitars.html">Guitars &amp; Gear</a></li>
+            <li class="dropdown-has-sub">
+              <a>Gallery</a>
+              <ul class="dropdown-sub">
+                <li><a href="gallery-live.html">Live Photos</a></li>
+                <li><a href="gallery-35years.html">35th Anniversary Concert</a></li>
+              </ul>
+            </li>
+            <li><a href="press.html">Press</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Mac's Acoustics &nbsp;·&nbsp; All Rights Reserved</p>
+        <p>homesickmac@gmail.com</p>
+        <p style="color:rgba(251,244,224,0.25);">Graphics: Lari Niehl &copy;</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+
+  <script>
+    // ── Per-CD Booklet Lightbox ──
+    const galleries = {
+      'koper-kaseta': ['images/discography/CD-covers/Trio-Koper-Kaseta-1987-DSC03097.jpeg'],
+      'belgrade-blues': ['images/discography/CD-covers/LP-BelgradeBlues-Today-DSC03102.jpeg'],
+      'balkan-blues': ['images/discography/CD-covers/Trio-BalkanBlues-DSC03094.jpeg'],
+      'smallest-trio': [
+        'images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-CD-cover.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-inside1.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-inside2.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-inside3.jpg'
+      ],
+      'steady-stomping': [
+        'images/discography/CDs-Booklets/SteadyStomping/SteadyStomping-cover.jpg',
+        'images/discography/CDs-Booklets/SteadyStomping/SteadyStomping-inside.jpg'
+      ],
+      'this-train': [
+        'images/discography/CDs-Booklets/BluesTrio-ThisTrain/TrisTrain-cover.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-ThisTrain/ThisTrain-inside1.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-ThisTrain/ThisTrain-inside2.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-ThisTrain/ThisTrain-inside3.jpg'
+      ],
+      'two-long': [
+        'images/discography/CDs-Booklets/TwoLongFromHome/Sam-Mac-inside1.jpg',
+        'images/discography/CDs-Booklets/TwoLongFromHome/Sam-Mac-inside2.jpg',
+        'images/discography/CDs-Booklets/TwoLongFromHome/Sam-Mac-inside3.jpg'
+      ],
+      'blues-summit': [
+        'images/discography/CDs-Booklets/BluesTrio-BluesSummit-Pancevo2001/BluesSummit-Pancevo-cover.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-BluesSummit-Pancevo2001/BluesSummit-Pancevo-bands.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-BluesSummit-Pancevo2001/BluesSummit-Pancevo-inside.jpg'
+      ],
+      'sessionman': [
+        'images/discography/CDs-Booklets/PeraJoe-Sessionman/Sessionman-cover.jpg',
+        'images/discography/CDs-Booklets/PeraJoe-Sessionman/Sessionman-inside1.jpg',
+        'images/discography/CDs-Booklets/PeraJoe-Sessionman/Sessionman-inside2.jpg',
+        'images/discography/CDs-Booklets/PeraJoe-Sessionman/Sessionman-inside3.jpg',
+        'images/discography/CDs-Booklets/PeraJoe-Sessionman/Sessionman-inside4.jpg',
+        'images/discography/CDs-Booklets/PeraJoe-Sessionman/Sessionman-inside5.jpg'
+      ],
+      'leaving': [
+        'images/discography/CDs-Booklets/HomesickMac-Leaving/Leaving-cover.jpg',
+        'images/discography/CDs-Booklets/HomesickMac-Leaving/Leaving-inside.jpg'
+      ],
+      'copenhagen': [
+        'images/discography/CDs-Booklets/CopenhagenBluesSessions/Copenhagen-sessions-inside.jpg'
+      ],
+      'guitar-art': [
+        'images/discography/CDs-Booklets/BluesTrio-GuitarArtFest2002/GuitarArt-cover.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-GuitarArtFest2002/GuitarArt-inside.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-GuitarArtFest2002/GuitarArt-inside1.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-GuitarArtFest2002/GuitarArt-Ana-Hill.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-GuitarArtFest2002/GuitarArt-Pera-Macan.jpg'
+      ],
+      'sometimes': [
+        'images/discography/CDs-Booklets/BluesTrio-Sometimes/Sometimes-cover.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-Sometimes/Sometimes-inside.jpg'
+      ],
+      'smallest-trio-cd': [
+        'images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-CD-cover.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-inside1.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-inside2.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-SmallestTrioInTheWorld-LP-CD/SmallestTrio-inside3.jpg'
+      ],
+      'you-all': [
+        'images/discography/CDs-Booklets/BluesTrio-YouAll/YouAll-cover.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-YouAll/YouAll-inside1.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-YouAll/YouAll-inside2.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-YouAll/YouAll-inside3.jpg'
+      ],
+      'pera-harmonica': [
+        'images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside1.jpg',
+        'images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside2.jpg',
+        'images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside3.jpg',
+        'images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside4.jpg',
+        'images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside5.jpg',
+        'images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside6.jpg',
+        'images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside7.jpg',
+        'images/discography/CDs-Booklets/PeraJoe-Harmonica,Blues and friends/Pera-Harmonica-inside8.jpg'
+      ],
+      'koper-cd': [
+        'images/discography/CDs-Booklets/BluesTrio-LIVE-in-Koper1987/Koper-Cover-CD.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-LIVE-in-Koper1987/Koper-Booklet1.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-LIVE-in-Koper1987/Koper-Booklet2.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-LIVE-in-Koper1987/Koper-Booklet3.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-LIVE-in-Koper1987/Koper-Booklet4.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-LIVE-in-Koper1987/Koper-Booklet5.jpg'
+      ],
+      'big-light': [
+        'images/discography/CDs-Booklets/BluesTrio-TheBigLight-Bootleg/BigLight-cover.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-TheBigLight-Bootleg/BigLight-inside1.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-TheBigLight-Bootleg/BigLight-inside2.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-TheBigLight-Bootleg/BigLight-inside3.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-TheBigLight-Bootleg/BigLight-inside4.jpg',
+        'images/discography/CDs-Booklets/BluesTrio-TheBigLight-Bootleg/BigLight-inside5.jpg'
+      ],
+      '35-years': [
+        'images/discography/CDs-Booklets/BluesTrioLiveWithFriends-35years/Trio-35-years-cover.jpg',
+        'images/discography/CDs-Booklets/BluesTrioLiveWithFriends-35years/Trio-35-years-inside1.jpg',
+        'images/discography/CDs-Booklets/BluesTrioLiveWithFriends-35years/Trio-35-years-inside2.jpg',
+        'images/discography/CDs-Booklets/BluesTrioLiveWithFriends-35years/Trio-35-years-inside3.jpg',
+        'images/discography/CDs-Booklets/BluesTrioLiveWithFriends-35years/Trio-35-years-inside4.jpg',
+        'images/discography/CDs-Booklets/BluesTrioLiveWithFriends-35years/Trio-35-years-inside5.jpg'
+      ]
+    };
+
+    let currentGallery = [];
+    let currentIndex = 0;
+    const modal = document.getElementById('booklet-modal');
+    const modalImg = document.getElementById('booklet-modal-img');
+    const counter = document.getElementById('booklet-modal-counter');
+    const prevBtn = document.getElementById('modal-prev');
+    const nextBtn = document.getElementById('modal-next');
+
+    function openCover(src) {
+      currentGallery = [src];
+      currentIndex = 0;
+      updateModal();
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function openCover(src) {
+      currentGallery = [src];
+      currentIndex = 0;
+      updateModal();
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function openBooklet(galleryKey, index = 0) {
+      currentGallery = galleries[galleryKey];
+      currentIndex = index;
+      updateModal();
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function updateModal() {
+      modalImg.src = currentGallery[currentIndex];
+      counter.textContent = (currentIndex + 1) + ' / ' + currentGallery.length;
+      prevBtn.classList.toggle('hidden', currentGallery.length <= 1);
+      nextBtn.classList.toggle('hidden', currentGallery.length <= 1);
+    }
+
+    function closeBooklet() {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function nextBooklet() {
+      currentIndex = (currentIndex + 1) % currentGallery.length;
+      updateModal();
+    }
+
+    function prevBooklet() {
+      currentIndex = (currentIndex - 1 + currentGallery.length) % currentGallery.length;
+      updateModal();
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (!modal.classList.contains('active')) return;
+      if (e.key === 'Escape') closeBooklet();
+      if (e.key === 'ArrowRight') nextBooklet();
+      if (e.key === 'ArrowLeft') prevBooklet();
+    });
+
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) closeBooklet();
+    });
+  </script>
+
+</body>
+</html>
