@@ -24,7 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
       toggle.setAttribute('aria-expanded', open);
     });
     navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => navLinks.classList.remove('open'));
+      link.addEventListener('click', () => {
+        // Don't close the menu if this link is a sub-dropdown trigger
+        if (link.parentElement.classList.contains('dropdown-has-sub')) return;
+        navLinks.classList.remove('open');
+      });
     });
     document.addEventListener('click', (e) => {
       if (!nav.contains(e.target)) navLinks.classList.remove('open');
