@@ -24,34 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
       toggle.setAttribute('aria-expanded', open);
     });
     navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        // Don't close the menu if this link is a sub-dropdown trigger
-        if (link.parentElement.classList.contains('dropdown-has-sub')) return;
-        navLinks.classList.remove('open');
-      });
+      link.addEventListener('click', () => navLinks.classList.remove('open'));
     });
     document.addEventListener('click', (e) => {
       if (!nav.contains(e.target)) navLinks.classList.remove('open');
     });
   }
-
-  /* ── Mobile sub-dropdown tap toggle ── */
-  // On touch devices :hover and :focus-within don't reliably open nested subs.
-  // This adds a tap handler so Collaborations and Gallery sub-menus open on mobile.
-  document.querySelectorAll('.dropdown-has-sub > a').forEach(link => {
-    link.addEventListener('click', (e) => {
-      // Only intercept on narrow screens where the hamburger menu is active
-      if (window.innerWidth > 900) return;
-      const parent = link.parentElement;
-      const isOpen = parent.classList.contains('sub-open');
-      // Close any other open subs first
-      document.querySelectorAll('.dropdown-has-sub.sub-open').forEach(el => el.classList.remove('sub-open'));
-      if (!isOpen) {
-        e.preventDefault();
-        parent.classList.add('sub-open');
-      }
-    });
-  });
 
   /* ── Active nav link ── */
   const currentPath = window.location.pathname.split('/').pop() || 'index.html';
