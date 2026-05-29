@@ -1603,6 +1603,7 @@ section { padding: var(--section-pad); }
 .dropdown-sub li a.active { color: var(--amber); }
 @media (max-width: 900px) {
   .dropdown-sub {
+    display: none;
     position: static;
     opacity: 1;
     visibility: visible;
@@ -1614,6 +1615,10 @@ section { padding: var(--section-pad); }
     background: transparent;
     padding: 0.2rem 0;
     margin: 0.2rem 0 0.3rem 1.8rem;
+  }
+  .dropdown-has-sub.sub-open > .dropdown-sub,
+  .dropdown-has-sub:focus-within > .dropdown-sub {
+    display: block;
   }
   .dropdown-has-sub > a::after { display: none; }
 }
