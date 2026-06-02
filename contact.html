@@ -121,7 +121,6 @@
             <a href="https://www.notion.so/homesickmac/Application-Form-no-binding-commitment-yet-13817c629df880fc9ecdf9a22722a09f?pvs=4"
                target="_blank" rel="noopener"
                class="btn btn-primary">Application Form ↗</a>
-            <a href="mailto:homesickmac@gmail.com" class="btn btn-outline-dark">Email me</a>
           </div>
         </div>
 
@@ -136,12 +135,82 @@
           <p>
             Also available for guitar workshops at events, festivals, and music organisations.
           </p>
-          <a href="mailto:homesickmac@gmail.com" class="contact-email">homesickmac@gmail.com</a>
-          <br>
-          <a href="mailto:homesickmac@gmail.com" class="btn btn-outline-dark">Send a Message</a>
         </div>
 
       </div>
+    </div>
+  </section>
+
+  <!-- ── Contact Form ── -->
+  <section class="section-cream">
+    <div class="container" style="max-width:680px;">
+      <div class="text-center mb-4 fade-in">
+        <span class="section-label">Get in Touch</span>
+        <h2>Send a Message</h2>
+        <div class="ornament"></div>
+      </div>
+      <form action="https://formspree.io/f/mlgkrezd" method="POST" class="fade-in" id="contact-form" style="display:flex;flex-direction:column;gap:1.2rem;">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+          <div>
+            <label style="font-family:var(--font-label);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--brown);display:block;margin-bottom:0.4rem;">Name</label>
+            <input type="text" name="name" required placeholder="Your name"
+              style="width:100%;padding:0.75rem 1rem;border:1px solid rgba(200,164,100,0.4);border-radius:3px;background:white;font-family:var(--font-body);font-size:0.95rem;color:var(--brown);box-sizing:border-box;">
+          </div>
+          <div>
+            <label style="font-family:var(--font-label);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--brown);display:block;margin-bottom:0.4rem;">Email</label>
+            <input type="email" name="email" required placeholder="your@email.com"
+              style="width:100%;padding:0.75rem 1rem;border:1px solid rgba(200,164,100,0.4);border-radius:3px;background:white;font-family:var(--font-body);font-size:0.95rem;color:var(--brown);box-sizing:border-box;">
+          </div>
+        </div>
+
+        <div>
+          <label style="font-family:var(--font-label);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--brown);display:block;margin-bottom:0.4rem;">Subject</label>
+          <select name="subject" required
+            style="width:100%;padding:0.75rem 1rem;border:1px solid rgba(200,164,100,0.4);border-radius:3px;background:white;font-family:var(--font-body);font-size:0.95rem;color:var(--brown);appearance:none;box-sizing:border-box;">
+            <option value="" disabled selected>Select a subject…</option>
+            <option value="Guitar Retreat">Guitar Retreat</option>
+            <option value="Private Session">Private Session</option>
+            <option value="Workshop Booking">Workshop Booking</option>
+            <option value="Club/Festival Booking">Club / Festival Booking</option>
+            <option value="General Enquiry">General Enquiry</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-family:var(--font-label);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--brown);display:block;margin-bottom:0.4rem;">Message</label>
+          <textarea name="message" required rows="6" placeholder="Your message…"
+            style="width:100%;padding:0.75rem 1rem;border:1px solid rgba(200,164,100,0.4);border-radius:3px;background:white;font-family:var(--font-body);font-size:0.95rem;color:var(--brown);resize:vertical;box-sizing:border-box;"></textarea>
+        </div>
+
+        <div style="text-align:center;">
+          <button type="submit" class="btn btn-primary" style="min-width:200px;">Send Message</button>
+        </div>
+
+        <div id="form-success" style="display:none;text-align:center;padding:1rem;background:rgba(193,123,24,0.1);border:1px solid rgba(193,123,24,0.3);border-radius:3px;">
+          <p style="color:var(--brown);margin:0;font-family:var(--font-display);">Thanks — message sent! I'll be in touch soon.</p>
+        </div>
+
+      </form>
+
+      <script>
+        const form = document.getElementById('contact-form');
+        if (form) {
+          form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const data = new FormData(form);
+            const response = await fetch(form.action, {
+              method: 'POST',
+              body: data,
+              headers: { 'Accept': 'application/json' }
+            });
+            if (response.ok) {
+              form.reset();
+              document.getElementById('form-success').style.display = 'block';
+            }
+          });
+        }
+      </script>
     </div>
   </section>
 
