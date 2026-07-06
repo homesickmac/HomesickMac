@@ -451,8 +451,8 @@
      LOCK SCREEN
 ════════════════════════════════════════ -->
 <div id="lock-screen">
-  <div class="lock-emblem">🎸</div>
-  <h1 class="lock-title">Welcome back.</h1>
+  <div class="lock-emblem"></div>
+  <h1 class="lock-title">Welcome.</h1>
   <p class="lock-sub">This page is for Retreat participants only. Enter the password Mac shared with you to continue.</p>
   <div class="lock-form">
     <input type="password" id="pw-input" placeholder="password" autocomplete="off" />
@@ -842,7 +842,31 @@
         <p>Check-in after 15:00. The porch is yours — make yourself at home. Late evening jams on the porch are a Retreat tradition.</p>
       </div>
       <div class="info-card">
-        <div class="ic-icon">🎸</div>
+        <div class="ic-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <!-- neck -->
+            <rect x="47" y="4" width="7" height="38" rx="3" fill="rgba(232,184,75,0.55)"/>
+            <!-- tuning head -->
+            <rect x="43" y="2" width="15" height="10" rx="3" fill="rgba(232,184,75,0.7)"/>
+            <!-- nut -->
+            <rect x="45" y="13" width="11" height="2.5" rx="1" fill="var(--gold)"/>
+            <!-- body -->
+            <ellipse cx="50" cy="72" rx="22" ry="16" fill="rgba(232,184,75,0.18)" stroke="rgba(232,184,75,0.6)" stroke-width="2"/>
+            <ellipse cx="50" cy="58" rx="16" ry="11" fill="rgba(232,184,75,0.12)" stroke="rgba(232,184,75,0.5)" stroke-width="1.5"/>
+            <!-- waist -->
+            <rect x="36" y="64" width="28" height="8" rx="0" fill="var(--bg)"/>
+            <path d="M36 64 Q28 68 36 72" stroke="rgba(232,184,75,0.6)" stroke-width="2" fill="none"/>
+            <path d="M64 64 Q72 68 64 72" stroke="rgba(232,184,75,0.6)" stroke-width="2" fill="none"/>
+            <!-- sound hole -->
+            <circle cx="50" cy="68" r="5" stroke="rgba(232,184,75,0.5)" stroke-width="1.5" fill="none"/>
+            <!-- bridge -->
+            <rect x="44" y="79" width="12" height="3" rx="1" fill="rgba(232,184,75,0.6)"/>
+            <!-- strings (3 visible) -->
+            <line x1="48" y1="15" x2="48" y2="79" stroke="rgba(232,184,75,0.3)" stroke-width="0.8"/>
+            <line x1="50.5" y1="15" x2="50.5" y2="79" stroke="rgba(232,184,75,0.3)" stroke-width="0.8"/>
+            <line x1="53" y1="15" x2="53" y2="79" stroke="rgba(232,184,75,0.3)" stroke-width="0.8"/>
+          </svg>
+        </div>
         <h3>Retreat Room</h3>
         <p>You can leave your instrument safely in the Retreat Room from 12:00 on Day 1. I'll show you where it is when you arrive.</p>
       </div>
