@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Homesick Mac's Guitar Retreat — Participant Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
+  <style>
+    /* ── TOKENS ──────────────────────────────────────────── */
+    :root {
+      --bg:       #0F1923;
+      --card:     #19283A;
+      --card2:    #1F3248;
+      --gold:     #E8B84B;
+      --sage:     #7EC8A4;
+      --coral:    #C4694F;
+      --text:     #F0EBE1;
+      --muted:    #8A9BAD;
+      --border:   #2A3D52;
+      --ff-disp:  'Playfair Display', Georgia, serif;
+      --ff-body:  'DM Sans', system-ui, sans-serif;
+      --ff-mono:  'DM Mono', 'Courier New', monospace;
+    }
+
+    /* ── RESET ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ff-body);
+      font-weight: 300;
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+    a { color: var(--gold); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── PASSWORD SCREEN ─────────────────────────────────── */
+    #lock-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      text-align: center;
+      background:
+        radial-gradient(ellipse at 60% 0%, rgba(232,184,75,0.08) 0%, transparent 60%),
+        var(--bg);
+    }
+    .lock-emblem {
+      font-size: 3.2rem;
+      margin-bottom: 1.2rem;
+      line-height: 1;
+    }
+    .lock-title {
+      font-family: var(--ff-disp);
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+    .lock-sub {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2.4rem;
+      max-width: 26rem;
+    }
+    .lock-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 22rem;
+    }
+    .lock-form input {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--ff-body);
+      font-size: 1rem;
+      padding: 0.85rem 1.1rem;
+      text-align: center;
+      letter-spacing: 0.12em;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .lock-form input:focus { border-color: var(--gold); }
+    .lock-form input::placeholder { color: var(--muted); letter-spacing: 0; }
+    .lock-form button {
+      background: var(--gold);
+      border: none;
+      border-radius: 8px;
+      color: #0F1923;
+      cursor: pointer;
+      font-family: var(--ff-body);
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.85rem;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .lock-form button:hover { opacity: 0.9; transform: translateY(-1px); }
+    .lock-form button:active { transform: translateY(0); }
+    .lock-error {
+      color: var(--coral);
+      font-size: 0.88rem;
+      min-height: 1.2em;
+      margin-top: 0.2rem;
+    }
+    .lock-hint {
+      margin-top: 2.5rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    /* ── PORTAL WRAPPER ──────────────────────────────────── */
+    #portal { display: none; }
+
+    /* ── HEADER ──────────────────────────────────────────── */
+    .site-header {
+      background: rgba(15,25,35,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0.8rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .header-brand {
+      font-family: var(--ff-disp);
+      font-size: 1rem;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+    .header-brand span { color: var(--muted); font-family: var(--ff-body); font-size: 0.8rem; font-weight: 300; display: block; }
+    .header-nav {
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+    }
+    .header-nav a {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .header-nav a:hover { color: var(--gold); text-decoration: none; }
+
+    /* ── HERO ─────────────────────────────────────────────── */
+    .hero {
+      padding: 3.5rem 1.5rem 3rem;
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--sage);
+      font-weight: 500;
+      margin-bottom: 0.8rem;
+    }
+    .hero h1 {
+      font-family: var(--ff-disp);
+      font-size: clamp(2rem, 6vw, 3rem);
+      line-height: 1.15;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--text);
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 36rem;
+      margin: 0 auto;
+    }
+
+    /* ── SECTIONS ─────────────────────────────────────────── */
+    .section {
+      padding: 2.8rem 1.5rem;
+      max-width: 720px;
+      margin: 0 auto;
+      border-top: 1px solid var(--border);
+    }
+    .section-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--sage);
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    .section h2 {
+      font-family: var(--ff-disp);
+      font-size: clamp(1.4rem, 4vw, 1.9rem);
+      color: var(--text);
+      margin-bottom: 1.4rem;
+      line-height: 1.2;
+    }
+
+    /* ── CARDS ────────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.4rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .card h3 {
+      font-family: var(--ff-disp);
+      font-size: 1.1rem;
+      color: var(--gold);
+      margin-bottom: 0.6rem;
+    }
+    .card p { font-size: 0.93rem; color: var(--text); margin-bottom: 0.5rem; }
+    .card p:last-child { margin-bottom: 0; }
+    .card .note { color: var(--muted); font-size: 0.85rem; }
+
+    /* ── STEP LIST (Getting Here) ─────────────────────────── */
+    .steps { display: flex; flex-direction: column; gap: 1rem; }
+    .step {
+      display: grid;
+      grid-template-columns: 2.4rem 1fr;
+      gap: 0.8rem;
+      align-items: start;
+    }
+    .step-num {
+      background: var(--gold);
+      color: #0F1923;
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      font-size: 0.85rem;
+      margin-top: 0.1rem;
+      flex-shrink: 0;
+    }
+    .step-body h3 { font-size: 0.95rem; font-weight: 500; color: var(--text); margin-bottom: 0.25rem; }
+    .step-body p { font-size: 0.88rem; color: var(--muted); }
+    .step-body a { color: var(--gold); }
+
+    /* ── SCHEDULE ─────────────────────────────────────────── */
+    .day-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.4rem;
+      flex-wrap: wrap;
+    }
+    .day-tab {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: var(--ff-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.55rem 1.1rem;
+      transition: all 0.2s;
+    }
+    .day-tab.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #0F1923;
+    }
+    .day-panel { display: none; }
+    .day-panel.active { display: block; }
+
+    /* Setlist card style */
+    .setlist {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .setlist-header {
+      background: var(--card2);
+      padding: 1rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: baseline;
+      gap: 0.8rem;
+    }
+    .setlist-header .day-name {
+      font-family: var(--ff-disp);
+      font-size: 1.15rem;
+      color: var(--gold);
+    }
+    .setlist-header .day-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .setlist-row {
+      display: grid;
+      grid-template-columns: 3.8rem 1fr auto;
+      align-items: center;
+      padding: 0.75rem 1.4rem;
+      border-bottom: 1px solid rgba(42,61,82,0.5);
+      gap: 0.6rem;
+    }
+    .setlist-row:last-child { border-bottom: none; }
+    .setlist-row.highlight { background: rgba(232,184,75,0.06); }
+    .setlist-row.break-row { background: rgba(126,200,164,0.05); }
+    .row-time {
+      font-family: var(--ff-mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .row-event { font-size: 0.9rem; color: var(--text); }
+    .row-event strong { color: var(--gold); font-weight: 500; }
+    .row-badge {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .badge-included { background: rgba(126,200,164,0.18); color: var(--sage); }
+    .badge-own { background: rgba(196,105,79,0.18); color: #E8906A; }
+    .badge-session { background: rgba(232,184,75,0.15); color: var(--gold); }
+    .badge-fika { background: rgba(126,200,164,0.12); color: var(--sage); }
+
+    /* ── MEALS GRID ───────────────────────────────────────── */
+    .meals-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.9rem;
+    }
+    @media (max-width: 560px) {
+      .meals-grid { grid-template-columns: 1fr; }
+    }
+    .meal-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .meal-card-head {
+      background: var(--card2);
+      padding: 0.75rem 1rem;
+      font-family: var(--ff-disp);
+      font-size: 0.95rem;
+      color: var(--gold);
+      border-bottom: 1px solid var(--border);
+    }
+    .meal-card-head span { display: block; font-family: var(--ff-body); font-size: 0.72rem; color: var(--muted); font-weight: 300; margin-top: 0.1rem; }
+    .meal-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.55rem 1rem;
+      border-bottom: 1px solid rgba(42,61,82,0.4);
+      font-size: 0.84rem;
+    }
+    .meal-row:last-child { border-bottom: none; }
+    .meal-icon { font-size: 1rem; flex-shrink: 0; }
+    .meal-label { color: var(--text); flex: 1; }
+    .meal-status-inc { color: var(--sage); font-size: 0.72rem; font-weight: 500; }
+    .meal-status-own { color: #E8906A; font-size: 0.72rem; font-weight: 500; }
+
+    /* ── PRACTICAL / WIFI ────────────────────────────────── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.9rem;
+    }
+    @media (max-width: 480px) {
+      .info-grid { grid-template-columns: 1fr; }
+    }
+    .info-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem 1.3rem;
+    }
+    .info-card .ic-icon { font-size: 1.6rem; margin-bottom: 0.5rem; }
+    .info-card h3 { font-size: 0.88rem; font-weight: 500; color: var(--text); margin-bottom: 0.4rem; }
+    .info-card p { font-size: 0.83rem; color: var(--muted); }
+    .wifi-badge {
+      display: inline-block;
+      background: var(--card2);
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      font-family: var(--ff-mono);
+      font-size: 0.9rem;
+      color: var(--sage);
+      padding: 0.35rem 0.8rem;
+      margin-top: 0.5rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── CONTACT ─────────────────────────────────────────── */
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .contact-row:first-child { border-top: 1px solid var(--border); }
+    .contact-icon { font-size: 1.4rem; flex-shrink: 0; width: 2.2rem; text-align: center; }
+    .contact-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .contact-value { font-size: 0.95rem; color: var(--text); }
+    .contact-value a { color: var(--gold); }
+
+    /* ── FOOTER ──────────────────────────────────────────── */
+    .site-footer {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .site-footer strong { color: var(--gold); font-weight: 500; }
+
+    /* ── UTILITIES ───────────────────────────────────────── */
+    .highlight-box {
+      background: rgba(232,184,75,0.07);
+      border: 1px solid rgba(232,184,75,0.25);
+      border-radius: 10px;
+      padding: 1.1rem 1.3rem;
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 1.2rem;
+    }
+    .highlight-box strong { color: var(--gold); }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     LOCK SCREEN
+════════════════════════════════════════ -->
+<div id="lock-screen">
+  <div class="lock-emblem">🎸</div>
+  <h1 class="lock-title">Welcome back.</h1>
+  <p class="lock-sub">This page is for Retreat participants only. Enter the password Mac shared with you to continue.</p>
+  <div class="lock-form">
+    <input type="password" id="pw-input" placeholder="password" autocomplete="off" />
+    <button onclick="checkPassword()">Open the porch door</button>
+    <div class="lock-error" id="pw-error"></div>
+  </div>
+  <p class="lock-hint">Don't have the password? Drop me a line at <a href="mailto:mac@homesickmac.com">mac@homesickmac.com</a></p>
+</div>
+
+<!-- ════════════════════════════════════════
+     PORTAL
+════════════════════════════════════════ -->
+<div id="portal">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-brand">
+      Homesick Mac
+      <span>Guitar Retreat — Participant Portal</span>
+    </div>
+    <nav class="header-nav">
+      <a href="#getting-here">Getting Here</a>
+      <a href="#arrival">Arrival</a>
+      <a href="#schedule">Schedule</a>
+      <a href="#meals">Meals</a>
+      <a href="#practical">Practical</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Island of Ven · Backafallsbyn · 2026</div>
+    <h1>Welcome to <em>the island.</em></h1>
+    <p>Everything you need for a smooth, relaxed arrival — and three great days together.</p>
+  </div>
+
+  <!-- ── GETTING HERE ───────────────────────── -->
+  <section class="section" id="getting-here">
+    <div class="section-label">Step by step</div>
+    <h2>Getting to Ven</h2>
+
+    <div class="highlight-box">
+      <strong>Before you travel:</strong> buy your ferry ticket in advance at
+      <a href="https://www.ventrafiken.se" target="_blank">ventrafiken.se</a>.
+      The crossing is short and scenic — about 25 minutes.
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Head to Landskrona — Skeppskajen</h3>
+          <p>The ferry terminal is at Skeppskajen in Landskrona. Follow signs to the harbour. There is parking nearby if you're driving.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Take the ferry to Ven</h3>
+          <p>Tickets at <a href="https://www.ventrafiken.se" target="_blank">ventrafiken.se</a>. Buy in advance if you can — it's easier than queuing. The crossing takes around 25 minutes and the views are lovely.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Step off the ferry — the bus is waiting</h3>
+          <p>Bus departures are synced with ferry arrivals, so there's no waiting around. Look for the bus with the sign <strong style="color:var(--gold)">Backafallsbyn</strong>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>Pay for the bus on board</h3>
+          <p>Debit or credit card accepted on the bus. Alternatively, use the <strong>Skånetrafiken</strong> app if you already have it. Either way works fine.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3>Arrive at Backafallsbyn</h3>
+          <p>You're here. Take a breath. The island is quiet and beautiful — you've made it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ARRIVAL DAY ────────────────────────── -->
+  <section class="section" id="arrival">
+    <div class="section-label">Day 1</div>
+    <h2>How Arrival Day works</h2>
+
+    <div class="card">
+      <h3>🕛 Smooth start from 12:00</h3>
+      <p>The Retreat officially begins at 15:00 — but feel free to arrive from noon. Drop your instrument in the Retreat Room, say hello to whoever's already there, warm up, ask Mac a question about a song. No pressure. The afternoon is yours to settle in at your own pace.</p>
+      <p class="note">Lunch on Day 1 is at own cost. The venue restaurant is right there if you're hungry.</p>
+    </div>
+
+    <div class="card">
+      <h3>🏠 Bungalows</h3>
+      <p>If not already by the time you arrive, the bungalows are ready after 15:00 — when we're already into the first session. You can drop your bags during the fika break at 16:30, or after we finish the first session at 18:00. Either works perfectly.</p>
+      <p class="note">If you arrive early and need somewhere to leave luggage, just ask at the reception to open the Retreat Room for you — I'm there from 11:00.</p>
+    </div>
+
+    <div class="card">
+      <h3>🌙 First evening</h3>
+      <p>After the first Retreat session wraps at 18:00, we have some free time before dinner at 19:00. The first evening meal is at the Backafallsbyn restaurant — we always go together, and it's a lovely way to kick off the Retreat. Dinner is at our own cost this evening.</p>
+      <p class="note">After dinner and around 20:00: short technique demos, Q&amp;A, then I'll play a short solo concert for you only (accompanying people are also welcome) — and if the porch calls — an evening jam in the bungalows.</p>
+    </div>
+  </section>
+
+  <!-- ── SCHEDULE ───────────────────────────── -->
+  <section class="section" id="schedule">
+    <div class="section-label">Three days together</div>
+    <h2>The Schedule</h2>
+    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1.4rem;">
+      I'll share the song titles before the Retreat. The structure below is your roadmap.
+    </p>
+
+    <div class="day-tabs">
+      <button class="day-tab active" onclick="showDay(0)">Day 1 — Arrival</button>
+      <button class="day-tab" onclick="showDay(1)">Day 2</button>
+      <button class="day-tab" onclick="showDay(2)">Day 3 — Farewell</button>
+    </div>
+
+    <!-- DAY 1 -->
+    <div class="day-panel active" id="day-0">
+      <div class="setlist">
+        <div class="setlist-header">
+          <span class="day-name">Day 1</span>
+          <span class="day-note">Arrival & first session</span>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">12:00</div>
+          <div class="row-event">Smooth start — arrive, drop off your instrument, settle in</div>
+          <div></div>
+        </div>
+        <div class="setlist-row highlight">
+          <div class="row-time">15:00</div>
+          <div class="row-event"><strong>Retreat officially begins</strong> — warm-up &amp; Song 1</div>
+          <div class="row-badge badge-session">Session</div>
+        </div>
+        <div class="setlist-row break-row">
+          <div class="row-time">16:30</div>
+          <div class="row-event">Fika ☕</div>
+          <div class="row-badge badge-fika">Included</div>
+        </div>
+        <div class="setlist-row highlight">
+          <div class="row-time">16:45</div>
+          <div class="row-event"><strong>Song 1 continues / Song 2 starts</strong></div>
+          <div class="row-badge badge-session">Session</div>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">18:00</div>
+          <div class="row-event">Free time — settle into your bungalow</div>
+          <div></div>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">19:00</div>
+          <div class="row-event">Evening meal together at Backafallsbyn restaurant</div>
+          <div class="row-badge badge-own">Own cost</div>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">20:00</div>
+          <div class="row-event">Sound &amp; technique with Mac — live mic demo &amp; setup</div>
+          <div></div>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">21:00</div>
+          <div class="row-event">Mac plays a short solo concert 🎸</div>
+          <div></div>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">21:30</div>
+          <div class="row-event">Q&amp;A / Evening jam in the bungalows</div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 2 -->
+    <div class="day-panel" id="day-1">
+      <div class="setlist">
+        <div class="setlist-header">
+          <span class="day-name">Day 2</span>
+          <span class="day-note">Full day — the heart of the Retreat</span>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">08:00</div>
+          <div class="row-event">Breakfast</div>
+          <div class="row-badge badge-included">Included</div>
+        </div>
+        <div class="setlist-row highlight">
+          <div class="row-time">09:30</div>
+          <div class="row-event"><strong>Rehearsal</strong> — Song 1 recap / Song 2 continues</div>
+          <div class="row-badge badge-session">Session</div>
+        </div>
+        <div class="setlist-row break-row">
+          <div class="row-time">10:45</div>
+          <div class="row-event">Fika ☕</div>
+          <div class="row-badge badge-fika">Included</div>
+        </div>
+        <div class="setlist-row highlight">
+          <div class="row-time">11:00</div>
+          <div class="row-event"><strong>Song 2 complete</strong></div>
+          <div class="row-badge badge-session">Session</div>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">12:00</div>
+          <div class="row-event">Lunch — free time or extra practice (just ask me)</div>
+          <div class="row-badge badge-included">Included</div>
+        </div>
+        <div class="setlist-row highlight">
+          <div class="row-time">15:00</div>
+          <div class="row-event"><strong>Song 3</strong></div>
+          <div class="row-badge badge-session">Session</div>
+        </div>
+        <div class="setlist-row break-row">
+          <div class="row-time">16:30</div>
+          <div class="row-event">Fika ☕</div>
+          <div class="row-badge badge-fika">Included</div>
+        </div>
+        <div class="setlist-row highlight">
+          <div class="row-time">16:45</div>
+          <div class="row-event"><strong>Song 4</strong></div>
+          <div class="row-badge badge-session">Session</div>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">18:00</div>
+          <div class="row-event">Free time</div>
+          <div></div>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">19:00</div>
+          <div class="row-event">Evening meal together at Turistgården</div>
+          <div class="row-badge badge-own">Own cost</div>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">20:00</div>
+          <div class="row-event">Free time / Q&amp;A with Mac</div>
+          <div></div>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">21:00</div>
+          <div class="row-event">Jam in the bungalows 🎸</div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 3 -->
+    <div class="day-panel" id="day-2">
+      <div class="setlist">
+        <div class="setlist-header">
+          <span class="day-name">Day 3</span>
+          <span class="day-note">Final session &amp; farewell</span>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">08:00</div>
+          <div class="row-event">Breakfast</div>
+          <div class="row-badge badge-included">Included</div>
+        </div>
+        <div class="setlist-row highlight">
+          <div class="row-time">09:30</div>
+          <div class="row-event"><strong>Rehearsal</strong> — Song 4 revisited</div>
+          <div class="row-badge badge-session">Session</div>
+        </div>
+        <div class="setlist-row break-row">
+          <div class="row-time">10:45</div>
+          <div class="row-event">Fika ☕</div>
+          <div class="row-badge badge-fika">Included</div>
+        </div>
+        <div class="setlist-row highlight">
+          <div class="row-time">11:00</div>
+          <div class="row-event"><strong>Song 5</strong></div>
+          <div class="row-badge badge-session">Session</div>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">12:00</div>
+          <div class="row-event">Lunch</div>
+          <div class="row-badge badge-included">Included</div>
+        </div>
+        <div class="setlist-row highlight">
+          <div class="row-time">13:00</div>
+          <div class="row-event"><strong>Final rehearsal, questions &amp; answers</strong></div>
+          <div class="row-badge badge-session">Session</div>
+        </div>
+        <div class="setlist-row">
+          <div class="row-time">15:00</div>
+          <div class="row-event">Retreat wraps — safe travels home 🎸</div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MEALS ─────────────────────────────── -->
+  <section class="section" id="meals">
+    <div class="section-label">What's covered</div>
+    <h2>Meals &amp; Fika</h2>
+    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1.4rem;">
+      All fika throughout the Retreat is on me. For evening meals — we always eat together as a group, so you're never on your own figuring it out.
+    </p>
+
+    <div class="meals-grid">
+      <!-- Day 1 -->
+      <div class="meal-card">
+        <div class="meal-card-head">Day 1 <span>Arrival</span></div>
+        <div class="meal-row">
+          <span class="meal-icon">☀️</span>
+          <span class="meal-label">Lunch</span>
+          <span class="meal-status-own">Own cost</span>
+        </div>
+        <div class="meal-row">
+          <span class="meal-icon">☕</span>
+          <span class="meal-label">Fika</span>
+          <span class="meal-status-inc">Included</span>
+        </div>
+        <div class="meal-row">
+          <span class="meal-icon">🌙</span>
+          <span class="meal-label">Dinner</span>
+          <span class="meal-status-own">Own cost</span>
+        </div>
+      </div>
+      <!-- Day 2 -->
+      <div class="meal-card">
+        <div class="meal-card-head">Day 2 <span>Full day</span></div>
+        <div class="meal-row">
+          <span class="meal-icon">🌅</span>
+          <span class="meal-label">Breakfast</span>
+          <span class="meal-status-inc">Included</span>
+        </div>
+        <div class="meal-row">
+          <span class="meal-icon">☀️</span>
+          <span class="meal-label">Lunch</span>
+          <span class="meal-status-inc">Included</span>
+        </div>
+        <div class="meal-row">
+          <span class="meal-icon">☕</span>
+          <span class="meal-label">Fika (×2)</span>
+          <span class="meal-status-inc">Included</span>
+        </div>
+        <div class="meal-row">
+          <span class="meal-icon">🌙</span>
+          <span class="meal-label">Dinner</span>
+          <span class="meal-status-own">Own cost</span>
+        </div>
+      </div>
+      <!-- Day 3 -->
+      <div class="meal-card">
+        <div class="meal-card-head">Day 3 <span>Farewell</span></div>
+        <div class="meal-row">
+          <span class="meal-icon">🌅</span>
+          <span class="meal-label">Breakfast</span>
+          <span class="meal-status-inc">Included</span>
+        </div>
+        <div class="meal-row">
+          <span class="meal-icon">☀️</span>
+          <span class="meal-label">Lunch</span>
+          <span class="meal-status-inc">Included</span>
+        </div>
+        <div class="meal-row">
+          <span class="meal-icon">☕</span>
+          <span class="meal-label">Fika (×2)</span>
+          <span class="meal-status-inc">Included</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PRACTICAL ─────────────────────────── -->
+  <section class="section" id="practical">
+    <div class="section-label">On the island</div>
+    <h2>Practical Info</h2>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="ic-icon">📶</div>
+        <h3>WiFi</h3>
+        <p>Available throughout Backafallsbyn — in the venue and in all bungalows.</p>
+        <div class="wifi-badge" id="wifi-pw">Ask me on arrival</div>
+        <p style="margin-top:0.5rem;font-size:0.78rem;color:var(--muted);">Password is confirmed fresh each year — I'll share it when you arrive.</p>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon">🏠</div>
+        <h3>Bungalows</h3>
+        <p>Check-in after 15:00. The porch is yours — make yourself at home. Late evening jams on the porch are a Retreat tradition.</p>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon">🎸</div>
+        <h3>Retreat Room</h3>
+        <p>You can leave your instrument safely in the Retreat Room from 12:00 on Day 1. I'll show you where it is when you arrive.</p>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon">⛴️</div>
+        <h3>Return Ferry</h3>
+        <p>Check return times at <a href="https://www.ventrafiken.se" target="_blank">ventrafiken.se</a> before you leave on Day 3. The Retreat wraps around 15:00.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT ───────────────────────────── -->
+  <section class="section" id="contact">
+    <div class="section-label">Reach out</div>
+    <h2>Get in Touch</h2>
+    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1.4rem;">
+      During the Retreat, I'm right there. But if you need to reach me before or after:
+    </p>
+
+    <div class="contact-row">
+      <div class="contact-icon">📞</div>
+      <div>
+        <div class="contact-label">Phone / WhatsApp</div>
+        <div class="contact-value"><a href="tel:+46702645134">+46 702 64 51 34</a></div>
+      </div>
+    </div>
+    <div class="contact-row">
+      <div class="contact-icon">🌐</div>
+      <div>
+        <div class="contact-label">Website</div>
+        <div class="contact-value"><a href="https://homesickmac.com" target="_blank">homesickmac.com</a></div>
+      </div>
+    </div>
+    <div class="contact-row">
+      <div class="contact-icon">👤</div>
+      <div>
+        <div class="contact-label">Facebook</div>
+        <div class="contact-value"><a href="https://web.facebook.com/dragan.ruzic" target="_blank">Connect with me on Facebook</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>
+      <strong>Homesick Mac's Guitar Retreat</strong> · Est. 2012 · Island of Ven, Sweden<br />
+      <span style="margin-top:0.3rem;display:block;">See you on the porch. 🎸</span>
+    </p>
+  </footer>
+
+</div><!-- /portal -->
+
+<!-- ════════════════════════════════════════
+     SCRIPT
+════════════════════════════════════════ -->
+<script>
+  // Allow Enter key to submit
+  document.getElementById('pw-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkPassword();
+  });
+
+  function checkPassword() {
+    const input = document.getElementById('pw-input').value.trim().toLowerCase();
+    const error = document.getElementById('pw-error');
+    if (input === 'porchblues') {
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('portal').style.display = 'block';
+      sessionStorage.setItem('retreat-auth', '1');
+    } else {
+      error.textContent = 'Not quite — try again.';
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-input').focus();
+    }
+  }
+
+  // Stay unlocked within the session
+  if (sessionStorage.getItem('retreat-auth') === '1') {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('portal').style.display = 'block';
+  }
+
+  // Day tab switching
+  function showDay(index) {
+    document.querySelectorAll('.day-tab').forEach((t, i) => {
+      t.classList.toggle('active', i === index);
+    });
+    document.querySelectorAll('.day-panel').forEach((p, i) => {
+      p.classList.toggle('active', i === index);
+    });
+  }
+</script>
+</body>
+</html>
