@@ -112,9 +112,12 @@
   #detail-header .btn{flex-shrink:0;}
   #detail-title{font-size:19px;font-weight:700;flex:1;}
   .detail-sub{color:var(--fg-dim);font-size:13px;margin-bottom:14px;}
-  .setlist-item{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:7px;display:flex;align-items:center;gap:10px;}
+  .setlist-item{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:7px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;}
   .setlist-item .num{color:var(--accent);font-weight:700;font-size:14px;width:22px;text-align:center;flex-shrink:0;}
-  .setlist-item .info{flex:1;min-width:0;}
+  .setlist-item .chevron{color:var(--fg-dim);font-size:13px;padding:4px;flex-shrink:0;}
+  .setlist-item-preview{display:none;flex-basis:100%;}
+  .setlist-item.expanded .setlist-item-preview{display:block;margin-top:4px;}
+  .setlist-item .info{flex:1;min-width:0;cursor:pointer;}
   .setlist-item .name{font-size:15.5px;font-weight:600;}
   .setlist-item .meta{font-size:12px;color:var(--fg-dim);}
   .setlist-item .btns{display:flex;gap:4px;flex-shrink:0;}
@@ -147,10 +150,11 @@
   /* Live performance */
   #live-overlay{position:fixed;inset:0;background:#000;color:#f5f0dc;z-index:100;display:none;flex-direction:column;}
   #live-overlay.active{display:flex;}
-  #live-setlist-name{text-align:center;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);padding:calc(10px + env(safe-area-inset-top)) 16px 0;flex-shrink:0;}
+  #live-setlist-name{text-align:center;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);padding:calc(10px + env(safe-area-inset-top)) 16px 0;flex-shrink:0;cursor:pointer;}
   #live-top{display:flex;align-items:center;gap:10px;padding:10px 16px 14px;border-bottom:1px solid #222;flex-shrink:0;}
   #live-progress{color:#f5f0dc;font-size:23px;font-weight:800;flex:1;text-align:center;letter-spacing:.01em;}
   .live-icon-btn{background:#1c1c1c;border:1px solid #333;color:#f5f0dc;border-radius:8px;width:38px;height:38px;font-size:16px;flex-shrink:0;}
+  #live-next-up{text-align:center;font-size:13px;color:#8a8478;font-style:italic;padding:0 16px 8px;flex-shrink:0;}
   #live-flag{text-align:center;margin:0 16px 10px;padding:9px 14px;border-radius:10px;font-size:15px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;flex-shrink:0;}
   #live-flag.flag-last{background:rgba(224,177,60,.16);color:var(--accent);border:1.5px solid var(--accent);}
   #live-flag.flag-encore{background:rgba(245,240,220,.08);color:#f5f0dc;border:1.5px solid #444;}
@@ -172,6 +176,14 @@
   #live-nav{display:flex;gap:10px;padding:14px 16px calc(14px + env(safe-area-inset-bottom));border-top:1px solid #222;flex-shrink:0;}
   #live-nav .btn{flex:1;text-align:center;padding:16px;font-size:17px;font-weight:700;background:#1c1c1c;border:1px solid #333;color:#f5f0dc;}
   #live-nav .btn:disabled{opacity:.3;}
+  #live-jump-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:110;display:none;align-items:flex-end;justify-content:center;}
+  #live-jump-overlay.active{display:flex;}
+  .live-jump-row{display:flex;align-items:center;gap:12px;padding:13px 8px;border-bottom:1px solid var(--line);}
+  .live-jump-row:last-child{border-bottom:none;}
+  .live-jump-row.current{background:rgba(224,177,60,.14);border-radius:10px;}
+  .live-jump-num{color:var(--accent);font-weight:700;font-size:14px;width:24px;text-align:center;flex-shrink:0;}
+  .live-jump-name{flex:1;font-size:15.5px;font-weight:600;}
+  .live-jump-divider{text-align:center;color:var(--fg-dim);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:9px 0;margin:4px 0;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);}
   .live-tap-zone{position:absolute;top:0;bottom:0;width:30%;z-index:1;}
 
   .hidden{display:none !important;}
@@ -253,6 +265,7 @@
     <button class="live-icon-btn" id="live-font-minus">A-</button>
     <button class="live-icon-btn" id="live-font-plus">A+</button>
   </div>
+  <div id="live-next-up" class="hidden"></div>
   <div id="live-flag" class="hidden"></div>
   <div id="live-dots"></div>
   <div id="live-scrollbar">
@@ -273,6 +286,13 @@
   <div id="live-nav">
     <button class="btn" id="live-prev">‹ Prev</button>
     <button class="btn" id="live-next">Next ›</button>
+  </div>
+</div>
+
+<div id="live-jump-overlay">
+  <div class="modal-sheet">
+    <div class="modal-title">Jump to a Song<button class="btn ghost" id="live-jump-close">Close</button></div>
+    <div class="modal-body" id="live-jump-list"></div>
   </div>
 </div>
 
@@ -7534,13 +7554,39 @@
         '<div class="dot ' + (song.lyrics ? 'has' : 'none') + '"></div>' +
         '<div class="info"><div class="name">' + escapeHtml(song.name) + '</div>' +
         '<div class="meta">' + escapeHtml(metaLine(song) || song.source) + '</div></div>' +
-        controlsHtml;
+        (selectionMode ? '' : '<div class="chevron">▾</div>') +
+        controlsHtml +
+        (selectionMode ? '' : '<div class="setlist-item-preview"></div>');
       if(selectionMode){
         item.addEventListener('click', function(){
           if(selectedIndices[idx]){ delete selectedIndices[idx]; } else { selectedIndices[idx] = true; }
           renderDetail();
         });
       } else {
+        // Tap the song name/meta (or its chevron) to preview the lyrics inline,
+        // same "quick peek" the Library view already offers - Mac wanted the
+        // same ability to check lyrics/order from inside a setlist too, without
+        // needing to start a full live performance.
+        item.querySelectorAll('.info, .chevron').forEach(function(el){
+          el.addEventListener('click', function(){
+            item.classList.toggle('expanded');
+            var previewEl = item.querySelector('.setlist-item-preview');
+            if(item.classList.contains('expanded') && !previewEl.dataset.built){
+              if(song.lyrics){
+                var pre = document.createElement('div');
+                pre.className = 'lyrics-preview';
+                pre.textContent = song.lyrics;
+                previewEl.appendChild(pre);
+              } else {
+                var note = document.createElement('div');
+                note.className = 'no-lyrics-note';
+                note.textContent = 'No lyrics on file for this one — check Notion if you need the words.';
+                previewEl.appendChild(note);
+              }
+              previewEl.dataset.built = '1';
+            }
+          });
+        });
         item.querySelector('[data-act="up"]').addEventListener('click', function(){ moveSong(idx, -1); });
         item.querySelector('[data-act="down"]').addEventListener('click', function(){ moveSong(idx, 1); });
         item.querySelector('[data-act="remove"]').addEventListener('click', function(){ removeSong(idx); });
@@ -8042,11 +8088,14 @@
   var liveSub = document.getElementById('live-song-sub');
   var liveLyrics = document.getElementById('live-lyrics');
   var liveProgress = document.getElementById('live-progress');
+  var liveNextUp = document.getElementById('live-next-up');
   var liveFlag = document.getElementById('live-flag');
   var liveDots = document.getElementById('live-dots');
   var livePrevBtn = document.getElementById('live-prev');
   var liveNextBtn = document.getElementById('live-next');
   var liveBody = document.getElementById('live-body');
+  var liveJumpOverlay = document.getElementById('live-jump-overlay');
+  var liveJumpList = document.getElementById('live-jump-list');
   var performSongIds = [];
   var performIdx = 0;
   // Index (within performSongIds) of the last song before the divider, if this
@@ -8059,7 +8108,7 @@
     var sl = getSetlist(setlistId);
     var realSongIds = sl ? sl.songIds.filter(function(id){ return !isDivider(id); }) : [];
     if(!sl || !realSongIds.length){ alert('Add some songs to this setlist first.'); return; }
-    liveSetlistName.textContent = sl.name;
+    liveSetlistName.textContent = sl.name + ' ▾';
     performSongIds = realSongIds;
     var dividerIdx = sl.songIds.indexOf(DIVIDER_ID);
     if(dividerIdx === -1){
@@ -8087,6 +8136,14 @@
       liveLyrics.innerHTML = '<div id="live-empty">No lyrics on file for this one.<br>Check Notion if you need the words — you\'ve got this from memory, or wing it.</div>';
     }
     liveProgress.textContent = 'Song ' + (performIdx+1) + ' of ' + performSongIds.length;
+    var nextIdx = performIdx + 1;
+    if(nextIdx < performSongIds.length){
+      var nextSong = SONGS_BY_ID[performSongIds[nextIdx]];
+      liveNextUp.textContent = 'Next: ' + (nextSong ? nextSong.name : 'Unknown song');
+      liveNextUp.classList.remove('hidden');
+    } else {
+      liveNextUp.classList.add('hidden');
+    }
     var isLastOverall = performIdx === performSongIds.length - 1;
     var isEndOfProgram = performProgramCount > 0 && performProgramCount < performSongIds.length && performIdx === performProgramCount - 1;
     if(isLastOverall){
@@ -8129,6 +8186,51 @@
       liveDots.appendChild(trailingTick);
     }
   }
+
+  // Jump-to-song list: mid-gig, Mac may need to skip straight to a specific
+  // song (a guest sitting in, an audience read that calls for a change of
+  // plan) without backing all the way out to the setlist and scrolling to
+  // find it. Tapping the setlist name at the top opens the full song order
+  // as a tappable list; picking one jumps straight there and closes itself.
+  function renderLiveJumpList(){
+    liveJumpList.innerHTML = '';
+    performSongIds.forEach(function(songId, i){
+      if(performProgramCount !== -1 && i === performProgramCount){
+        var divRow = document.createElement('div');
+        divRow.className = 'live-jump-divider';
+        divRow.textContent = 'Encore / Reserve';
+        liveJumpList.appendChild(divRow);
+      }
+      var song = SONGS_BY_ID[songId];
+      var row = document.createElement('div');
+      row.className = 'live-jump-row' + (i === performIdx ? ' current' : '');
+      row.innerHTML =
+        '<div class="live-jump-num">' + (i+1) + '</div>' +
+        '<div class="live-jump-name">' + escapeHtml(song ? song.name : 'Unknown song') + '</div>';
+      row.addEventListener('click', function(){
+        performIdx = i;
+        renderLiveSong();
+        closeLiveJump();
+      });
+      liveJumpList.appendChild(row);
+    });
+    if(performProgramCount !== -1 && performProgramCount === performSongIds.length){
+      var trailingDivRow = document.createElement('div');
+      trailingDivRow.className = 'live-jump-divider';
+      trailingDivRow.textContent = 'Encore / Reserve';
+      liveJumpList.appendChild(trailingDivRow);
+    }
+  }
+  function openLiveJump(){
+    renderLiveJumpList();
+    liveJumpOverlay.classList.add('active');
+  }
+  function closeLiveJump(){
+    liveJumpOverlay.classList.remove('active');
+  }
+  liveSetlistName.addEventListener('click', openLiveJump);
+  document.getElementById('live-jump-close').addEventListener('click', closeLiveJump);
+  liveJumpOverlay.addEventListener('click', function(e){ if(e.target === liveJumpOverlay) closeLiveJump(); });
 
   function liveNext(){ if(performIdx < performSongIds.length - 1){ performIdx++; renderLiveSong(); } }
   function livePrev(){ if(performIdx > 0){ performIdx--; renderLiveSong(); } }
