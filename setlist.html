@@ -149,6 +149,7 @@
   #live-overlay.active{display:flex;}
   #live-top{display:flex;align-items:center;gap:10px;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));border-bottom:1px solid #222;flex-shrink:0;}
   #live-progress{color:#8a8478;font-size:14px;flex:1;text-align:center;}
+  .live-progress-flag{color:var(--accent);font-weight:700;}
   .live-icon-btn{background:#1c1c1c;border:1px solid #333;color:#f5f0dc;border-radius:8px;width:38px;height:38px;font-size:16px;flex-shrink:0;}
   #live-scrollbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid #222;flex-shrink:0;}
   #live-scroll-toggle{background:#1c1c1c;border:1px solid #333;color:#f5f0dc;border-radius:10px;padding:10px 15px;font-size:14px;font-weight:700;flex-shrink:0;}
@@ -7986,12 +7987,23 @@
   var liveBody = document.getElementById('live-body');
   var performSongIds = [];
   var performIdx = 0;
+  // Index (within performSongIds) of the last song before the divider, if this
+  // setlist has one and there's at least one real song after it. -1 means
+  // "no divider" (or nothing follows it yet), so there's no separate
+  // "end of program" milestone to flag - only the final "last song" one.
+  var performProgramCount = -1;
 
   function startPerformance(setlistId){
     var sl = getSetlist(setlistId);
     var realSongIds = sl ? sl.songIds.filter(function(id){ return !isDivider(id); }) : [];
     if(!sl || !realSongIds.length){ alert('Add some songs to this setlist first.'); return; }
     performSongIds = realSongIds;
+    var dividerIdx = sl.songIds.indexOf(DIVIDER_ID);
+    if(dividerIdx === -1){
+      performProgramCount = -1;
+    } else {
+      performProgramCount = sl.songIds.slice(0, dividerIdx).filter(function(id){ return !isDivider(id); }).length;
+    }
     performIdx = 0;
     renderLiveSong();
     liveOverlay.classList.add('active');
@@ -8011,7 +8023,16 @@
     } else {
       liveLyrics.innerHTML = '<div id="live-empty">No lyrics on file for this one.<br>Check Notion if you need the words — you\'ve got this from memory, or wing it.</div>';
     }
-    liveProgress.textContent = 'Song ' + (performIdx+1) + ' of ' + performSongIds.length;
+    var progressText = 'Song ' + (performIdx+1) + ' of ' + performSongIds.length;
+    var isLastOverall = performIdx === performSongIds.length - 1;
+    var isEndOfProgram = performProgramCount > 0 && performProgramCount < performSongIds.length && performIdx === performProgramCount - 1;
+    if(isLastOverall){
+      liveProgress.innerHTML = progressText + ' <span class="live-progress-flag">— Last song!</span>';
+    } else if(isEndOfProgram){
+      liveProgress.innerHTML = progressText + ' <span class="live-progress-flag">— End of program, encore next</span>';
+    } else {
+      liveProgress.textContent = progressText;
+    }
     livePrevBtn.disabled = performIdx === 0;
     liveNextBtn.disabled = performIdx === performSongIds.length - 1;
   }
