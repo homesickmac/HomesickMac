@@ -148,9 +148,16 @@
   #live-overlay{position:fixed;inset:0;background:#000;color:#f5f0dc;z-index:100;display:none;flex-direction:column;}
   #live-overlay.active{display:flex;}
   #live-top{display:flex;align-items:center;gap:10px;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));border-bottom:1px solid #222;flex-shrink:0;}
-  #live-progress{color:#8a8478;font-size:14px;flex:1;text-align:center;}
-  .live-progress-flag{color:var(--accent);font-weight:700;}
+  #live-progress{color:#f5f0dc;font-size:23px;font-weight:800;flex:1;text-align:center;letter-spacing:.01em;}
   .live-icon-btn{background:#1c1c1c;border:1px solid #333;color:#f5f0dc;border-radius:8px;width:38px;height:38px;font-size:16px;flex-shrink:0;}
+  #live-flag{text-align:center;margin:0 16px 10px;padding:9px 14px;border-radius:10px;font-size:15px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;flex-shrink:0;}
+  #live-flag.flag-last{background:rgba(224,177,60,.16);color:var(--accent);border:1.5px solid var(--accent);}
+  #live-flag.flag-encore{background:rgba(245,240,220,.08);color:#f5f0dc;border:1.5px solid #444;}
+  #live-dots{display:flex;align-items:center;justify-content:center;gap:6px;padding:0 16px 12px;overflow-x:auto;flex-shrink:0;}
+  .live-dot{width:10px;height:10px;min-width:10px;border-radius:50%;background:transparent;border:1.5px solid #4a4a52;flex-shrink:0;}
+  .live-dot.played{background:#6a6a72;border-color:#6a6a72;}
+  .live-dot.current{width:15px;height:15px;min-width:15px;background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 3px rgba(224,177,60,.28);}
+  .live-divider-tick{width:3px;height:15px;background:#55555c;border-radius:2px;flex-shrink:0;margin:0 3px;}
   #live-scrollbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid #222;flex-shrink:0;}
   #live-scroll-toggle{background:#1c1c1c;border:1px solid #333;color:#f5f0dc;border-radius:10px;padding:10px 15px;font-size:14px;font-weight:700;flex-shrink:0;}
   #live-scroll-toggle.active{background:var(--accent);border-color:var(--accent);color:#1a1400;}
@@ -244,6 +251,8 @@
     <button class="live-icon-btn" id="live-font-minus">A-</button>
     <button class="live-icon-btn" id="live-font-plus">A+</button>
   </div>
+  <div id="live-flag" class="hidden"></div>
+  <div id="live-dots"></div>
   <div id="live-scrollbar">
     <button id="live-scroll-toggle">▶ Auto-scroll</button>
     <div class="scroll-speed-controls">
@@ -7982,6 +7991,8 @@
   var liveSub = document.getElementById('live-song-sub');
   var liveLyrics = document.getElementById('live-lyrics');
   var liveProgress = document.getElementById('live-progress');
+  var liveFlag = document.getElementById('live-flag');
+  var liveDots = document.getElementById('live-dots');
   var livePrevBtn = document.getElementById('live-prev');
   var liveNextBtn = document.getElementById('live-next');
   var liveBody = document.getElementById('live-body');
@@ -8023,18 +8034,48 @@
     } else {
       liveLyrics.innerHTML = '<div id="live-empty">No lyrics on file for this one.<br>Check Notion if you need the words — you\'ve got this from memory, or wing it.</div>';
     }
-    var progressText = 'Song ' + (performIdx+1) + ' of ' + performSongIds.length;
+    liveProgress.textContent = 'Song ' + (performIdx+1) + ' of ' + performSongIds.length;
     var isLastOverall = performIdx === performSongIds.length - 1;
     var isEndOfProgram = performProgramCount > 0 && performProgramCount < performSongIds.length && performIdx === performProgramCount - 1;
     if(isLastOverall){
-      liveProgress.innerHTML = progressText + ' <span class="live-progress-flag">— Last song!</span>';
+      liveFlag.textContent = '🏁 Last Song!';
+      liveFlag.className = 'flag-last';
     } else if(isEndOfProgram){
-      liveProgress.innerHTML = progressText + ' <span class="live-progress-flag">— End of program, encore next</span>';
+      liveFlag.textContent = '🎤 End of Program — Encore Next';
+      liveFlag.className = 'flag-encore';
     } else {
-      liveProgress.textContent = progressText;
+      liveFlag.className = 'hidden';
     }
+    renderLiveDots();
     livePrevBtn.disabled = performIdx === 0;
     liveNextBtn.disabled = performIdx === performSongIds.length - 1;
+  }
+
+  function renderLiveDots(){
+    liveDots.innerHTML = '';
+    performSongIds.forEach(function(songId, i){
+      if(performProgramCount !== -1 && i === performProgramCount){
+        var tick = document.createElement('div');
+        tick.className = 'live-divider-tick';
+        tick.title = 'Encore / Reserve divider';
+        liveDots.appendChild(tick);
+      }
+      var dot = document.createElement('div');
+      var state = i === performIdx ? 'current' : (i < performIdx ? 'played' : 'upcoming');
+      dot.className = 'live-dot ' + state;
+      dot.title = 'Song ' + (i+1) + ' of ' + performSongIds.length;
+      dot.addEventListener('click', function(){
+        performIdx = i;
+        renderLiveSong();
+      });
+      liveDots.appendChild(dot);
+    });
+    if(performProgramCount !== -1 && performProgramCount === performSongIds.length){
+      var trailingTick = document.createElement('div');
+      trailingTick.className = 'live-divider-tick';
+      trailingTick.title = 'Encore / Reserve divider';
+      liveDots.appendChild(trailingTick);
+    }
   }
 
   function liveNext(){ if(performIdx < performSongIds.length - 1){ performIdx++; renderLiveSong(); } }
