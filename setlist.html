@@ -75,12 +75,17 @@
 
   /* Setlists */
   .setlist-card{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:10px;}
+  .setlist-card .card-top{display:flex;align-items:flex-start;gap:10px;}
+  .setlist-card .card-reorder{display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
+  .setlist-card .card-reorder .icon-btn{width:30px;height:30px;font-size:13px;}
+  .tag-badge{display:inline-block;background:var(--bg-card-2);color:var(--accent);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:6px;}
   .setlist-card h3{margin:0 0 4px;font-size:17px;}
   .setlist-card .sub{color:var(--fg-dim);font-size:13px;margin-bottom:12px;}
   .setlist-card .actions{display:flex;gap:8px;flex-wrap:wrap;}
   .empty-state{color:var(--fg-dim);text-align:center;padding:60px 20px;font-size:15px;line-height:1.6;}
   .setlists-toolbar{display:flex;gap:8px;margin-bottom:14px;}
   .setlists-toolbar .btn{flex:1;text-align:center;}
+  #setlist-tag-filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
   .reminder-banner{background:#2a2210;border:1px solid var(--accent-dim);color:var(--fg);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:13.5px;line-height:1.4;}
   .reminder-banner span{flex:1;}
   .reminder-banner .btn{flex-shrink:0;padding:9px 13px;font-size:13px;}
@@ -99,8 +104,13 @@
   .setlist-item .btns{display:flex;gap:4px;flex-shrink:0;}
   .icon-btn{background:var(--bg-card-2);border:1px solid var(--line);color:var(--fg);border-radius:8px;width:34px;height:34px;font-size:15px;display:flex;align-items:center;justify-content:center;}
   .icon-btn:active{opacity:.6;}
+  .icon-btn.active{background:var(--accent);border-color:var(--accent);color:#1a1400;}
   .detail-actions{display:flex;gap:10px;margin:16px 0 6px;position:sticky;bottom:0;background:var(--bg);padding-top:6px;padding-bottom:6px;}
   .detail-actions .btn{flex:1;text-align:center;padding:13px;font-size:15px;}
+  .setlist-item.selected{border-color:var(--accent);background:#241f10;}
+  .selection-toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 6px;position:sticky;bottom:0;background:var(--bg);padding-top:6px;padding-bottom:6px;align-items:center;}
+  .selection-toolbar .btn{flex:1 1 auto;text-align:center;padding:12px;font-size:13.5px;min-width:100px;}
+  #selection-count{width:100%;color:var(--fg-dim);font-size:13px;margin-bottom:2px;}
 
   /* Modal */
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:flex;align-items:flex-end;justify-content:center;}
@@ -177,6 +187,7 @@
       <button class="btn" id="import-setlists-btn">⬆ Import backup</button>
       <input type="file" id="import-file-input" accept="application/json,.json" class="hidden">
     </div>
+    <div id="setlist-tag-filter-row" class="hidden"></div>
     <div id="setlists-list"></div>
     <button class="fab" id="new-setlist-fab">+ New Setlist</button>
   </main>
@@ -185,14 +196,22 @@
     <div id="detail-header">
       <button class="icon-btn" id="detail-back">‹</button>
       <div id="detail-title">Setlist</div>
+      <button class="icon-btn" id="detail-select-toggle">☑</button>
       <button class="icon-btn" id="detail-rename">✎</button>
       <button class="icon-btn" id="detail-delete">🗑</button>
     </div>
     <div class="detail-sub" id="detail-sub"></div>
     <div id="detail-list"></div>
-    <div class="detail-actions">
+    <div class="detail-actions" id="detail-actions-normal">
       <button class="btn" id="detail-add-songs">+ Add Songs</button>
       <button class="btn accent" id="detail-start">▶ Start Performance</button>
+    </div>
+    <div class="selection-toolbar hidden" id="selection-toolbar">
+      <span id="selection-count">0 selected</span>
+      <button class="btn" id="selection-select-all">Select all</button>
+      <button class="btn" id="selection-move">Move to…</button>
+      <button class="btn" id="selection-copy">Copy to…</button>
+      <button class="btn danger" id="selection-remove">Remove</button>
     </div>
   </main>
 </div>
@@ -239,16 +258,31 @@
   var FONT_KEY = 'hm_live_font_v1';
   var LAST_MODIFIED_KEY = 'hm_last_modified_v1';
   var LAST_EXPORT_KEY = 'hm_last_export_v1';
+  var ORDER_MIGRATED_KEY = 'hm_order_migrated_v1';
 
   function loadSetlists(){
     try{
       var raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
+      var list = raw ? JSON.parse(raw) : [];
+      // One-time migration: earlier versions stored setlists oldest-first and reversed
+      // them only for display. Now display order follows storage order directly (so
+      // manual reordering works), so flip existing data once to avoid it silently
+      // reordering itself the first time this loads.
+      if(list.length && !localStorage.getItem(ORDER_MIGRATED_KEY)){
+        list.reverse();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      }
+      localStorage.setItem(ORDER_MIGRATED_KEY, '1');
+      list.forEach(function(sl){ if(typeof sl.tag === 'undefined') sl.tag = ''; });
+      return list;
     }catch(e){ return []; }
   }
   function saveSetlists(list){
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
     localStorage.setItem(LAST_MODIFIED_KEY, String(Date.now()));
+  }
+  function makeSetlist(name, songIds){
+    return { id: uid(), name: name.trim(), date: '', tag: '', songIds: songIds ? songIds.slice() : [] };
   }
   function markExported(){
     localStorage.setItem(LAST_EXPORT_KEY, String(Date.now()));
@@ -390,11 +424,42 @@
   // ---------- Setlists list ----------
   var setlistsList = document.getElementById('setlists-list');
   var exportReminderBanner = document.getElementById('export-reminder-banner');
+  var setlistTagFilterRow = document.getElementById('setlist-tag-filter-row');
+  var currentSetlistTagFilter = 'all';
   function updateExportReminder(){
     exportReminderBanner.classList.toggle('hidden', !hasUnexportedChanges());
   }
+  function renderSetlistTagFilters(){
+    var tags = [];
+    setlists.forEach(function(sl){
+      if(sl.tag && tags.indexOf(sl.tag) === -1) tags.push(sl.tag);
+    });
+    tags.sort(function(a,b){ return a.localeCompare(b); });
+    if(currentSetlistTagFilter !== 'all' && tags.indexOf(currentSetlistTagFilter) === -1){
+      currentSetlistTagFilter = 'all';
+    }
+    setlistTagFilterRow.innerHTML = '';
+    if(!tags.length){
+      setlistTagFilterRow.classList.add('hidden');
+      return;
+    }
+    setlistTagFilterRow.classList.remove('hidden');
+    var allChip = document.createElement('button');
+    allChip.className = 'filter-chip' + (currentSetlistTagFilter === 'all' ? ' active' : '');
+    allChip.textContent = 'All';
+    allChip.addEventListener('click', function(){ currentSetlistTagFilter = 'all'; renderSetlists(); });
+    setlistTagFilterRow.appendChild(allChip);
+    tags.forEach(function(tag){
+      var chip = document.createElement('button');
+      chip.className = 'filter-chip' + (currentSetlistTagFilter === tag ? ' active' : '');
+      chip.textContent = tag;
+      chip.addEventListener('click', function(){ currentSetlistTagFilter = tag; renderSetlists(); });
+      setlistTagFilterRow.appendChild(chip);
+    });
+  }
   function renderSetlists(){
     updateExportReminder();
+    renderSetlistTagFilters();
     setlistsList.innerHTML = '';
     if(!setlists.length){
       var empty = document.createElement('div');
@@ -403,21 +468,70 @@
       setlistsList.appendChild(empty);
       return;
     }
-    setlists.slice().reverse().forEach(function(sl){
+    var visibleSetlists = setlists.filter(function(sl){
+      return currentSetlistTagFilter === 'all' || sl.tag === currentSetlistTagFilter;
+    });
+    if(!visibleSetlists.length){
+      var emptyFiltered = document.createElement('div');
+      emptyFiltered.className = 'empty-state';
+      emptyFiltered.textContent = 'No setlists with this tag.';
+      setlistsList.appendChild(emptyFiltered);
+      return;
+    }
+    var canReorder = currentSetlistTagFilter === 'all';
+    visibleSetlists.forEach(function(sl){
+      var realIdx = setlists.indexOf(sl);
       var card = document.createElement('div');
       card.className = 'setlist-card';
       var withLyrics = sl.songIds.filter(function(id){ var s = SONGS_BY_ID[id]; return s && s.lyrics; }).length;
+      var reorderHtml = canReorder ?
+        '<div class="card-reorder">' +
+          '<button class="icon-btn" data-act="up">↑</button>' +
+          '<button class="icon-btn" data-act="down">↓</button>' +
+        '</div>' : '';
       card.innerHTML =
-        '<h3>' + escapeHtml(sl.name) + '</h3>' +
-        '<div class="sub">' + sl.songIds.length + ' songs · ' + withLyrics + ' with lyrics' + (sl.date ? ' · ' + escapeHtml(sl.date) : '') + '</div>' +
-        '<div class="actions">' +
-          '<button class="btn accent" data-act="open">Open</button>' +
-          '<button class="btn" data-act="perform">▶ Perform</button>' +
+        '<div class="card-top">' +
+          reorderHtml +
+          '<div style="flex:1;min-width:0;">' +
+            (sl.tag ? '<div class="tag-badge">' + escapeHtml(sl.tag) + '</div>' : '') +
+            '<h3>' + escapeHtml(sl.name) + '</h3>' +
+            '<div class="sub">' + sl.songIds.length + ' songs · ' + withLyrics + ' with lyrics' + (sl.date ? ' · ' + escapeHtml(sl.date) : '') + '</div>' +
+            '<div class="actions">' +
+              '<button class="btn accent" data-act="open">Open</button>' +
+              '<button class="btn" data-act="perform">▶ Perform</button>' +
+              '<button class="btn" data-act="duplicate">⧉ Duplicate</button>' +
+            '</div>' +
+          '</div>' +
         '</div>';
       card.querySelector('[data-act="open"]').addEventListener('click', function(){ openDetail(sl.id); });
       card.querySelector('[data-act="perform"]').addEventListener('click', function(){ startPerformance(sl.id); });
+      card.querySelector('[data-act="duplicate"]').addEventListener('click', function(){ duplicateSetlist(sl.id); });
+      if(canReorder){
+        card.querySelector('[data-act="up"]').addEventListener('click', function(){ moveSetlist(realIdx, -1); });
+        card.querySelector('[data-act="down"]').addEventListener('click', function(){ moveSetlist(realIdx, 1); });
+      }
       setlistsList.appendChild(card);
     });
+  }
+  function moveSetlist(idx, dir){
+    var newIdx = idx + dir;
+    if(newIdx < 0 || newIdx >= setlists.length) return;
+    var tmp = setlists[idx];
+    setlists[idx] = setlists[newIdx];
+    setlists[newIdx] = tmp;
+    saveSetlists(setlists);
+    renderSetlists();
+  }
+  function duplicateSetlist(setlistId){
+    var sl = getSetlist(setlistId);
+    var name = prompt('Name for the duplicate:', sl.name + ' (copy)');
+    if(!name) return;
+    var newSl = makeSetlist(name, sl.songIds);
+    newSl.tag = sl.tag || '';
+    setlists.unshift(newSl);
+    saveSetlists(setlists);
+    renderSetlists();
+    openDetail(newSl.id);
   }
 
   // ---------- Export / Import backup ----------
@@ -471,8 +585,8 @@
   document.getElementById('new-setlist-fab').addEventListener('click', function(){
     var name = prompt('Setlist name (e.g. gig or venue name):');
     if(!name) return;
-    var sl = { id: uid(), name: name.trim(), date: '', songIds: [] };
-    setlists.push(sl);
+    var sl = makeSetlist(name);
+    setlists.unshift(sl);
     saveSetlists(setlists);
     renderSetlists();
     openDetail(sl.id);
@@ -483,6 +597,12 @@
   var detailTitle = document.getElementById('detail-title');
   var detailSub = document.getElementById('detail-sub');
   var detailList = document.getElementById('detail-list');
+  var detailActionsNormal = document.getElementById('detail-actions-normal');
+  var selectionToolbar = document.getElementById('selection-toolbar');
+  var selectionCountEl = document.getElementById('selection-count');
+  var selectToggleBtn = document.getElementById('detail-select-toggle');
+  var selectionMode = false;
+  var selectedIndices = {};
 
   function getSetlist(id){
     return setlists.filter(function(s){ return s.id === id; })[0];
@@ -490,9 +610,24 @@
 
   function openDetail(id){
     currentSetlistId = id;
+    selectionMode = false;
+    selectedIndices = {};
+    detailActionsNormal.classList.remove('hidden');
+    selectionToolbar.classList.add('hidden');
+    selectToggleBtn.classList.remove('active');
     renderDetail();
     showView('detail');
   }
+
+  function setSelectionMode(on){
+    selectionMode = on;
+    selectedIndices = {};
+    detailActionsNormal.classList.toggle('hidden', on);
+    selectionToolbar.classList.toggle('hidden', !on);
+    selectToggleBtn.classList.toggle('active', on);
+    renderDetail();
+  }
+  selectToggleBtn.addEventListener('click', function(){ setSelectionMode(!selectionMode); });
 
   function renderDetail(){
     var sl = getSetlist(currentSetlistId);
@@ -501,6 +636,10 @@
     var withLyrics = sl.songIds.filter(function(id){ var s = SONGS_BY_ID[id]; return s && s.lyrics; }).length;
     detailSub.textContent = sl.songIds.length + ' songs · ' + withLyrics + ' with lyrics on file';
     detailList.innerHTML = '';
+    if(selectionMode){
+      var selCount = Object.keys(selectedIndices).length;
+      selectionCountEl.textContent = selCount + ' selected';
+    }
     if(!sl.songIds.length){
       var empty = document.createElement('div');
       empty.className = 'empty-state';
@@ -512,22 +651,111 @@
       var song = SONGS_BY_ID[songId];
       if(!song) return;
       var item = document.createElement('div');
-      item.className = 'setlist-item';
-      item.innerHTML =
-        '<div class="num">' + (idx+1) + '</div>' +
-        '<div class="dot ' + (song.lyrics ? 'has' : 'none') + '"></div>' +
-        '<div class="info"><div class="name">' + escapeHtml(song.name) + '</div>' +
-        '<div class="meta">' + escapeHtml(metaLine(song) || song.source) + '</div></div>' +
+      item.className = 'setlist-item' + (selectionMode && selectedIndices[idx] ? ' selected' : '');
+      var controlsHtml = selectionMode ?
+        '<div class="btns"><button class="icon-btn" data-act="check">' + (selectedIndices[idx] ? '☑' : '☐') + '</button></div>' :
         '<div class="btns">' +
           '<button class="icon-btn" data-act="up">↑</button>' +
           '<button class="icon-btn" data-act="down">↓</button>' +
           '<button class="icon-btn" data-act="remove">✕</button>' +
         '</div>';
-      item.querySelector('[data-act="up"]').addEventListener('click', function(){ moveSong(idx, -1); });
-      item.querySelector('[data-act="down"]').addEventListener('click', function(){ moveSong(idx, 1); });
-      item.querySelector('[data-act="remove"]').addEventListener('click', function(){ removeSong(idx); });
+      item.innerHTML =
+        '<div class="num">' + (idx+1) + '</div>' +
+        '<div class="dot ' + (song.lyrics ? 'has' : 'none') + '"></div>' +
+        '<div class="info"><div class="name">' + escapeHtml(song.name) + '</div>' +
+        '<div class="meta">' + escapeHtml(metaLine(song) || song.source) + '</div></div>' +
+        controlsHtml;
+      if(selectionMode){
+        item.addEventListener('click', function(){
+          if(selectedIndices[idx]){ delete selectedIndices[idx]; } else { selectedIndices[idx] = true; }
+          renderDetail();
+        });
+      } else {
+        item.querySelector('[data-act="up"]').addEventListener('click', function(){ moveSong(idx, -1); });
+        item.querySelector('[data-act="down"]').addEventListener('click', function(){ moveSong(idx, 1); });
+        item.querySelector('[data-act="remove"]').addEventListener('click', function(){ removeSong(idx); });
+      }
       detailList.appendChild(item);
     });
+  }
+
+  document.getElementById('selection-select-all').addEventListener('click', function(){
+    var sl = getSetlist(currentSetlistId);
+    var allSelected = Object.keys(selectedIndices).length === sl.songIds.length && sl.songIds.length > 0;
+    selectedIndices = {};
+    if(!allSelected){
+      sl.songIds.forEach(function(_, idx){ selectedIndices[idx] = true; });
+    }
+    renderDetail();
+  });
+
+  document.getElementById('selection-remove').addEventListener('click', function(){
+    var sl = getSetlist(currentSetlistId);
+    var idxsDesc = Object.keys(selectedIndices).map(Number).sort(function(a,b){ return b-a; });
+    if(!idxsDesc.length){ alert('Select at least one song first.'); return; }
+    if(!confirm('Remove ' + idxsDesc.length + ' song(s) from this setlist?')) return;
+    idxsDesc.forEach(function(idx){ sl.songIds.splice(idx, 1); });
+    saveSetlists(setlists);
+    setSelectionMode(false);
+  });
+
+  document.getElementById('selection-move').addEventListener('click', function(){ openDestinationPicker('move'); });
+  document.getElementById('selection-copy').addEventListener('click', function(){ openDestinationPicker('copy'); });
+
+  function openDestinationPicker(mode){
+    var sl = getSetlist(currentSetlistId);
+    var idxsAsc = Object.keys(selectedIndices).map(Number).sort(function(a,b){ return a-b; });
+    if(!idxsAsc.length){ alert('Select at least one song first.'); return; }
+    var songIdsToMove = idxsAsc.map(function(i){ return sl.songIds[i]; });
+
+    var backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+    var sheet = document.createElement('div');
+    sheet.className = 'modal-sheet';
+    var title = (mode === 'move' ? 'Move ' : 'Copy ') + songIdsToMove.length + ' song(s) to…';
+    sheet.innerHTML = '<div class="modal-title">' + escapeHtml(title) + '<button class="btn ghost" id="dest-close">Cancel</button></div><div class="modal-body" id="dest-list"></div>';
+    backdrop.appendChild(sheet);
+    modalRoot.appendChild(backdrop);
+    var list = sheet.querySelector('#dest-list');
+
+    function applyToDestination(destSl){
+      var addedCount = 0;
+      songIdsToMove.forEach(function(sid){
+        if(destSl.songIds.indexOf(sid) === -1){ destSl.songIds.push(sid); addedCount++; }
+      });
+      if(mode === 'move'){
+        var idxsDesc = idxsAsc.slice().sort(function(a,b){ return b-a; });
+        idxsDesc.forEach(function(idx){ sl.songIds.splice(idx, 1); });
+      }
+      saveSetlists(setlists);
+      modalRoot.removeChild(backdrop);
+      setSelectionMode(false);
+      var verb = mode === 'move' ? 'Moved' : 'Copied';
+      alert(verb + ' ' + addedCount + ' song(s) to "' + destSl.name + '"' + (addedCount < songIdsToMove.length ? ' (some were already there).' : '.'));
+    }
+
+    var otherSetlists = setlists.filter(function(s){ return s.id !== currentSetlistId; });
+    otherSetlists.forEach(function(destSl){
+      var row = document.createElement('div');
+      row.className = 'pick-row';
+      row.innerHTML = '<div class="info" style="flex:1;"><div class="song-name">' + escapeHtml(destSl.name) + '</div><div class="song-meta">' + destSl.songIds.length + ' songs</div></div>' +
+        '<button class="btn accent">Choose</button>';
+      row.querySelector('button').addEventListener('click', function(){ applyToDestination(destSl); });
+      list.appendChild(row);
+    });
+    var newRow = document.createElement('div');
+    newRow.className = 'pick-row';
+    newRow.innerHTML = '<div class="info" style="flex:1;"><div class="song-name">+ New setlist…</div></div><button class="btn accent">Create</button>';
+    newRow.querySelector('button').addEventListener('click', function(){
+      var name = prompt('New setlist name:');
+      if(!name) return;
+      var newSl = makeSetlist(name);
+      setlists.unshift(newSl);
+      applyToDestination(newSl);
+    });
+    list.appendChild(newRow);
+    sheet.querySelector('#dest-close').addEventListener('click', function(){ modalRoot.removeChild(backdrop); });
+    backdrop.addEventListener('click', function(e){ if(e.target === backdrop) modalRoot.removeChild(backdrop); });
   }
 
   function moveSong(idx, dir){
@@ -556,6 +784,8 @@
     var name = prompt('Rename setlist:', sl.name);
     if(!name) return;
     sl.name = name.trim();
+    var tag = prompt('Tag/category (optional, e.g. "Festival", "Duo", "Retreat") — leave blank to clear:', sl.tag || '');
+    if(tag !== null) sl.tag = tag.trim();
     saveSetlists(setlists);
     renderDetail();
   });
@@ -581,8 +811,8 @@
     if(!setlists.length){
       var name = prompt('You don\'t have a setlist yet. Name one to create it:');
       if(!name) return;
-      var sl = { id: uid(), name: name.trim(), date: '', songIds: [songId] };
-      setlists.push(sl);
+      var sl = makeSetlist(name, [songId]);
+      setlists.unshift(sl);
       saveSetlists(setlists);
       alert('Added to "' + sl.name + '".');
       return;
@@ -618,8 +848,8 @@
     newRow.querySelector('button').addEventListener('click', function(){
       var name = prompt('New setlist name:');
       if(!name) return;
-      var sl = { id: uid(), name: name.trim(), date: '', songIds: [songId] };
-      setlists.push(sl);
+      var sl = makeSetlist(name, [songId]);
+      setlists.unshift(sl);
       saveSetlists(setlists);
       document.body.removeChild(backdrop);
     });
@@ -841,6 +1071,25 @@
     applyFontSize();
   });
   applyFontSize();
+
+  // ---------- Keyboard navigation (BT keyboard / laptop) ----------
+  document.addEventListener('keydown', function(e){
+    if(!liveOverlay.classList.contains('active')) return;
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown'){
+      e.preventDefault();
+      liveNext();
+    } else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){
+      e.preventDefault();
+      livePrev();
+    } else if(e.key === 'Escape'){
+      e.preventDefault();
+      liveOverlay.classList.remove('active');
+      setAutoScroll(false);
+    } else if(e.key === ' ' || e.key === 'Spacebar'){
+      e.preventDefault();
+      setAutoScroll(!autoScrollOn);
+    }
+  });
 
   // ---------- Init ----------
   renderLibrary();
