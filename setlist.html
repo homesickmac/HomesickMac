@@ -76,8 +76,11 @@
   /* Setlists */
   .setlist-card{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:10px;}
   .setlist-card .card-top{display:flex;align-items:flex-start;gap:10px;}
-  .setlist-card .card-reorder{display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
+  .setlist-card .card-reorder{display:flex;flex-direction:column;gap:4px;flex-shrink:0;align-items:center;}
   .setlist-card .card-reorder .icon-btn{width:30px;height:30px;font-size:13px;}
+  .drag-handle{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;font-size:18px;line-height:1;color:var(--fg-dim);width:30px;height:24px;display:flex;align-items:center;justify-content:center;}
+  .drag-handle:active{cursor:grabbing;}
+  .setlist-card.dragging,.setlist-item.dragging{opacity:.55;box-shadow:0 8px 20px rgba(0,0,0,.45);position:relative;z-index:5;}
   .tag-badge{display:inline-block;background:var(--bg-card-2);color:var(--accent);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:6px;margin-right:4px;}
   .edit-tags-label{font-size:13px;color:var(--fg-dim);margin:4px 0 8px;font-weight:600;}
   .edit-tags-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;min-height:30px;}
@@ -7206,9 +7209,11 @@
       var realIdx = setlists.indexOf(sl);
       var card = document.createElement('div');
       card.className = 'setlist-card';
+      card.dataset.dragIdx = realIdx;
       var withLyrics = sl.songIds.filter(function(id){ var s = SONGS_BY_ID[id]; return s && s.lyrics; }).length;
       var reorderHtml = canReorder ?
         '<div class="card-reorder">' +
+          '<span class="drag-handle" title="Drag to reorder">⠿</span>' +
           '<button class="icon-btn" data-act="up">↑</button>' +
           '<button class="icon-btn" data-act="down">↓</button>' +
         '</div>' : '';
@@ -7247,6 +7252,72 @@
     saveSetlists(setlists);
     renderSetlists();
   }
+
+  // ---------- Drag-to-reorder (mouse + touch, via Pointer Events) ----------
+  // Works alongside the up/down arrow buttons rather than replacing them.
+  // A drag handle (⠿) on each row is the only thing that starts a drag, so
+  // tapping the rest of the row/card still does its normal thing. Each item
+  // carries a data-drag-idx set at render time (its position in the live
+  // array); on drop, the new DOM order is read back and mapped onto that
+  // same array in place, so every closure already holding a reference to it
+  // (setlists, or a setlist's songIds) sees the reordered contents.
+  function enableDragReorder(container, itemSelector, handleSelector, getArray, onReordered){
+    var dragEl = null;
+    var pointerId = null;
+
+    function pointerDown(e){
+      var handle = e.target.closest ? e.target.closest(handleSelector) : null;
+      if(!handle || !container.contains(handle)) return;
+      var item = handle.closest(itemSelector);
+      if(!item || item.parentNode !== container) return;
+      dragEl = item;
+      pointerId = e.pointerId;
+      try{ dragEl.setPointerCapture(pointerId); }catch(err){}
+      dragEl.classList.add('dragging');
+      e.preventDefault();
+    }
+
+    function pointerMove(e){
+      if(!dragEl || e.pointerId !== pointerId) return;
+      e.preventDefault();
+      var items = Array.prototype.slice.call(container.querySelectorAll(itemSelector));
+      var y = e.clientY;
+      var target = null;
+      for(var i=0;i<items.length;i++){
+        var it = items[i];
+        if(it === dragEl) continue;
+        var rect = it.getBoundingClientRect();
+        if(y < rect.top + rect.height/2){ target = it; break; }
+      }
+      if(target){
+        if(target !== dragEl.nextSibling) container.insertBefore(dragEl, target);
+      } else if(container.lastElementChild !== dragEl){
+        container.appendChild(dragEl);
+      }
+    }
+
+    function pointerEnd(e){
+      if(!dragEl || (pointerId !== null && e.pointerId !== pointerId)) return;
+      dragEl.classList.remove('dragging');
+      var order = Array.prototype.slice.call(container.querySelectorAll(itemSelector)).map(function(it){
+        return parseInt(it.dataset.dragIdx, 10);
+      });
+      var arr = getArray();
+      var newArr = order.map(function(origIdx){ return arr[origIdx]; });
+      arr.length = 0;
+      newArr.forEach(function(x){ arr.push(x); });
+      dragEl = null;
+      pointerId = null;
+      onReordered();
+    }
+
+    container.addEventListener('pointerdown', pointerDown);
+    container.addEventListener('pointermove', pointerMove);
+    container.addEventListener('pointerup', pointerEnd);
+    container.addEventListener('pointercancel', pointerEnd);
+  }
+  enableDragReorder(setlistsList, '.setlist-card', '.drag-handle', function(){ return setlists; }, function(){ saveSetlists(setlists); renderSetlists(); });
+
   function duplicateSetlist(setlistId){
     var sl = getSetlist(setlistId);
     var name = prompt('Name for the duplicate:', sl.name + ' (copy)');
@@ -7380,9 +7451,11 @@
       if(!song) return;
       var item = document.createElement('div');
       item.className = 'setlist-item' + (selectionMode && selectedIndices[idx] ? ' selected' : '');
+      item.dataset.dragIdx = idx;
       var controlsHtml = selectionMode ?
         '<div class="btns"><button class="icon-btn" data-act="check">' + (selectedIndices[idx] ? '☑' : '☐') + '</button></div>' :
         '<div class="btns">' +
+          '<span class="drag-handle" title="Drag to reorder">⠿</span>' +
           '<button class="icon-btn" data-act="up">↑</button>' +
           '<button class="icon-btn" data-act="down">↓</button>' +
           '<button class="icon-btn" data-act="remove">✕</button>' +
@@ -7496,6 +7569,7 @@
     saveSetlists(setlists);
     renderDetail();
   }
+  enableDragReorder(detailList, '.setlist-item', '.drag-handle', function(){ return getSetlist(currentSetlistId).songIds; }, function(){ saveSetlists(setlists); renderDetail(); });
   function removeSong(idx){
     var sl = getSetlist(currentSetlistId);
     sl.songIds.splice(idx, 1);
