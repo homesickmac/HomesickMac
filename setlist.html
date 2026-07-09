@@ -78,7 +78,16 @@
   .setlist-card .card-top{display:flex;align-items:flex-start;gap:10px;}
   .setlist-card .card-reorder{display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
   .setlist-card .card-reorder .icon-btn{width:30px;height:30px;font-size:13px;}
-  .tag-badge{display:inline-block;background:var(--bg-card-2);color:var(--accent);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:6px;}
+  .tag-badge{display:inline-block;background:var(--bg-card-2);color:var(--accent);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:6px;margin-right:4px;}
+  .edit-tags-label{font-size:13px;color:var(--fg-dim);margin:4px 0 8px;font-weight:600;}
+  .edit-tags-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;min-height:30px;}
+  .edit-tags-empty{color:var(--fg-dim);font-size:13px;font-style:italic;}
+  .tag-chip-editable{display:inline-flex;align-items:center;gap:4px;background:var(--bg-card-2);color:var(--accent);border-radius:999px;padding:5px 4px 5px 12px;font-size:13px;font-weight:600;}
+  .tag-chip-editable button{background:none;border:none;color:var(--fg-dim);font-size:14px;cursor:pointer;padding:4px 8px;}
+  .edit-tags-add-row{display:flex;gap:8px;margin-bottom:16px;}
+  .edit-tags-add-row input{flex:1;background:var(--bg);border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:10px 12px;font-size:15px;}
+  .edit-tags-add-row .btn{flex-shrink:0;}
+  #edit-setlist-name{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:12px 14px;font-size:16px;margin:10px 0 16px;}
   .setlist-card h3{margin:0 0 4px;font-size:17px;}
   .setlist-card .sub{color:var(--fg-dim);font-size:13px;margin-bottom:12px;}
   .setlist-card .actions{display:flex;gap:8px;flex-wrap:wrap;}
@@ -273,7 +282,14 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
       }
       localStorage.setItem(ORDER_MIGRATED_KEY, '1');
-      list.forEach(function(sl){ if(typeof sl.tag === 'undefined') sl.tag = ''; });
+      // Migrate the old single-tag field (string) to a tags array, and make sure
+      // every setlist has one even if it predates tags entirely.
+      list.forEach(function(sl){
+        if(typeof sl.tags === 'undefined'){
+          sl.tags = sl.tag ? [sl.tag] : [];
+        }
+        delete sl.tag;
+      });
       return list;
     }catch(e){ return []; }
   }
@@ -282,7 +298,7 @@
     localStorage.setItem(LAST_MODIFIED_KEY, String(Date.now()));
   }
   function makeSetlist(name, songIds){
-    return { id: uid(), name: name.trim(), date: '', tag: '', songIds: songIds ? songIds.slice() : [] };
+    return { id: uid(), name: name.trim(), date: '', tags: [], songIds: songIds ? songIds.slice() : [] };
   }
   function markExported(){
     localStorage.setItem(LAST_EXPORT_KEY, String(Date.now()));
@@ -432,7 +448,7 @@
   function renderSetlistTagFilters(){
     var tags = [];
     setlists.forEach(function(sl){
-      if(sl.tag && tags.indexOf(sl.tag) === -1) tags.push(sl.tag);
+      (sl.tags||[]).forEach(function(t){ if(tags.indexOf(t) === -1) tags.push(t); });
     });
     tags.sort(function(a,b){ return a.localeCompare(b); });
     if(currentSetlistTagFilter !== 'all' && tags.indexOf(currentSetlistTagFilter) === -1){
@@ -469,7 +485,7 @@
       return;
     }
     var visibleSetlists = setlists.filter(function(sl){
-      return currentSetlistTagFilter === 'all' || sl.tag === currentSetlistTagFilter;
+      return currentSetlistTagFilter === 'all' || (sl.tags||[]).indexOf(currentSetlistTagFilter) !== -1;
     });
     if(!visibleSetlists.length){
       var emptyFiltered = document.createElement('div');
@@ -493,7 +509,7 @@
         '<div class="card-top">' +
           reorderHtml +
           '<div style="flex:1;min-width:0;">' +
-            (sl.tag ? '<div class="tag-badge">' + escapeHtml(sl.tag) + '</div>' : '') +
+            (sl.tags && sl.tags.length ? '<div>' + sl.tags.map(function(t){ return '<span class="tag-badge">' + escapeHtml(t) + '</span>'; }).join('') + '</div>' : '') +
             '<h3>' + escapeHtml(sl.name) + '</h3>' +
             '<div class="sub">' + sl.songIds.length + ' songs · ' + withLyrics + ' with lyrics' + (sl.date ? ' · ' + escapeHtml(sl.date) : '') + '</div>' +
             '<div class="actions">' +
@@ -527,7 +543,7 @@
     var name = prompt('Name for the duplicate:', sl.name + ' (copy)');
     if(!name) return;
     var newSl = makeSetlist(name, sl.songIds);
-    newSl.tag = sl.tag || '';
+    newSl.tags = (sl.tags || []).slice();
     setlists.unshift(newSl);
     saveSetlists(setlists);
     renderSetlists();
@@ -780,15 +796,90 @@
     showView('setlists');
   });
   document.getElementById('detail-rename').addEventListener('click', function(){
-    var sl = getSetlist(currentSetlistId);
-    var name = prompt('Rename setlist:', sl.name);
-    if(!name) return;
-    sl.name = name.trim();
-    var tag = prompt('Tag/category (optional, e.g. "Festival", "Duo", "Retreat") — leave blank to clear:', sl.tag || '');
-    if(tag !== null) sl.tag = tag.trim();
-    saveSetlists(setlists);
-    renderDetail();
+    openEditSetlistModal(currentSetlistId);
   });
+
+  function openEditSetlistModal(setlistId){
+    var sl = getSetlist(setlistId);
+    var workingTags = (sl.tags || []).slice();
+
+    var backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+    var sheet = document.createElement('div');
+    sheet.className = 'modal-sheet';
+    sheet.innerHTML =
+      '<div class="modal-title">Edit Setlist<button class="btn ghost" id="edit-setlist-close">Cancel</button></div>' +
+      '<input id="edit-setlist-name" type="text" autocomplete="off" autocorrect="off">' +
+      '<div class="edit-tags-label">Tags</div>' +
+      '<div class="edit-tags-chips" id="edit-tags-chips"></div>' +
+      '<div class="edit-tags-add-row">' +
+        '<input id="edit-tags-input" type="text" placeholder="Add or pick a tag…" list="existing-tags-datalist" autocomplete="off" autocorrect="off" spellcheck="false">' +
+        '<button class="btn" id="edit-tags-add-btn">+ Add</button>' +
+      '</div>' +
+      '<datalist id="existing-tags-datalist"></datalist>' +
+      '<button class="btn accent" id="edit-setlist-save" style="width:100%;">Save</button>';
+    backdrop.appendChild(sheet);
+    modalRoot.appendChild(backdrop);
+
+    var nameInput = sheet.querySelector('#edit-setlist-name');
+    nameInput.value = sl.name;
+    var chipsEl = sheet.querySelector('#edit-tags-chips');
+    var tagInput = sheet.querySelector('#edit-tags-input');
+    var datalist = sheet.querySelector('#existing-tags-datalist');
+
+    var allTags = [];
+    setlists.forEach(function(s){ (s.tags||[]).forEach(function(t){ if(allTags.indexOf(t) === -1) allTags.push(t); }); });
+    allTags.sort(function(a,b){ return a.localeCompare(b); });
+    datalist.innerHTML = allTags.map(function(t){ return '<option value="' + escapeHtml(t) + '">'; }).join('');
+
+    function renderChips(){
+      chipsEl.innerHTML = '';
+      if(!workingTags.length){
+        var none = document.createElement('span');
+        none.className = 'edit-tags-empty';
+        none.textContent = 'No tags yet — add one below.';
+        chipsEl.appendChild(none);
+        return;
+      }
+      workingTags.forEach(function(tag, i){
+        var chip = document.createElement('span');
+        chip.className = 'tag-chip-editable';
+        chip.innerHTML = escapeHtml(tag) + ' <button type="button">✕</button>';
+        chip.querySelector('button').addEventListener('click', function(){
+          workingTags.splice(i, 1);
+          renderChips();
+        });
+        chipsEl.appendChild(chip);
+      });
+    }
+    renderChips();
+
+    function addTagFromInput(){
+      var val = tagInput.value.trim();
+      if(!val) return;
+      if(workingTags.indexOf(val) === -1) workingTags.push(val);
+      tagInput.value = '';
+      renderChips();
+      tagInput.focus();
+    }
+    sheet.querySelector('#edit-tags-add-btn').addEventListener('click', addTagFromInput);
+    tagInput.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ e.preventDefault(); addTagFromInput(); }
+    });
+
+    function closeModal(){ modalRoot.removeChild(backdrop); }
+    sheet.querySelector('#edit-setlist-save').addEventListener('click', function(){
+      var name = nameInput.value.trim();
+      if(!name){ alert('Setlist needs a name.'); return; }
+      sl.name = name;
+      sl.tags = workingTags.slice();
+      saveSetlists(setlists);
+      closeModal();
+      renderDetail();
+    });
+    sheet.querySelector('#edit-setlist-close').addEventListener('click', closeModal);
+    backdrop.addEventListener('click', function(e){ if(e.target === backdrop) closeModal(); });
+  }
   document.getElementById('detail-delete').addEventListener('click', function(){
     var sl = getSetlist(currentSetlistId);
     if(!confirm('Delete "' + sl.name + '"? This cannot be undone.')) return;
