@@ -6926,6 +6926,7 @@
   var LAST_EXPORT_KEY = 'hm_last_export_v1';
   var ORDER_MIGRATED_KEY = 'hm_order_migrated_v1';
   var CURRENT_VIEW_KEY = 'hm_current_view_v1';
+  var TAG_REGISTRY_KEY = 'hm_tag_registry_v1';
 
   function loadSetlists(){
     try{
@@ -6970,6 +6971,43 @@
     return lastMod > lastExp;
   }
   var setlists = loadSetlists();
+
+  // ---------- Tag registry ----------
+  // Tags used to be purely derived from whatever setlists currently had them
+  // assigned, which meant a tag vanished everywhere (filter row, Tag Manager,
+  // autocomplete) the moment it was removed from its last setlist. Mac wants
+  // tags to keep "living" independent of assignment, so they're now tracked
+  // in their own persisted registry, separate from the setlists themselves.
+  function loadTagRegistry(){
+    var registry = [];
+    try{
+      var raw = localStorage.getItem(TAG_REGISTRY_KEY);
+      registry = raw ? JSON.parse(raw) : [];
+    }catch(e){ registry = []; }
+    // Fold in any tags already assigned on setlists but not yet in the registry
+    // (covers both first-ever load of this feature and any future drift).
+    var changed = false;
+    setlists.forEach(function(sl){
+      (sl.tags||[]).forEach(function(t){
+        if(registry.indexOf(t) === -1){ registry.push(t); changed = true; }
+      });
+    });
+    if(changed) saveTagRegistry(registry);
+    return registry;
+  }
+  function saveTagRegistry(registry){
+    tagRegistry = registry;
+    localStorage.setItem(TAG_REGISTRY_KEY, JSON.stringify(registry));
+  }
+  function registerTag(tag){
+    tag = (tag||'').trim();
+    if(!tag) return false;
+    if(tagRegistry.indexOf(tag) !== -1) return false;
+    tagRegistry.push(tag);
+    saveTagRegistry(tagRegistry);
+    return true;
+  }
+  var tagRegistry = loadTagRegistry();
 
   function uid(){ return 's' + Date.now() + Math.floor(Math.random()*10000); }
 
@@ -7116,10 +7154,9 @@
     exportReminderBanner.classList.toggle('hidden', !hasUnexportedChanges());
   }
   function renderSetlistTagFilters(){
-    var tags = [];
-    setlists.forEach(function(sl){
-      (sl.tags||[]).forEach(function(t){ if(tags.indexOf(t) === -1) tags.push(t); });
-    });
+    // Sourced from the tag registry (not just tags currently assigned to a
+    // setlist) so a tag that's been unassigned everywhere still shows up here.
+    var tags = tagRegistry.slice();
     tags.sort(function(a,b){ return a.localeCompare(b); });
     if(currentSetlistTagFilter !== 'all' && tags.indexOf(currentSetlistTagFilter) === -1){
       currentSetlistTagFilter = 'all';
@@ -7264,6 +7301,9 @@
       setlists = parsed;
       saveSetlists(setlists);
       markExported(); // freshly imported data matches the backup file, so nothing "unexported" yet
+      // Fold any tags from the imported setlists into the registry so they keep
+      // "living" even if later removed from every setlist, same as tags created locally.
+      setlists.forEach(function(sl){ (sl.tags||[]).forEach(registerTag); });
       renderSetlists();
       alert('Import complete.');
     };
@@ -7499,9 +7539,7 @@
     var tagInput = sheet.querySelector('#edit-tags-input');
     var datalist = sheet.querySelector('#existing-tags-datalist');
 
-    var allTags = [];
-    setlists.forEach(function(s){ (s.tags||[]).forEach(function(t){ if(allTags.indexOf(t) === -1) allTags.push(t); }); });
-    allTags.sort(function(a,b){ return a.localeCompare(b); });
+    var allTags = tagRegistry.slice().sort(function(a,b){ return a.localeCompare(b); });
     datalist.innerHTML = allTags.map(function(t){ return '<option value="' + escapeHtml(t) + '">'; }).join('');
 
     function renderChips(){
@@ -7530,6 +7568,10 @@
       var val = tagInput.value.trim();
       if(!val) return;
       if(workingTags.indexOf(val) === -1) workingTags.push(val);
+      // Register immediately (not just on Save) so a brand-new tag typed here
+      // shows up as an autocomplete option right away, even before this
+      // setlist's edit is saved.
+      if(registerTag(val)) renderSetlistTagFilters();
       tagInput.value = '';
       renderChips();
       tagInput.focus();
@@ -7554,7 +7596,9 @@
     backdrop.addEventListener('click', function(e){ if(e.target === backdrop) closeModal(); });
   }
 
-  // ---------- Tag Manager: rename or delete a tag everywhere it's used ----------
+  // ---------- Tag Manager: create, rename, or delete a tag everywhere ----------
+  // Tags live in the persisted registry (tagRegistry) independent of whether
+  // any setlist currently has them assigned - see loadTagRegistry() above.
   function renameTagEverywhere(oldTag, newTag){
     newTag = newTag.trim();
     if(!newTag || newTag === oldTag) return;
@@ -7566,6 +7610,10 @@
       if(sl.tags.indexOf(newTag) === -1) sl.tags.push(newTag);
     });
     saveSetlists(setlists);
+    var regIdx = tagRegistry.indexOf(oldTag);
+    if(regIdx !== -1) tagRegistry.splice(regIdx, 1);
+    if(tagRegistry.indexOf(newTag) === -1) tagRegistry.push(newTag);
+    saveTagRegistry(tagRegistry);
   }
   function deleteTagEverywhere(tag){
     setlists.forEach(function(sl){
@@ -7574,6 +7622,9 @@
       if(idx !== -1) sl.tags.splice(idx, 1);
     });
     saveSetlists(setlists);
+    var regIdx = tagRegistry.indexOf(tag);
+    if(regIdx !== -1) tagRegistry.splice(regIdx, 1);
+    saveTagRegistry(tagRegistry);
   }
   function openTagManagerModal(){
     var backdrop = document.createElement('div');
@@ -7582,17 +7633,24 @@
     sheet.className = 'modal-sheet';
     sheet.innerHTML =
       '<div class="modal-title">Manage Tags<button class="btn ghost" id="tag-manager-close">Close</button></div>' +
-      '<div id="tag-manager-list"></div>';
+      '<div id="tag-manager-list"></div>' +
+      '<div class="edit-tags-add-row">' +
+        '<input id="tag-manager-new-input" type="text" placeholder="New tag name…" autocomplete="off" autocorrect="off" spellcheck="false">' +
+        '<button class="btn" id="tag-manager-new-btn">+ Add</button>' +
+      '</div>';
     backdrop.appendChild(sheet);
     modalRoot.appendChild(backdrop);
     var listEl = sheet.querySelector('#tag-manager-list');
+    var newInput = sheet.querySelector('#tag-manager-new-input');
 
     function collectTags(){
       var counts = {};
       setlists.forEach(function(sl){
         (sl.tags||[]).forEach(function(t){ counts[t] = (counts[t]||0) + 1; });
       });
-      return Object.keys(counts).sort(function(a,b){ return a.localeCompare(b); }).map(function(t){ return { tag: t, count: counts[t] }; });
+      // Every registered tag gets a row, even ones with zero setlists using them.
+      return tagRegistry.slice().sort(function(a,b){ return a.localeCompare(b); })
+        .map(function(t){ return { tag: t, count: counts[t] || 0 }; });
     }
 
     function renderRows(){
@@ -7601,7 +7659,7 @@
       if(!tags.length){
         var empty = document.createElement('div');
         empty.className = 'edit-tags-empty';
-        empty.textContent = 'No tags in use yet — add one from a setlist\'s Tags button first.';
+        empty.textContent = 'No tags yet — add one below.';
         listEl.appendChild(empty);
         return;
       }
@@ -7635,6 +7693,20 @@
       });
     }
     renderRows();
+
+    function addNewTag(){
+      var val = newInput.value.trim();
+      if(!val) return;
+      if(!registerTag(val)){ newInput.value = ''; return; }
+      renderSetlists();
+      renderRows();
+      newInput.value = '';
+      newInput.focus();
+    }
+    sheet.querySelector('#tag-manager-new-btn').addEventListener('click', addNewTag);
+    newInput.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ e.preventDefault(); addNewTag(); }
+    });
 
     function closeModal(){
       modalRoot.removeChild(backdrop);
