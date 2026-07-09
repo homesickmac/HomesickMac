@@ -7361,7 +7361,13 @@
   // ---------- Export / Import backup ----------
   function exportSetlists(){
     if(!setlists.length){ alert('No setlists to export yet.'); return; }
-    var blob = new Blob([JSON.stringify(setlists, null, 1)], { type: 'application/json' });
+    // Backup includes the full tag registry alongside the setlists - not just
+    // whatever tags happen to be assigned right now - so a tag created but not
+    // yet assigned to anything still travels over to another device on import,
+    // same as an assigned one would. Older backups from before this were a bare
+    // array of setlists with no separate tags field; import still reads those fine.
+    var backup = { setlists: setlists, tags: tagRegistry };
+    var blob = new Blob([JSON.stringify(backup, null, 1)], { type: 'application/json' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     var d = new Date();
@@ -7388,21 +7394,40 @@
     if(!file) return;
     var reader = new FileReader();
     reader.onload = function(){
-      var parsed;
+      var parsed, importedSetlists, importedTags;
       try{
         parsed = JSON.parse(reader.result);
-        if(!Array.isArray(parsed)) throw new Error('not an array');
+        if(Array.isArray(parsed)){
+          // Older backup format: a bare array of setlists, no separate tag registry.
+          importedSetlists = parsed;
+          importedTags = null;
+        } else if(parsed && Array.isArray(parsed.setlists)){
+          // Current format: { setlists: [...], tags: [...] }.
+          importedSetlists = parsed.setlists;
+          importedTags = Array.isArray(parsed.tags) ? parsed.tags : null;
+        } else {
+          throw new Error('unrecognized backup shape');
+        }
       }catch(e){
         alert('That file doesn\'t look like a valid setlists backup.');
         return;
       }
-      if(!confirm('Import ' + parsed.length + ' setlist(s)? This replaces what\'s currently saved in this browser.')) return;
-      setlists = parsed;
+      if(!confirm('Import ' + importedSetlists.length + ' setlist(s)? This replaces what\'s currently saved in this browser.')) return;
+      setlists = importedSetlists;
       saveSetlists(setlists);
       markExported(); // freshly imported data matches the backup file, so nothing "unexported" yet
-      // Fold any tags from the imported setlists into the registry so they keep
-      // "living" even if later removed from every setlist, same as tags created locally.
-      setlists.forEach(function(sl){ (sl.tags||[]).forEach(registerTag); });
+      if(importedTags){
+        // Backup carried its own tag registry - replace this browser's registry
+        // outright so it matches the source device exactly (assigned tags AND
+        // ones sitting at 0 setlists), the same full-replace behavior as setlists.
+        tagRegistry = importedTags.slice();
+        saveTagRegistry(tagRegistry);
+      } else {
+        // Older backup with no tag registry field - safest fallback is folding in
+        // whatever tags the imported setlists themselves reference, rather than
+        // wiping this browser's existing registry blind.
+        setlists.forEach(function(sl){ (sl.tags||[]).forEach(registerTag); });
+      }
       renderSetlists();
       alert('Import complete.');
     };
@@ -7575,8 +7600,15 @@
         idxsDesc.forEach(function(idx){ sl.songIds.splice(idx, 1); });
       }
       saveSetlists(setlists);
-      modalRoot.removeChild(backdrop);
+      // Update the list behind the modal *before* removing the modal itself.
+      // iOS Safari can fail to repaint a list that changes in the same tick a
+      // position:fixed overlay is removed on top of it - the change is there
+      // in the DOM (reopening the setlist shows it fine), it just doesn't
+      // visibly repaint until something else forces it. Doing the render
+      // first, with the modal removal as the very last DOM change, avoids that.
       setSelectionMode(false);
+      modalRoot.removeChild(backdrop);
+      nudgeRepaint();
       var verb = mode === 'move' ? 'Moved' : 'Copied';
       alert(verb + ' ' + addedCount + ' song(s) to "' + destSl.name + '"' + (addedCount < songIdsToMove.length ? ' (some were already there).' : '.'));
     }
@@ -7708,9 +7740,12 @@
       sl.name = name;
       sl.tags = workingTags.slice();
       saveSetlists(setlists);
-      closeModal();
+      // Render before removing the modal (not after) - see the comment on the
+      // same pattern in applyToDestination() for why order matters here.
       renderDetail();
       renderSetlists();
+      closeModal();
+      nudgeRepaint();
     });
     sheet.querySelector('#edit-setlist-close').addEventListener('click', closeModal);
     backdrop.addEventListener('click', function(e){ if(e.target === backdrop) closeModal(); });
@@ -7829,8 +7864,11 @@
     });
 
     function closeModal(){
-      modalRoot.removeChild(backdrop);
+      // Render before removing the modal (not after) - see the comment on the
+      // same pattern in applyToDestination() for why order matters here.
       renderDetail();
+      modalRoot.removeChild(backdrop);
+      nudgeRepaint();
     }
     sheet.querySelector('#tag-manager-close').addEventListener('click', closeModal);
     backdrop.addEventListener('click', function(e){ if(e.target === backdrop) closeModal(); });
@@ -7864,6 +7902,13 @@
 
   // ---------- Add-song modal (from library row) ----------
   var modalRoot = document.getElementById('modal-root');
+  // Extra safety net for the iOS Safari repaint quirk noted throughout this
+  // file: forces a synchronous layout pass right after a modal is removed,
+  // in case the render-before-removeChild ordering alone isn't enough on
+  // some real devices.
+  function nudgeRepaint(){
+    void document.body.offsetHeight;
+  }
 
   function openAddToSetlistModal(songId){
     if(!setlists.length){
@@ -7981,10 +8026,13 @@
     });
     renderPicker();
     sheet.querySelector('#picker-close').addEventListener('click', function(){
-      modalRoot.removeChild(backdrop);
+      // Render before removing the modal (not after) - see the comment on the
+      // same pattern in applyToDestination() for why order matters here.
       renderDetail();
+      modalRoot.removeChild(backdrop);
+      nudgeRepaint();
     });
-    backdrop.addEventListener('click', function(e){ if(e.target === backdrop){ modalRoot.removeChild(backdrop); renderDetail(); } });
+    backdrop.addEventListener('click', function(e){ if(e.target === backdrop){ renderDetail(); modalRoot.removeChild(backdrop); nudgeRepaint(); } });
   }
 
   // ---------- Live performance ----------
