@@ -268,6 +268,7 @@
   var LAST_MODIFIED_KEY = 'hm_last_modified_v1';
   var LAST_EXPORT_KEY = 'hm_last_export_v1';
   var ORDER_MIGRATED_KEY = 'hm_order_migrated_v1';
+  var CURRENT_VIEW_KEY = 'hm_current_view_v1';
 
   function loadSetlists(){
     try{
@@ -321,6 +322,18 @@
   function showView(name){
     views.forEach(function(v){ v.classList.toggle('active', v.id === 'view-' + name); });
     tabBtns.forEach(function(b){ b.classList.toggle('active', b.dataset.tab === name); });
+    persistCurrentView(name);
+  }
+  function persistCurrentView(name){
+    // Remembers which tab (and, if inside a setlist, which one) so a page
+    // reload / Cmd-R lands back where the user was instead of resetting to Library.
+    try{
+      if(name === 'detail'){
+        localStorage.setItem(CURRENT_VIEW_KEY, JSON.stringify({ tab: 'detail', setlistId: currentSetlistId }));
+      } else {
+        localStorage.setItem(CURRENT_VIEW_KEY, JSON.stringify({ tab: name, setlistId: null }));
+      }
+    }catch(e){}
   }
   tabBtns.forEach(function(b){
     b.addEventListener('click', function(){ showView(b.dataset.tab); });
@@ -1185,6 +1198,20 @@
   // ---------- Init ----------
   renderLibrary();
   renderSetlists();
+
+  // Restore whichever tab (or setlist detail) was open before the last reload,
+  // so Cmd-R / the browser reload button doesn't dump the user back to Library.
+  (function restoreView(){
+    var saved = null;
+    try{ saved = JSON.parse(localStorage.getItem(CURRENT_VIEW_KEY) || 'null'); }catch(e){ saved = null; }
+    if(saved && saved.tab === 'detail' && saved.setlistId && getSetlist(saved.setlistId)){
+      openDetail(saved.setlistId);
+    } else if(saved && saved.tab === 'setlists'){
+      showView('setlists');
+    } else {
+      showView('library');
+    }
+  })();
 })();
 </script>
 </body>
