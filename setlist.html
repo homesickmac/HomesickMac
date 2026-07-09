@@ -147,7 +147,8 @@
   /* Live performance */
   #live-overlay{position:fixed;inset:0;background:#000;color:#f5f0dc;z-index:100;display:none;flex-direction:column;}
   #live-overlay.active{display:flex;}
-  #live-top{display:flex;align-items:center;gap:10px;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));border-bottom:1px solid #222;flex-shrink:0;}
+  #live-setlist-name{text-align:center;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);padding:calc(10px + env(safe-area-inset-top)) 16px 0;flex-shrink:0;}
+  #live-top{display:flex;align-items:center;gap:10px;padding:10px 16px 14px;border-bottom:1px solid #222;flex-shrink:0;}
   #live-progress{color:#f5f0dc;font-size:23px;font-weight:800;flex:1;text-align:center;letter-spacing:.01em;}
   .live-icon-btn{background:#1c1c1c;border:1px solid #333;color:#f5f0dc;border-radius:8px;width:38px;height:38px;font-size:16px;flex-shrink:0;}
   #live-flag{text-align:center;margin:0 16px 10px;padding:9px 14px;border-radius:10px;font-size:15px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;flex-shrink:0;}
@@ -245,6 +246,7 @@
 </div>
 
 <div id="live-overlay">
+  <div id="live-setlist-name"></div>
   <div id="live-top">
     <button class="live-icon-btn" id="live-exit">✕</button>
     <div id="live-progress"></div>
@@ -7987,6 +7989,7 @@
 
   // ---------- Live performance ----------
   var liveOverlay = document.getElementById('live-overlay');
+  var liveSetlistName = document.getElementById('live-setlist-name');
   var liveTitle = document.getElementById('live-song-title');
   var liveSub = document.getElementById('live-song-sub');
   var liveLyrics = document.getElementById('live-lyrics');
@@ -8008,6 +8011,7 @@
     var sl = getSetlist(setlistId);
     var realSongIds = sl ? sl.songIds.filter(function(id){ return !isDivider(id); }) : [];
     if(!sl || !realSongIds.length){ alert('Add some songs to this setlist first.'); return; }
+    liveSetlistName.textContent = sl.name;
     performSongIds = realSongIds;
     var dividerIdx = sl.songIds.indexOf(DIVIDER_ID);
     if(dividerIdx === -1){
