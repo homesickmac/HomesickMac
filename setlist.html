@@ -116,6 +116,7 @@
   .setlist-item{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:7px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;}
   .setlist-item .num{color:var(--accent);font-weight:700;font-size:14px;width:22px;text-align:center;flex-shrink:0;}
   .setlist-item .play-btn{color:var(--accent);border-color:var(--accent-dim);flex-shrink:0;}
+  .setlist-item .notion-link-btn{text-decoration:none;flex-shrink:0;}
   .setlist-item .info{flex:1;min-width:0;}
   .setlist-item .name{font-size:15.5px;font-weight:600;}
   .setlist-item .meta{font-size:12px;color:var(--fg-dim);}
@@ -169,7 +170,9 @@
   #live-scroll-speed-label{min-width:64px;text-align:center;}
   #live-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 22px 30px;position:relative;}
   #live-song-title{font-size:26px;font-weight:700;color:var(--accent);margin-bottom:4px;}
-  #live-song-sub{font-size:15px;color:#8a8478;margin-bottom:18px;}
+  #live-song-sub{font-size:15px;color:#8a8478;margin-bottom:6px;}
+  #live-notion-link{position:relative;z-index:2;display:inline-block;font-size:13px;color:var(--accent);text-decoration:underline;padding:4px 0;margin-bottom:14px;}
+  #live-notion-link.hidden{display:none;}
   #live-lyrics{white-space:pre-wrap;font-size:var(--live-font);line-height:1.6;font-weight:500;}
   #live-empty{color:#8a8478;font-size:20px;line-height:1.6;font-style:italic;}
   #live-nav{display:flex;gap:10px;padding:14px 16px calc(14px + env(safe-area-inset-bottom));border-top:1px solid #222;flex-shrink:0;}
@@ -280,6 +283,7 @@
     <div class="live-tap-zone" id="tap-next" style="right:0;"></div>
     <div id="live-song-title"></div>
     <div id="live-song-sub"></div>
+    <a id="live-notion-link" href="#" target="_blank" rel="noopener">Open in Notion ↗</a>
     <div id="live-lyrics"></div>
   </div>
   <div id="live-nav">
@@ -498,10 +502,16 @@
     "url": "https://app.notion.com/1de17c629df8802ab259fb236cf8aee6",
     "source": "IDEAS",
     "artist": [],
-    "key": [],
-    "tuning": [],
-    "status": [],
-    "lyrics": null
+    "key": [
+      "G"
+    ],
+    "tuning": [
+      "Open G"
+    ],
+    "status": [
+      "IN WORKS"
+    ],
+    "lyrics": "Anna Lou, I want you for my own, Anna Lou\nAnna Lou, I want you for my own, Anna Lou\nYou got to be mine no matter what you say or do\n\nAnna Lou, you're just the type for me, Anna Lou\nAnna Lou, you're just the type for me, Anna Lou\nYou're gonna be mine, baby, just wait and see\n\n'Cause I'm going to Louisiana just to get me a mojo hand\nAnd I won't stop trying 'til I get you under my command\nPlay that back boy\n\nAnna Lou, the wedding bells keep ringin', Anna Lou\nAnna Lou, my heart keeps on a singin', Anna Lou\nJust a little bit of lovin', mama let your heart be true\n\nAnna Lou, what kind of girl is you, Anna Lou?\nAnna Lou, what is that you got, Anna Lou?\nWell, I think by now that no one else would do but you"
   },
   {
     "id": 17,
@@ -7594,6 +7604,7 @@
         '<div class="info"><div class="name">' + escapeHtml(song.name) + '</div>' +
         '<div class="meta">' + escapeHtml(metaLine(song) || song.source) + '</div></div>' +
         (selectionMode ? '' : '<button class="icon-btn play-btn" data-act="play" title="Play from here">▶</button>') +
+        (selectionMode || !song.url ? '' : '<a class="icon-btn notion-link-btn" href="' + escapeHtml(song.url) + '" target="_blank" rel="noopener" title="Open in Notion">🔗</a>') +
         controlsHtml;
       if(selectionMode){
         item.addEventListener('click', function(){
@@ -8114,6 +8125,7 @@
   var liveSetlistName = document.getElementById('live-setlist-name');
   var liveTitle = document.getElementById('live-song-title');
   var liveSub = document.getElementById('live-song-sub');
+  var liveNotionLink = document.getElementById('live-notion-link');
   var liveLyrics = document.getElementById('live-lyrics');
   var liveProgress = document.getElementById('live-progress');
   var liveNextUp = document.getElementById('live-next-up');
@@ -8158,6 +8170,12 @@
     if(!song) return;
     liveTitle.textContent = song.name;
     liveSub.textContent = metaLine(song) || song.source;
+    if(song.url){
+      liveNotionLink.href = song.url;
+      liveNotionLink.classList.remove('hidden');
+    } else {
+      liveNotionLink.classList.add('hidden');
+    }
     liveBody.scrollTop = 0;
     scrollPos = 0;
     if(song.lyrics){
