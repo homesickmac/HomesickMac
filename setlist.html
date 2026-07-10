@@ -8053,6 +8053,12 @@
       searchBox.focus();
     });
     renderPicker();
+    // Mac searches for a song almost every time this opens - put the cursor
+    // straight in the search box so he can start typing immediately instead
+    // of tapping into it first. Focusing synchronously (not via setTimeout)
+    // keeps it tied to the same click gesture that opened the modal, which
+    // iOS Safari requires for a programmatic focus to actually take.
+    searchBox.focus();
     sheet.querySelector('#picker-close').addEventListener('click', function(){
       // Render before removing the modal (not after) - see the comment on the
       // same pattern in applyToDestination() for why order matters here.
