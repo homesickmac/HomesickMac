@@ -114,10 +114,8 @@
   .detail-sub{color:var(--fg-dim);font-size:13px;margin-bottom:14px;}
   .setlist-item{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:7px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;}
   .setlist-item .num{color:var(--accent);font-weight:700;font-size:14px;width:22px;text-align:center;flex-shrink:0;}
-  .setlist-item .chevron{color:var(--fg-dim);font-size:13px;padding:4px;flex-shrink:0;}
-  .setlist-item-preview{display:none;flex-basis:100%;}
-  .setlist-item.expanded .setlist-item-preview{display:block;margin-top:4px;}
-  .setlist-item .info{flex:1;min-width:0;cursor:pointer;}
+  .setlist-item .play-btn{color:var(--accent);border-color:var(--accent-dim);flex-shrink:0;}
+  .setlist-item .info{flex:1;min-width:0;}
   .setlist-item .name{font-size:15.5px;font-weight:600;}
   .setlist-item .meta{font-size:12px;color:var(--fg-dim);}
   .setlist-item .btns{display:flex;gap:4px;flex-shrink:0;}
@@ -7549,44 +7547,28 @@
           '<button class="icon-btn" data-act="down">↓</button>' +
           '<button class="icon-btn" data-act="remove">✕</button>' +
         '</div>';
+      var thisSongNumber = songNumber; // capture for the closure below
       item.innerHTML =
         '<div class="num">' + songNumber + '</div>' +
         '<div class="dot ' + (song.lyrics ? 'has' : 'none') + '"></div>' +
         '<div class="info"><div class="name">' + escapeHtml(song.name) + '</div>' +
         '<div class="meta">' + escapeHtml(metaLine(song) || song.source) + '</div></div>' +
-        (selectionMode ? '' : '<div class="chevron">▾</div>') +
-        controlsHtml +
-        (selectionMode ? '' : '<div class="setlist-item-preview"></div>');
+        (selectionMode ? '' : '<button class="icon-btn play-btn" data-act="play" title="Play from here">▶</button>') +
+        controlsHtml;
       if(selectionMode){
         item.addEventListener('click', function(){
           if(selectedIndices[idx]){ delete selectedIndices[idx]; } else { selectedIndices[idx] = true; }
           renderDetail();
         });
       } else {
-        // Tap the song name/meta (or its chevron) to preview the lyrics inline,
-        // same "quick peek" the Library view already offers - Mac wanted the
-        // same ability to check lyrics/order from inside a setlist too, without
-        // needing to start a full live performance.
-        item.querySelectorAll('.info, .chevron').forEach(function(el){
-          el.addEventListener('click', function(){
-            item.classList.toggle('expanded');
-            var previewEl = item.querySelector('.setlist-item-preview');
-            if(item.classList.contains('expanded') && !previewEl.dataset.built){
-              if(song.lyrics){
-                var pre = document.createElement('div');
-                pre.className = 'lyrics-preview';
-                pre.textContent = song.lyrics;
-                previewEl.appendChild(pre);
-              } else {
-                var note = document.createElement('div');
-                note.className = 'no-lyrics-note';
-                note.textContent = 'No lyrics on file for this one — check Notion if you need the words.';
-                previewEl.appendChild(note);
-              }
-              previewEl.dataset.built = '1';
-            }
-          });
-        });
+        // Mac doesn't always play a setlist start-to-finish in order - a guest
+        // might show up mid-gig and he needs to jump straight into whatever
+        // song fits, without scrolling through "Start Performance" from song 1.
+        // This Play button starts the live view directly at this song; the
+        // running real-song count (thisSongNumber, 1-based) maps directly to
+        // its index within performSongIds since both skip the divider the
+        // same way.
+        item.querySelector('[data-act="play"]').addEventListener('click', function(){ startPerformance(sl.id, thisSongNumber - 1); });
         item.querySelector('[data-act="up"]').addEventListener('click', function(){ moveSong(idx, -1); });
         item.querySelector('[data-act="down"]').addEventListener('click', function(){ moveSong(idx, 1); });
         item.querySelector('[data-act="remove"]').addEventListener('click', function(){ removeSong(idx); });
@@ -8104,7 +8086,7 @@
   // "end of program" milestone to flag - only the final "last song" one.
   var performProgramCount = -1;
 
-  function startPerformance(setlistId){
+  function startPerformance(setlistId, startIdx){
     var sl = getSetlist(setlistId);
     var realSongIds = sl ? sl.songIds.filter(function(id){ return !isDivider(id); }) : [];
     if(!sl || !realSongIds.length){ alert('Add some songs to this setlist first.'); return; }
@@ -8116,7 +8098,10 @@
     } else {
       performProgramCount = sl.songIds.slice(0, dividerIdx).filter(function(id){ return !isDivider(id); }).length;
     }
-    performIdx = 0;
+    // Defaults to the first song ("Start Performance"), but a specific song's
+    // own Play button passes its index directly so playback can begin
+    // anywhere in the setlist, not just from the top.
+    performIdx = (typeof startIdx === 'number' && startIdx >= 0 && startIdx < realSongIds.length) ? startIdx : 0;
     renderLiveSong();
     liveOverlay.classList.add('active');
     if(typeof setAutoScroll === 'function') setAutoScroll(false);
