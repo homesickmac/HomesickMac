@@ -80,7 +80,8 @@
   .setlist-card .card-reorder .icon-btn{width:30px;height:30px;font-size:13px;}
   .drag-handle{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;font-size:18px;line-height:1;color:var(--fg-dim);width:30px;height:24px;display:flex;align-items:center;justify-content:center;}
   .drag-handle:active{cursor:grabbing;}
-  .setlist-card.dragging,.setlist-item.dragging{opacity:.55;box-shadow:0 8px 20px rgba(0,0,0,.45);position:relative;z-index:5;}
+  .setlist-card.dragging,.setlist-item.dragging{opacity:1;box-shadow:0 18px 34px rgba(0,0,0,.6);position:relative;z-index:50;cursor:grabbing;will-change:transform;}
+  .drag-active .setlist-card:not(.dragging),.drag-active .setlist-item:not(.dragging){transition:transform 150ms ease;}
   .tag-badge{display:inline-block;background:var(--bg-card-2);color:var(--accent);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:6px;margin-right:4px;}
   .edit-tags-label{font-size:13px;color:var(--fg-dim);margin:4px 0 8px;font-weight:600;}
   .edit-tags-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;min-height:30px;}
@@ -7307,9 +7308,25 @@
   // array); on drop, the new DOM order is read back and mapped onto that
   // same array in place, so every closure already holding a reference to it
   // (setlists, or a setlist's songIds) sees the reordered contents.
+  // Mac wanted dragging a card/song to visually feel like really picking it
+  // up and carrying it, not just swapping in place. So instead of physically
+  // moving the DOM node every time the pointer crosses a neighbor's midpoint
+  // (the old approach - functional, but the row just snapped between slots
+  // with no sense of being lifted out), the dragged element now tracks the
+  // pointer continuously via a live transform (lift + slight scale + tilt),
+  // and the OTHER rows slide out of its way to open a gap - exactly like
+  // iOS/Trello-style reorderable lists. The underlying array isn't touched
+  // until the drag actually ends; only then is the real DOM re-rendered in
+  // its final order, which is also what throws away all the temporary
+  // transforms in one go.
   function enableDragReorder(container, itemSelector, handleSelector, getArray, onReordered){
     var dragEl = null;
     var pointerId = null;
+    var startY = 0;
+    var dragElHeight = 0;
+    var dragStartPos = -1; // dragEl's index within itemsSnapshot at pickup time
+    var lastNewIndex = -1; // most recently computed target slot among the non-dragged rows
+    var itemsSnapshot = []; // frozen geometry captured once at pickup - never re-measured mid-drag
 
     function pointerDown(e){
       var handle = e.target.closest ? e.target.closest(handleSelector) : null;
@@ -7319,42 +7336,65 @@
       dragEl = item;
       pointerId = e.pointerId;
       try{ dragEl.setPointerCapture(pointerId); }catch(err){}
+
+      var allItems = Array.prototype.slice.call(container.querySelectorAll(itemSelector));
+      itemsSnapshot = allItems.map(function(el){
+        var rect = el.getBoundingClientRect();
+        return { el: el, centerY: rect.top + rect.height/2 };
+      });
+      dragStartPos = allItems.indexOf(dragEl);
+      lastNewIndex = dragStartPos;
+      dragElHeight = dragEl.getBoundingClientRect().height;
+      startY = e.clientY;
+
       dragEl.classList.add('dragging');
+      container.classList.add('drag-active');
       e.preventDefault();
     }
 
     function pointerMove(e){
       if(!dragEl || e.pointerId !== pointerId) return;
       e.preventDefault();
-      var items = Array.prototype.slice.call(container.querySelectorAll(itemSelector));
-      var y = e.clientY;
-      var target = null;
-      for(var i=0;i<items.length;i++){
-        var it = items[i];
-        if(it === dragEl) continue;
-        var rect = it.getBoundingClientRect();
-        if(y < rect.top + rect.height/2){ target = it; break; }
-      }
-      if(target){
-        if(target !== dragEl.nextSibling) container.insertBefore(dragEl, target);
-      } else if(container.lastElementChild !== dragEl){
-        container.appendChild(dragEl);
-      }
+      var deltaY = e.clientY - startY;
+      // The card itself just follows the pointer directly, lifted and tilted
+      // - this is the "really carrying it" part.
+      dragEl.style.transform = 'translateY(' + deltaY + 'px) scale(1.03) rotate(1deg)';
+
+      var pointerY = e.clientY;
+      var nonDrag = [];
+      itemsSnapshot.forEach(function(snap, i){ if(i !== dragStartPos) nonDrag.push(snap); });
+
+      var newIndex = 0;
+      nonDrag.forEach(function(snap){ if(pointerY >= snap.centerY) newIndex++; });
+      lastNewIndex = newIndex;
+
+      // Only the rows actually between the old and new slot need to slide -
+      // they open/close a dragEl-sized gap, everyone else stays put.
+      var lo = Math.min(newIndex, dragStartPos);
+      var hi = Math.max(newIndex, dragStartPos);
+      var movingUp = newIndex < dragStartPos;
+      nonDrag.forEach(function(snap, k){
+        snap.el.style.transform = (k >= lo && k < hi) ? ('translateY(' + (movingUp ? dragElHeight : -dragElHeight) + 'px)') : '';
+      });
     }
 
     function pointerEnd(e){
       if(!dragEl || (pointerId !== null && e.pointerId !== pointerId)) return;
       dragEl.classList.remove('dragging');
-      var order = Array.prototype.slice.call(container.querySelectorAll(itemSelector)).map(function(it){
-        return parseInt(it.dataset.dragIdx, 10);
-      });
+      container.classList.remove('drag-active');
+      var dragIdxVal = parseInt(dragEl.dataset.dragIdx, 10);
+      var nonDragIdxVals = [];
+      itemsSnapshot.forEach(function(snap){ if(snap.el !== dragEl) nonDragIdxVals.push(parseInt(snap.el.dataset.dragIdx, 10)); });
+      var insertAt = Math.max(0, Math.min(lastNewIndex, nonDragIdxVals.length));
+      nonDragIdxVals.splice(insertAt, 0, dragIdxVal);
       var arr = getArray();
-      var newArr = order.map(function(origIdx){ return arr[origIdx]; });
+      var newArr = nonDragIdxVals.map(function(origIdx){ return arr[origIdx]; });
       arr.length = 0;
       newArr.forEach(function(x){ arr.push(x); });
+      dragEl.style.transform = '';
       dragEl = null;
       pointerId = null;
-      onReordered();
+      onReordered(); // full re-render replaces every node fresh, so no leftover transforms to clean up
     }
 
     container.addEventListener('pointerdown', pointerDown);
