@@ -6967,6 +6967,18 @@
   var SONGS_BY_ID = {};
   SONGS.forEach(function(s){ SONGS_BY_ID[s.id] = s; });
 
+  // Notion links behave oppositely well on the two devices Mac actually uses:
+  // on the iPad, a same-tab link lets iOS's Universal Links jump straight into
+  // the Notion app with one tap (an app switch, so the page underneath is
+  // untouched); on a laptop there's no such app-switch trick, and same-tab
+  // navigation instead pushes Notion's own "Open Notion?" redirect page into
+  // browser history, which makes the Back button a two-step dance. So: open
+  // in a new tab everywhere EXCEPT iPad/iPhone, where same-tab is the better
+  // deal. maxTouchPoints check is needed because iPadOS reports itself as a
+  // Mac in the user-agent string; a real Mac has no touch points.
+  var isIOSish = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var notionLinkTargetAttrs = isIOSish ? '' : ' target="_blank" rel="noopener"';
+
   var STORAGE_KEY = 'hm_setlists_v1';
   var FONT_KEY = 'hm_live_font_v1';
   var LAST_MODIFIED_KEY = 'hm_last_modified_v1';
@@ -7329,6 +7341,15 @@
   // until the drag actually ends; only then is the real DOM re-rendered in
   // its final order, which is also what throws away all the temporary
   // transforms in one go.
+  // Long setlists don't all fit on screen, so dragging a row needs to be able
+  // to auto-scroll the page when the pointer is held near the top or bottom
+  // edge of the visible list - otherwise you can only ever drop a song
+  // somewhere within whatever's currently in view. The scrollable ancestor is
+  // always the main.view panel the list lives in (not the window), so that's
+  // what actually scrolls.
+  var DRAG_EDGE_ZONE = 70; // px from the scrollable panel's edge that triggers auto-scroll
+  var DRAG_MAX_SCROLL_SPEED = 16; // px per animation frame at the very edge
+
   function enableDragReorder(container, itemSelector, handleSelector, getArray, onReordered){
     var dragEl = null;
     var pointerId = null;
@@ -7337,6 +7358,11 @@
     var dragStartPos = -1; // dragEl's index within itemsSnapshot at pickup time
     var lastNewIndex = -1; // most recently computed target slot among the non-dragged rows
     var itemsSnapshot = []; // frozen geometry captured once at pickup - never re-measured mid-drag
+    var scrollAncestor = null;
+    var scrollStartTop = 0;
+    var lastPointerY = 0;
+    var autoScrollSpeed = 0; // signed px/frame; 0 means no auto-scroll running
+    var autoScrollRAF = null;
 
     function pointerDown(e){
       var handle = e.target.closest ? e.target.closest(handleSelector) : null;
@@ -7356,26 +7382,39 @@
       lastNewIndex = dragStartPos;
       dragElHeight = dragEl.getBoundingClientRect().height;
       startY = e.clientY;
+      lastPointerY = e.clientY;
+
+      scrollAncestor = (container.closest && container.closest('.view')) || document.scrollingElement || document.documentElement;
+      scrollStartTop = scrollAncestor.scrollTop;
 
       dragEl.classList.add('dragging');
       container.classList.add('drag-active');
       e.preventDefault();
     }
 
-    function pointerMove(e){
-      if(!dragEl || e.pointerId !== pointerId) return;
-      e.preventDefault();
-      var deltaY = e.clientY - startY;
-      // The card itself just follows the pointer directly, lifted and tilted
-      // - this is the "really carrying it" part.
+    // Recomputes everything from lastPointerY + however much the panel has
+    // scrolled since pickup. Called on every real pointer move, and again on
+    // every auto-scroll animation frame (since the panel can keep scrolling
+    // even while the pointer itself isn't sending new events).
+    function applyDragVisuals(){
+      var scrollDelta = scrollAncestor.scrollTop - scrollStartTop;
+      // The row's own resting position drifts with the scroll; add it back so
+      // the row keeps tracking the pointer's actual on-screen position rather
+      // than sliding away from it as the list scrolls underneath.
+      var deltaY = (lastPointerY - startY) + scrollDelta;
       dragEl.style.transform = 'translateY(' + deltaY + 'px) scale(1.03) rotate(1deg)';
 
-      var pointerY = e.clientY;
+      // Everything below compares against the geometry frozen at pickup, so
+      // fold the scroll delta into the pointer's position instead (equivalent,
+      // and avoids re-measuring rects mid-drag - which would pick up the
+      // sibling rows' own temporary shift transforms and corrupt the numbers).
+      var pointerYInOriginalSpace = lastPointerY - scrollDelta;
+
       var nonDrag = [];
       itemsSnapshot.forEach(function(snap, i){ if(i !== dragStartPos) nonDrag.push(snap); });
 
       var newIndex = 0;
-      nonDrag.forEach(function(snap){ if(pointerY >= snap.centerY) newIndex++; });
+      nonDrag.forEach(function(snap){ if(pointerYInOriginalSpace >= snap.centerY) newIndex++; });
       lastNewIndex = newIndex;
 
       // Only the rows actually between the old and new slot need to slide -
@@ -7388,8 +7427,45 @@
       });
     }
 
+    function autoScrollTick(){
+      if(!dragEl || !autoScrollSpeed){ autoScrollRAF = null; return; }
+      scrollAncestor.scrollTop += autoScrollSpeed;
+      applyDragVisuals();
+      autoScrollRAF = requestAnimationFrame(autoScrollTick);
+    }
+
+    function updateAutoScrollSpeed(){
+      var rect = scrollAncestor.getBoundingClientRect();
+      var distFromTop = lastPointerY - rect.top;
+      var distFromBottom = rect.bottom - lastPointerY;
+      var speed = 0;
+      if(distFromTop >= 0 && distFromTop < DRAG_EDGE_ZONE){
+        speed = -DRAG_MAX_SCROLL_SPEED * (1 - distFromTop / DRAG_EDGE_ZONE);
+      } else if(distFromBottom >= 0 && distFromBottom < DRAG_EDGE_ZONE){
+        speed = DRAG_MAX_SCROLL_SPEED * (1 - distFromBottom / DRAG_EDGE_ZONE);
+      }
+      autoScrollSpeed = speed;
+      if(autoScrollSpeed && autoScrollRAF === null){
+        autoScrollRAF = requestAnimationFrame(autoScrollTick);
+      }
+    }
+
+    function stopAutoScroll(){
+      autoScrollSpeed = 0;
+      if(autoScrollRAF !== null){ cancelAnimationFrame(autoScrollRAF); autoScrollRAF = null; }
+    }
+
+    function pointerMove(e){
+      if(!dragEl || e.pointerId !== pointerId) return;
+      e.preventDefault();
+      lastPointerY = e.clientY;
+      applyDragVisuals();
+      updateAutoScrollSpeed();
+    }
+
     function pointerEnd(e){
       if(!dragEl || (pointerId !== null && e.pointerId !== pointerId)) return;
+      stopAutoScroll();
       dragEl.classList.remove('dragging');
       container.classList.remove('drag-active');
       var dragIdxVal = parseInt(dragEl.dataset.dragIdx, 10);
@@ -7604,7 +7680,7 @@
         '<div class="info"><div class="name">' + escapeHtml(song.name) + '</div>' +
         '<div class="meta">' + escapeHtml(metaLine(song) || song.source) + '</div></div>' +
         (selectionMode ? '' : '<button class="icon-btn play-btn" data-act="play" title="Play from here">▶</button>') +
-        (selectionMode || !song.url ? '' : '<a class="icon-btn notion-link-btn" href="' + escapeHtml(song.url) + '" title="Open in Notion">🔗</a>') +
+        (selectionMode || !song.url ? '' : '<a class="icon-btn notion-link-btn" href="' + escapeHtml(song.url) + '"' + notionLinkTargetAttrs + ' title="Open in Notion">🔗</a>') +
         controlsHtml;
       if(selectionMode){
         item.addEventListener('click', function(){
@@ -8126,6 +8202,7 @@
   var liveTitle = document.getElementById('live-song-title');
   var liveSub = document.getElementById('live-song-sub');
   var liveNotionLink = document.getElementById('live-notion-link');
+  if(!isIOSish){ liveNotionLink.target = '_blank'; liveNotionLink.rel = 'noopener'; }
   var liveLyrics = document.getElementById('live-lyrics');
   var liveProgress = document.getElementById('live-progress');
   var liveNextUp = document.getElementById('live-next-up');
