@@ -283,7 +283,7 @@
     <div class="live-tap-zone" id="tap-next" style="right:0;"></div>
     <div id="live-song-title"></div>
     <div id="live-song-sub"></div>
-    <a id="live-notion-link" href="#" target="_blank" rel="noopener">Open in Notion ↗</a>
+    <a id="live-notion-link" href="#">Open in Notion ↗</a>
     <div id="live-lyrics"></div>
   </div>
   <div id="live-nav">
@@ -7604,7 +7604,7 @@
         '<div class="info"><div class="name">' + escapeHtml(song.name) + '</div>' +
         '<div class="meta">' + escapeHtml(metaLine(song) || song.source) + '</div></div>' +
         (selectionMode ? '' : '<button class="icon-btn play-btn" data-act="play" title="Play from here">▶</button>') +
-        (selectionMode || !song.url ? '' : '<a class="icon-btn notion-link-btn" href="' + escapeHtml(song.url) + '" target="_blank" rel="noopener" title="Open in Notion">🔗</a>') +
+        (selectionMode || !song.url ? '' : '<a class="icon-btn notion-link-btn" href="' + escapeHtml(song.url) + '" title="Open in Notion">🔗</a>') +
         controlsHtml;
       if(selectionMode){
         item.addEventListener('click', function(){
