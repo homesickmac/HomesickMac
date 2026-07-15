@@ -486,7 +486,7 @@
 
   <!-- HERO -->
   <div class="hero">
-    <div class="hero-eyebrow">Island of Ven · Backafallsbyn · 2026</div>
+    <div class="hero-eyebrow">Island of Ven · Backafallsbyn · <span id="retreat-year"></span></div>
     <h1>Welcome to <em>the island.</em></h1>
     <p>Everything you need for a smooth, relaxed arrival — and three great days together.</p>
   </div>
@@ -924,6 +924,9 @@
      SCRIPT
 ════════════════════════════════════════ -->
 <script>
+  // Auto-update year
+  document.getElementById('retreat-year').textContent = new Date().getFullYear();
+
   // Allow Enter key to submit
   document.getElementById('pw-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') checkPassword();
