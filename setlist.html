@@ -7573,7 +7573,10 @@
     // yet assigned to anything still travels over to another device on import,
     // same as an assigned one would. Older backups from before this were a bare
     // array of setlists with no separate tags field; import still reads those fine.
-    var backup = { setlists: setlists, tags: tagRegistry };
+    // Also includes each song's own remembered auto-scroll speed, so Mac's
+    // Mac-to-iPad export/import workflow carries those over too, instead of
+    // the iPad starting every song back at a shared default speed.
+    var backup = { setlists: setlists, tags: tagRegistry, songScrollSpeeds: (typeof songScrollSpeeds !== 'undefined' ? songScrollSpeeds : {}) };
     var blob = new Blob([JSON.stringify(backup, null, 1)], { type: 'application/json' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
@@ -7601,17 +7604,19 @@
     if(!file) return;
     var reader = new FileReader();
     reader.onload = function(){
-      var parsed, importedSetlists, importedTags;
+      var parsed, importedSetlists, importedTags, importedSongScrollSpeeds;
       try{
         parsed = JSON.parse(reader.result);
         if(Array.isArray(parsed)){
           // Older backup format: a bare array of setlists, no separate tag registry.
           importedSetlists = parsed;
           importedTags = null;
+          importedSongScrollSpeeds = null;
         } else if(parsed && Array.isArray(parsed.setlists)){
-          // Current format: { setlists: [...], tags: [...] }.
+          // Current format: { setlists: [...], tags: [...], songScrollSpeeds: {...} }.
           importedSetlists = parsed.setlists;
           importedTags = Array.isArray(parsed.tags) ? parsed.tags : null;
+          importedSongScrollSpeeds = (parsed.songScrollSpeeds && typeof parsed.songScrollSpeeds === 'object') ? parsed.songScrollSpeeds : null;
         } else {
           throw new Error('unrecognized backup shape');
         }
@@ -7634,6 +7639,13 @@
         // whatever tags the imported setlists themselves reference, rather than
         // wiping this browser's existing registry blind.
         setlists.forEach(function(sl){ (sl.tags||[]).forEach(registerTag); });
+      }
+      if(importedSongScrollSpeeds){
+        // Same full-replace behavior as tags/setlists - the receiving device
+        // (e.g. the iPad) ends up with exactly the per-song speeds set on the
+        // source device.
+        songScrollSpeeds = importedSongScrollSpeeds;
+        saveSongScrollSpeeds();
       }
       renderSetlists();
       alert('Import complete.');
@@ -8324,6 +8336,7 @@
   function renderLiveSong(){
     var song = SONGS_BY_ID[performSongIds[performIdx]];
     if(!song) return;
+    if(typeof applySongScrollSpeed === 'function') applySongScrollSpeed(song);
     liveTitle.textContent = song.name;
     liveSub.textContent = metaLine(song) || song.source;
     if(song.url){
@@ -8503,6 +8516,39 @@
     localStorage.setItem(SCROLL_KEY, JSON.stringify({ speedIdx: scrollSpeedIdx }));
   }
 
+  // Per-song auto-scroll speed: some songs read comfortably at Speed 2, others
+  // (dense verses, faster tempo) need 3 or 4. Rather than one shared speed for
+  // every song, each song remembers its own last-set speed here, keyed by song
+  // id, and the live view applies it automatically whenever that song comes up
+  // - no need to re-adjust +/- every single time. Falls back to whatever speed
+  // was last used for songs that haven't had their own speed set yet.
+  var SONG_SCROLL_KEY = 'hm_song_scroll_speed_v1';
+  var songScrollSpeeds = {}; // { songId: speedIdx }
+  (function loadSongScrollSpeeds(){
+    try{
+      var raw = localStorage.getItem(SONG_SCROLL_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed && typeof parsed === 'object') songScrollSpeeds = parsed;
+      }
+    }catch(e){}
+  })();
+  function saveSongScrollSpeeds(){
+    localStorage.setItem(SONG_SCROLL_KEY, JSON.stringify(songScrollSpeeds));
+  }
+  function applySongScrollSpeed(song){
+    if(song && songScrollSpeeds.hasOwnProperty(song.id)){
+      scrollSpeedIdx = songScrollSpeeds[song.id];
+    }
+    if(typeof updateScrollUI === 'function') updateScrollUI();
+  }
+  function saveCurrentSongScrollSpeed(){
+    var song = SONGS_BY_ID[performSongIds[performIdx]];
+    if(!song) return;
+    songScrollSpeeds[song.id] = scrollSpeedIdx;
+    saveSongScrollSpeeds();
+  }
+
   function updateScrollUI(){
     scrollSpeedLabel.textContent = 'Speed ' + (scrollSpeedIdx + 1);
     scrollToggleBtn.textContent = autoScrollOn ? '⏸ Auto-scroll' : '▶ Auto-scroll';
@@ -8543,11 +8589,13 @@
   scrollMinusBtn.addEventListener('click', function(){
     scrollSpeedIdx = Math.max(0, scrollSpeedIdx - 1);
     saveScrollPrefs();
+    saveCurrentSongScrollSpeed();
     updateScrollUI();
   });
   scrollPlusBtn.addEventListener('click', function(){
     scrollSpeedIdx = Math.min(scrollSpeeds.length - 1, scrollSpeedIdx + 1);
     saveScrollPrefs();
+    saveCurrentSongScrollSpeed();
     updateScrollUI();
   });
   updateScrollUI();
