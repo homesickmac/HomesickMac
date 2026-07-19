@@ -165,6 +165,7 @@ Me and my papa can pick a bale of cotton, Me and my papa can pick a bale a day.<
   var scrollPos = 0; // true fractional scroll position tracked outside window.scrollY,
                       // which itself only ever holds whole pixels - same fix that solved
                       // the "all speeds look the same" bug in the setlist app's live view.
+  var autoScrollTargetEl = null; // the .song element the current auto-scroll run stops at
 
   function updateSpeedLabel(){ speedLabel.textContent = 'Speed ' + (scrollSpeedIdx + 1); }
 
@@ -216,7 +217,13 @@ Me and my papa can pick a bale of cotton, Me and my papa can pick a bale a day.<
       window.scrollTo(0, scrollPos);
       updateCurrentSong();
       var doc = document.documentElement;
-      if(window.scrollY + window.innerHeight >= doc.scrollHeight - 2){
+      var reachedPageEnd = window.scrollY + window.innerHeight >= doc.scrollHeight - 2;
+      // Stop as soon as the song we started on has fully scrolled out from
+      // under the sticky bar - i.e. we've reached the blank gap after it -
+      // rather than continuing on into the next song. Mac wants one tap of
+      // Auto-scroll to cover exactly one song, then stop on its own.
+      var reachedSongEnd = autoScrollTargetEl && autoScrollTargetEl.getBoundingClientRect().bottom <= topbar.getBoundingClientRect().bottom;
+      if(reachedPageEnd || reachedSongEnd){
         setAutoScroll(false);
         return;
       }
@@ -230,6 +237,7 @@ Me and my papa can pick a bale of cotton, Me and my papa can pick a bale a day.<
     if(on){
       lastTs = null;
       scrollPos = window.scrollY;
+      autoScrollTargetEl = currentSongId != null ? document.querySelector('.song[data-song-id="' + currentSongId + '"]') : null;
       if(rafId) window.cancelAnimationFrame(rafId);
       rafId = window.requestAnimationFrame(autoScrollStep);
     } else if(rafId){
