@@ -63,7 +63,13 @@
     color:var(--fg);font-size:16px;line-height:1;padding:0;}
   .speed-ctl .speed-label{min-width:54px;text-align:center;}
 
-  #song-content{flex:1;overflow-y:auto;padding:26px 32px 80px;max-width:900px;}
+  /* Centered, capped-width reading column so lines don't stretch edge-to-edge
+     on a wide screen. Without the margin:auto this content sits flush-left
+     inside the pane, leaving a big obviously-empty stretch on the right once
+     the sidebar is hidden and #main has the whole window to itself - widen
+     the cap too when the sidebar's collapsed, since there's real room to use. */
+  #song-content{flex:1;overflow-y:auto;padding:26px 32px 80px;max-width:900px;margin:0 auto;width:100%;}
+  #sidebar.collapsed ~ #main #song-content{max-width:1200px;}
   .song-img{width:100%;height:auto;display:block;border-radius:10px;}
   .song-lyrics{white-space:pre-wrap;font-size:clamp(19px,2.2vw,28px);line-height:1.55;}
   .song-lyrics.chords{white-space:pre;overflow-x:auto;font-family:'SF Mono',Menlo,Consolas,'Courier New',monospace;
