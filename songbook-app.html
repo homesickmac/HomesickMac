@@ -261,11 +261,14 @@
   var scrollPos = 0; // true fractional scroll position tracked outside scrollTop,
                       // which itself only ever holds whole pixels - same fix used
                       // for auto-scroll throughout this project.
-  var LOOP_PAUSE_MS = 3500; // headroom at the end of a loop, so the last line
+  var LOOP_PAUSE_MS = 10000; // headroom at the end of a loop, so the last line
                              // has time to actually be read before it jumps
                              // back to the top - Mac found it was restarting
                              // the instant it hit the bottom, with no beat to
-                             // register the song had finished.
+                             // register the song had finished. Raised from
+                             // 3500 to 10000 (2026-07-20 follow-up) - the
+                             // first value felt like ~5s in practice, not
+                             // long enough.
   var pausedUntil = null; // rAF timestamp when the current end-of-song pause ends, or null if not paused
 
   function autoScrollStep(ts){
