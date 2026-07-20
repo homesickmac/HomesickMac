@@ -35,7 +35,12 @@
   .side-song.active{background:var(--accent);}
   .side-song.active .side-name{color:#1a1400;font-weight:700;}
   .side-song.active .side-num{color:#1a1400;}
-  .side-song.dragging{opacity:.55;background:var(--bg);box-shadow:0 4px 14px rgba(0,0,0,.4);}
+  /* Lifted-and-carried look while dragging - same treatment as the setlist
+     app's own drag-reorder (.setlist-card.dragging / .setlist-item.dragging
+     in app-template.html), so both apps feel consistent. */
+  .side-song.dragging{opacity:1;box-shadow:0 18px 34px rgba(0,0,0,.6);position:relative;
+    z-index:50;cursor:grabbing;will-change:transform;background:var(--bg-card);border-radius:8px;}
+  #song-list.drag-active .side-song:not(.dragging){transition:transform 150ms ease;}
   /* Drag handle: separate from the row's own click-to-open behaviour, so
      grabbing the handle reorders while tapping the rest of the row still
      opens the song, same "handle is its own thing" pattern as the drag
@@ -234,82 +239,167 @@
   resetOrderBtn.addEventListener('click', resetOrder);
 
   // ---------- Sidebar drag-to-reorder ----------
-  // A small "⠿" handle on each row starts the drag, kept separate from the
-  // row's own click-to-open-song behaviour so tapping the rest of the row
-  // still just opens that song. Geometry is read fresh from the live DOM on
-  // every pointermove (not frozen at drag start) since the dragged row is
-  // physically repositioned via insertBefore as you drag past a neighbour -
-  // simpler and more robust than animating a "carried" row with a synced
-  // frozen-snapshot slide, at the cost of the fancier lift/tilt visual used
-  // in the interactive setlist app's own drag-reorder. The "More songs"
-  // divider is left untouched during the drag (never used as a drop
-  // target/anchor) and only settles back into its correct position - right
-  // after the FRONT_SET_COUNT'th song in whatever the new order turns out
-  // to be - once the drop triggers a full renderSidebar().
-  var dragEl = null;
-  var dragPointerId = null;
+  // Same "pick up and carry" feel as the interactive setlist app's own
+  // drag-reorder (enableDragReorder in app-template.html), so both apps feel
+  // consistent: the dragged row tracks the pointer continuously via a live
+  // transform (lift + slight scale + tilt) while the other rows slide out of
+  // the way to open a gap, rather than physically snapping into a
+  // neighbour's slot the instant the pointer crosses its midpoint. Geometry
+  // is frozen once at pickup (never re-measured mid-drag, which would pick
+  // up the siblings' own temporary shift transforms and corrupt the
+  // numbers); the real SONGS array is only reordered once, on drop - which
+  // is also what triggers the one full renderSidebar() that clears every
+  // temporary transform in one go. A small "⠿" handle on each row is the
+  // only thing that starts a drag, so tapping the rest of the row still just
+  // opens that song. Listeners are attached once on the stable #song-list
+  // container (event delegation) rather than per-row, so they keep working
+  // across every re-render without needing to be reattached.
+  //
+  // #sidebar itself is the scrollable ancestor, so dragging near its top or
+  // bottom edge auto-scrolls it - matters once the library grows past what
+  // fits on screen, same as long setlists in the setlist app.
+  (function initSidebarDragReorder(){
+    var DRAG_EDGE_ZONE = 60; // px from the sidebar's edge that triggers auto-scroll
+    var DRAG_MAX_SCROLL_SPEED = 14; // px per animation frame at the very edge
 
-  function sideSongRows(){
-    return Array.prototype.slice.call(songListEl.querySelectorAll('.side-song'));
-  }
+    var dragEl = null;
+    var pointerId = null;
+    var startY = 0;
+    var dragElHeight = 0;
+    var dragStartPos = -1; // dragEl's index within itemsSnapshot at pickup time
+    var lastNewIndex = -1; // most recently computed target slot among the non-dragged rows
+    var itemsSnapshot = []; // frozen geometry captured once at pickup
+    var scrollStartTop = 0;
+    var lastPointerY = 0;
+    var autoScrollSpeed = 0;
+    var autoScrollRAF = null;
 
-  function onSidebarDragMove(e){
-    if(!dragEl) return;
-    var others = sideSongRows().filter(function(r){ return r !== dragEl; });
-    var pointerY = e.clientY;
-    var placed = false;
-    for(var i = 0; i < others.length; i++){
-      var rect = others[i].getBoundingClientRect();
-      if(pointerY < rect.top + rect.height / 2){
-        songListEl.insertBefore(dragEl, others[i]);
-        placed = true;
-        break;
-      }
-    }
-    if(!placed) songListEl.appendChild(dragEl);
-  }
-
-  function onSidebarDragUp(){
-    if(!dragEl) return;
-    dragEl.classList.remove('dragging');
-    songListEl.classList.remove('drag-active');
-    try{ dragEl.releasePointerCapture(dragPointerId); }catch(err){}
-    document.removeEventListener('pointermove', onSidebarDragMove);
-    document.removeEventListener('pointerup', onSidebarDragUp);
-
-    var visualIds = sideSongRows().map(function(r){ return r.dataset.songId; });
-    var byId = {};
-    SONGS.forEach(function(s){ byId[String(s.id)] = s; });
-    var newOrder = visualIds.map(function(id){ return byId[id]; }).filter(Boolean);
-    // Sanity check: only trust the reordered array if it accounts for every
-    // song (a stray DOM state should never lose or duplicate a song) -
-    // otherwise leave SONGS untouched rather than risk dropping one.
-    if(newOrder.length === SONGS.length){
-      var activeId = SONGS[currentIdx] ? SONGS[currentIdx].id : null;
-      SONGS = newOrder;
-      saveCurrentOrder();
-      if(activeId != null){
-        var newIdx = SONGS.findIndex(function(s){ return s.id === activeId; });
-        if(newIdx !== -1) currentIdx = newIdx;
-      }
+    function sideSongRows(){
+      return Array.prototype.slice.call(songListEl.querySelectorAll('.side-song'));
     }
 
-    dragEl = null;
-    dragPointerId = null;
-    renderSidebar();
-  }
+    function pointerDown(e){
+      var handle = e.target.closest ? e.target.closest('.side-drag-handle') : null;
+      if(!handle || !songListEl.contains(handle)) return;
+      var row = handle.closest('.side-song');
+      if(!row || row.parentNode !== songListEl) return;
+      dragEl = row;
+      pointerId = e.pointerId;
+      try{ dragEl.setPointerCapture(pointerId); }catch(err){}
 
-  function onSidebarDragStart(e, row){
-    if(e.pointerType === 'mouse' && e.button !== 0) return;
-    e.preventDefault();
-    dragPointerId = e.pointerId;
-    dragEl = row;
-    row.classList.add('dragging');
-    songListEl.classList.add('drag-active');
-    try{ row.setPointerCapture(dragPointerId); }catch(err){}
-    document.addEventListener('pointermove', onSidebarDragMove);
-    document.addEventListener('pointerup', onSidebarDragUp);
-  }
+      var allRows = sideSongRows();
+      itemsSnapshot = allRows.map(function(el){
+        var rect = el.getBoundingClientRect();
+        return { el: el, centerY: rect.top + rect.height / 2 };
+      });
+      dragStartPos = allRows.indexOf(dragEl);
+      lastNewIndex = dragStartPos;
+      dragElHeight = dragEl.getBoundingClientRect().height;
+      startY = e.clientY;
+      lastPointerY = e.clientY;
+      scrollStartTop = sidebarEl.scrollTop;
+
+      dragEl.classList.add('dragging');
+      songListEl.classList.add('drag-active');
+      e.preventDefault();
+    }
+
+    function applyDragVisuals(){
+      var scrollDelta = sidebarEl.scrollTop - scrollStartTop;
+      var deltaY = (lastPointerY - startY) + scrollDelta;
+      dragEl.style.transform = 'translateY(' + deltaY + 'px) scale(1.03) rotate(1deg)';
+
+      var pointerYInOriginalSpace = lastPointerY - scrollDelta;
+      var nonDrag = [];
+      itemsSnapshot.forEach(function(snap, i){ if(i !== dragStartPos) nonDrag.push(snap); });
+
+      var newIndex = 0;
+      nonDrag.forEach(function(snap){ if(pointerYInOriginalSpace >= snap.centerY) newIndex++; });
+      lastNewIndex = newIndex;
+
+      var lo = Math.min(newIndex, dragStartPos);
+      var hi = Math.max(newIndex, dragStartPos);
+      var movingUp = newIndex < dragStartPos;
+      nonDrag.forEach(function(snap, k){
+        snap.el.style.transform = (k >= lo && k < hi) ? ('translateY(' + (movingUp ? dragElHeight : -dragElHeight) + 'px)') : '';
+      });
+    }
+
+    function autoScrollTick(){
+      if(!dragEl || !autoScrollSpeed){ autoScrollRAF = null; return; }
+      sidebarEl.scrollTop += autoScrollSpeed;
+      applyDragVisuals();
+      autoScrollRAF = window.requestAnimationFrame(autoScrollTick);
+    }
+
+    function updateAutoScrollSpeed(){
+      var rect = sidebarEl.getBoundingClientRect();
+      var distFromTop = lastPointerY - rect.top;
+      var distFromBottom = rect.bottom - lastPointerY;
+      var speed = 0;
+      if(distFromTop >= 0 && distFromTop < DRAG_EDGE_ZONE){
+        speed = -DRAG_MAX_SCROLL_SPEED * (1 - distFromTop / DRAG_EDGE_ZONE);
+      } else if(distFromBottom >= 0 && distFromBottom < DRAG_EDGE_ZONE){
+        speed = DRAG_MAX_SCROLL_SPEED * (1 - distFromBottom / DRAG_EDGE_ZONE);
+      }
+      autoScrollSpeed = speed;
+      if(autoScrollSpeed && autoScrollRAF === null){
+        autoScrollRAF = window.requestAnimationFrame(autoScrollTick);
+      }
+    }
+
+    function stopAutoScroll(){
+      autoScrollSpeed = 0;
+      if(autoScrollRAF !== null){ window.cancelAnimationFrame(autoScrollRAF); autoScrollRAF = null; }
+    }
+
+    function pointerMove(e){
+      if(!dragEl || e.pointerId !== pointerId) return;
+      e.preventDefault();
+      lastPointerY = e.clientY;
+      applyDragVisuals();
+      updateAutoScrollSpeed();
+    }
+
+    function pointerEnd(e){
+      if(!dragEl || (pointerId !== null && e.pointerId !== pointerId)) return;
+      stopAutoScroll();
+      dragEl.classList.remove('dragging');
+      songListEl.classList.remove('drag-active');
+
+      var draggedId = dragEl.dataset.songId;
+      var nonDragIds = [];
+      itemsSnapshot.forEach(function(snap){ if(snap.el !== dragEl) nonDragIds.push(snap.el.dataset.songId); });
+      var insertAt = Math.max(0, Math.min(lastNewIndex, nonDragIds.length));
+      nonDragIds.splice(insertAt, 0, draggedId);
+
+      var byId = {};
+      SONGS.forEach(function(s){ byId[String(s.id)] = s; });
+      var newOrder = nonDragIds.map(function(id){ return byId[id]; }).filter(Boolean);
+      // Sanity check: only trust the reordered array if it accounts for
+      // every song (a stray DOM state should never lose or duplicate a
+      // song) - otherwise leave SONGS untouched rather than risk dropping one.
+      if(newOrder.length === SONGS.length){
+        var activeId = SONGS[currentIdx] ? SONGS[currentIdx].id : null;
+        SONGS = newOrder;
+        saveCurrentOrder();
+        if(activeId != null){
+          var newIdx = SONGS.findIndex(function(s){ return s.id === activeId; });
+          if(newIdx !== -1) currentIdx = newIdx;
+        }
+      }
+
+      dragEl.style.transform = '';
+      dragEl = null;
+      pointerId = null;
+      renderSidebar(); // full re-render replaces every node fresh, so no leftover transforms to clean up
+    }
+
+    songListEl.addEventListener('pointerdown', pointerDown);
+    songListEl.addEventListener('pointermove', pointerMove);
+    songListEl.addEventListener('pointerup', pointerEnd);
+    songListEl.addEventListener('pointercancel', pointerEnd);
+  })();
 
   function renderSidebar(){
     songListEl.innerHTML = '';
@@ -328,9 +418,6 @@
       row.addEventListener('click', function(e){
         if(e.target.classList.contains('side-drag-handle')) return;
         selectSong(i);
-      });
-      row.querySelector('.side-drag-handle').addEventListener('pointerdown', function(e){
-        onSidebarDragStart(e, row);
       });
       songListEl.appendChild(row);
     });
