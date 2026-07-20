@@ -30,15 +30,27 @@
   #sidebar-header h1{margin:0;font-size:16px;color:var(--accent);font-weight:700;letter-spacing:.3px;}
   #sidebar-header .sub{margin-top:3px;font-size:12px;color:var(--fg-dim);}
   .side-song{padding:12px 16px;border-bottom:1px solid var(--line);cursor:pointer;
-    display:flex;gap:10px;align-items:baseline;}
+    display:flex;gap:10px;align-items:center;}
   .side-song:hover{background:var(--bg);}
   .side-song.active{background:var(--accent);}
   .side-song.active .side-name{color:#1a1400;font-weight:700;}
   .side-song.active .side-num{color:#1a1400;}
+  .side-song.dragging{opacity:.55;background:var(--bg);box-shadow:0 4px 14px rgba(0,0,0,.4);}
+  /* Drag handle: separate from the row's own click-to-open behaviour, so
+     grabbing the handle reorders while tapping the rest of the row still
+     opens the song, same "handle is its own thing" pattern as the drag
+     handles in the setlist app's setlist/song reordering. touch-action:none
+     stops the browser trying to scroll the list while a finger is dragging. */
+  .side-drag-handle{cursor:grab;color:var(--fg-dim);font-size:14px;line-height:1;flex-shrink:0;
+    touch-action:none;user-select:none;padding:2px;}
+  .side-drag-handle:active{cursor:grabbing;}
   .side-num{color:var(--accent-dim);font-size:12.5px;font-weight:700;flex-shrink:0;min-width:16px;}
   .side-name{font-size:14px;color:var(--fg);line-height:1.35;}
   .side-marker{padding:10px 16px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;
     color:var(--fg-dim);border-bottom:1px solid var(--line);background:var(--bg);}
+  #reset-order-btn{margin-top:8px;background:none;border:none;color:var(--fg-dim);font-size:11.5px;
+    padding:0;text-decoration:underline;text-underline-offset:2px;cursor:pointer;}
+  #reset-order-btn:hover{color:var(--fg);}
 
   /* ---------- Main pane ---------- */
   #main{flex:1;min-width:0;display:flex;flex-direction:column;}
@@ -55,9 +67,15 @@
     overflow:hidden;text-overflow:ellipsis;}
   #main-song-artist{font-size:12px;color:var(--fg-dim);}
   #main-song-artist.hidden{display:none;}
-  #scroll-toggle{flex-shrink:0;background:var(--bg-card);color:var(--fg);border:1px solid var(--line);
+  /* Auto-scroll (start/stop) and Loop (on/off) are deliberately two separate,
+     equally-sized pill buttons rather than one combined control - Mac found
+     a single "Auto-scroll (loop)" toggle unpredictable once songs of
+     different lengths and different per-song speeds were involved, so he
+     wanted to be able to turn looping off independently of starting or
+     stopping the scroll itself. */
+  #scroll-toggle,#loop-toggle{flex-shrink:0;background:var(--bg-card);color:var(--fg);border:1px solid var(--line);
     border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:600;}
-  #scroll-toggle.active{background:var(--accent);color:#1a1400;border-color:var(--accent);}
+  #scroll-toggle.active,#loop-toggle.active{background:var(--accent);color:#1a1400;border-color:var(--accent);}
   .speed-ctl{display:flex;align-items:center;gap:6px;flex-shrink:0;color:var(--fg-dim);font-size:12.5px;}
   .speed-ctl button{width:28px;height:28px;border-radius:8px;background:var(--bg-card);border:1px solid var(--line);
     color:var(--fg);font-size:16px;line-height:1;padding:0;}
@@ -90,6 +108,7 @@
     <div id="sidebar-header">
       <h1>Guitar Retreat 2026</h1>
       <div class="sub">Songbook · 13 songs</div>
+      <button id="reset-order-btn" title="Restore the original song order">↺ Reset order</button>
     </div>
     <div id="song-list"></div>
   </div>
@@ -103,7 +122,8 @@
         <div id="main-song-title">—</div>
         <div id="main-song-artist" class="hidden"></div>
       </div>
-      <button id="scroll-toggle">▶ Auto-scroll (loop)</button>
+      <button id="scroll-toggle">▶ Auto-scroll</button>
+      <button id="loop-toggle" title="When on, reaching the end of a song pauses briefly then loops back to the top. When off, auto-scroll just stops at the end.">🔁 Loop: On</button>
       <div class="speed-ctl">
         <button id="speed-minus" title="Slower">−</button>
         <span class="speed-label" id="speed-label">Speed 3</span>
@@ -121,6 +141,7 @@
 
   var sidebarEl = document.getElementById('sidebar');
   var sidebarToggleBtn = document.getElementById('sidebar-toggle');
+  var resetOrderBtn = document.getElementById('reset-order-btn');
   var songListEl = document.getElementById('song-list');
   var contentEl = document.getElementById('song-content');
   var titleEl = document.getElementById('main-song-title');
@@ -130,6 +151,7 @@
   var counterEl = document.getElementById('nav-counter');
 
   var scrollToggleBtn = document.getElementById('scroll-toggle');
+  var loopToggleBtn = document.getElementById('loop-toggle');
   var speedMinusBtn = document.getElementById('speed-minus');
   var speedPlusBtn = document.getElementById('speed-plus');
   var speedLabelEl = document.getElementById('speed-label');
@@ -156,6 +178,139 @@
     setSidebar(sidebarEl.classList.contains('collapsed'));
   });
 
+  // ---------- Sidebar song order - Mac asked to be able to drag songs into
+  // whatever order he wants directly in the browser, rather than only via
+  // the build-time SONG_ORDER list. Stored separately from the song data
+  // itself (a plain array of song ids) so it survives a rebuild: rebuilding
+  // this page (new lyrics, new songs) doesn't wipe out a reorder Mac already
+  // did, and any song not yet in a saved order (e.g. one just added to the
+  // library) falls back to its normal build-time position instead of
+  // vanishing. Per-browser only, same as every other localStorage-backed
+  // preference in this project (auto-scroll speed, sidebar shown/hidden). ----------
+  var ORDER_KEY = 'hm_songbook_app_order_v1';
+  var DEFAULT_SONGS = SONGS.slice(); // build-time order, kept so "Reset order" can restore it
+
+  function loadSavedOrder(){
+    try{
+      var raw = localStorage.getItem(ORDER_KEY);
+      if(!raw) return null;
+      var ids = JSON.parse(raw);
+      return Array.isArray(ids) ? ids : null;
+    }catch(e){ return null; }
+  }
+
+  function applySavedOrder(){
+    var savedIds = loadSavedOrder();
+    if(!savedIds || !savedIds.length) return;
+    var byId = {};
+    SONGS.forEach(function(s){ byId[s.id] = s; });
+    var seen = {};
+    var reordered = [];
+    savedIds.forEach(function(id){
+      if(byId.hasOwnProperty(id) && !seen[id]){
+        reordered.push(byId[id]);
+        seen[id] = true;
+      }
+    });
+    SONGS.forEach(function(s){
+      if(!seen[s.id]){ reordered.push(s); seen[s.id] = true; }
+    });
+    SONGS = reordered;
+  }
+
+  function saveCurrentOrder(){
+    localStorage.setItem(ORDER_KEY, JSON.stringify(SONGS.map(function(s){ return s.id; })));
+  }
+
+  function resetOrder(){
+    setAutoScroll(false);
+    var activeId = SONGS[currentIdx] ? SONGS[currentIdx].id : null;
+    SONGS = DEFAULT_SONGS.slice();
+    localStorage.removeItem(ORDER_KEY);
+    currentIdx = activeId != null ? Math.max(0, SONGS.findIndex(function(s){ return s.id === activeId; })) : 0;
+    renderSidebar();
+    renderSong();
+  }
+  resetOrderBtn.addEventListener('click', resetOrder);
+
+  // ---------- Sidebar drag-to-reorder ----------
+  // A small "⠿" handle on each row starts the drag, kept separate from the
+  // row's own click-to-open-song behaviour so tapping the rest of the row
+  // still just opens that song. Geometry is read fresh from the live DOM on
+  // every pointermove (not frozen at drag start) since the dragged row is
+  // physically repositioned via insertBefore as you drag past a neighbour -
+  // simpler and more robust than animating a "carried" row with a synced
+  // frozen-snapshot slide, at the cost of the fancier lift/tilt visual used
+  // in the interactive setlist app's own drag-reorder. The "More songs"
+  // divider is left untouched during the drag (never used as a drop
+  // target/anchor) and only settles back into its correct position - right
+  // after the FRONT_SET_COUNT'th song in whatever the new order turns out
+  // to be - once the drop triggers a full renderSidebar().
+  var dragEl = null;
+  var dragPointerId = null;
+
+  function sideSongRows(){
+    return Array.prototype.slice.call(songListEl.querySelectorAll('.side-song'));
+  }
+
+  function onSidebarDragMove(e){
+    if(!dragEl) return;
+    var others = sideSongRows().filter(function(r){ return r !== dragEl; });
+    var pointerY = e.clientY;
+    var placed = false;
+    for(var i = 0; i < others.length; i++){
+      var rect = others[i].getBoundingClientRect();
+      if(pointerY < rect.top + rect.height / 2){
+        songListEl.insertBefore(dragEl, others[i]);
+        placed = true;
+        break;
+      }
+    }
+    if(!placed) songListEl.appendChild(dragEl);
+  }
+
+  function onSidebarDragUp(){
+    if(!dragEl) return;
+    dragEl.classList.remove('dragging');
+    songListEl.classList.remove('drag-active');
+    try{ dragEl.releasePointerCapture(dragPointerId); }catch(err){}
+    document.removeEventListener('pointermove', onSidebarDragMove);
+    document.removeEventListener('pointerup', onSidebarDragUp);
+
+    var visualIds = sideSongRows().map(function(r){ return r.dataset.songId; });
+    var byId = {};
+    SONGS.forEach(function(s){ byId[String(s.id)] = s; });
+    var newOrder = visualIds.map(function(id){ return byId[id]; }).filter(Boolean);
+    // Sanity check: only trust the reordered array if it accounts for every
+    // song (a stray DOM state should never lose or duplicate a song) -
+    // otherwise leave SONGS untouched rather than risk dropping one.
+    if(newOrder.length === SONGS.length){
+      var activeId = SONGS[currentIdx] ? SONGS[currentIdx].id : null;
+      SONGS = newOrder;
+      saveCurrentOrder();
+      if(activeId != null){
+        var newIdx = SONGS.findIndex(function(s){ return s.id === activeId; });
+        if(newIdx !== -1) currentIdx = newIdx;
+      }
+    }
+
+    dragEl = null;
+    dragPointerId = null;
+    renderSidebar();
+  }
+
+  function onSidebarDragStart(e, row){
+    if(e.pointerType === 'mouse' && e.button !== 0) return;
+    e.preventDefault();
+    dragPointerId = e.pointerId;
+    dragEl = row;
+    row.classList.add('dragging');
+    songListEl.classList.add('drag-active');
+    try{ row.setPointerCapture(dragPointerId); }catch(err){}
+    document.addEventListener('pointermove', onSidebarDragMove);
+    document.addEventListener('pointerup', onSidebarDragUp);
+  }
+
   function renderSidebar(){
     songListEl.innerHTML = '';
     SONGS.forEach(function(song, i){
@@ -167,8 +322,16 @@
       }
       var row = document.createElement('div');
       row.className = 'side-song' + (i === currentIdx ? ' active' : '');
-      row.innerHTML = '<span class="side-num">' + (i + 1) + '</span><span class="side-name">' + escapeHtml(song.name) + '</span>';
-      row.addEventListener('click', function(){ selectSong(i); });
+      row.dataset.songId = song.id;
+      row.innerHTML = '<span class="side-drag-handle" title="Drag to reorder">⠿</span>' +
+        '<span class="side-num">' + (i + 1) + '</span><span class="side-name">' + escapeHtml(song.name) + '</span>';
+      row.addEventListener('click', function(e){
+        if(e.target.classList.contains('side-drag-handle')) return;
+        selectSong(i);
+      });
+      row.querySelector('.side-drag-handle').addEventListener('pointerdown', function(e){
+        onSidebarDragStart(e, row);
+      });
       songListEl.appendChild(row);
     });
   }
@@ -271,15 +434,43 @@
                              // long enough.
   var pausedUntil = null; // rAF timestamp when the current end-of-song pause ends, or null if not paused
 
+  // ---------- Loop on/off - a separate control from Auto-scroll itself.
+  // Mac found the combined "Auto-scroll (loop)" button unpredictable once
+  // different songs (different lengths) and different per-song speeds were
+  // in play - sometimes he wants a song to loop a few times while teaching
+  // it, sometimes he just wants it to scroll through once and stop, and the
+  // two shouldn't be tied together. Persisted globally (not per-song) since
+  // it's a mode Mac switches between deliberately, not a per-song setting
+  // like scroll speed. ----------
+  var LOOP_KEY = 'hm_songbook_app_loop_v1';
+  var loopOn = localStorage.getItem(LOOP_KEY) !== 'off'; // defaults on
+  function updateLoopButton(){
+    loopToggleBtn.textContent = loopOn ? '🔁 Loop: On' : '🔁 Loop: Off';
+    loopToggleBtn.classList.toggle('active', loopOn);
+  }
+  function setLoop(on){
+    loopOn = on;
+    localStorage.setItem(LOOP_KEY, on ? 'on' : 'off');
+    updateLoopButton();
+  }
+  loopToggleBtn.addEventListener('click', function(){ setLoop(!loopOn); });
+
   function autoScrollStep(ts){
     if(!autoOn) return;
     if(pausedUntil !== null){
       // Sitting on the last line - don't advance scroll position at all
-      // until the pause has elapsed, then jump back to the top and resume.
+      // until the pause has elapsed. Re-check loopOn at that point too (not
+      // just when the pause was armed) in case Mac turned looping off while
+      // a pause was already in progress.
       if(ts >= pausedUntil){
         pausedUntil = null;
-        scrollPos = 0;
-        contentEl.scrollTop = 0;
+        if(loopOn){
+          scrollPos = 0;
+          contentEl.scrollTop = 0;
+        } else {
+          setAutoScroll(false);
+          return;
+        }
       }
       lastTs = ts;
       rafId = window.requestAnimationFrame(autoScrollStep);
@@ -290,14 +481,17 @@
       var pxPerSec = scrollSpeeds[scrollSpeedIdx];
       scrollPos += pxPerSec * dt;
       contentEl.scrollTop = scrollPos;
-      // Loop: once the bottom of this song's content is reached, hold here
+      // Reached the bottom of this song's content. With Loop on: hold here
       // for LOOP_PAUSE_MS (last line stays on screen) before jumping back to
-      // the top and continuing at the same speed, rather than restarting
-      // instantly - Mac wants to be able to loop a song five or six times in
-      // a row while the class works through it, and stop it himself
-      // (button or spacebar) whenever they're done with it.
+      // the top and continuing at the same speed. With Loop off: just stop,
+      // same as the plain auto-stop-at-end behaviour in songbook.html.
       if(contentEl.scrollTop + contentEl.clientHeight >= contentEl.scrollHeight - 2){
-        pausedUntil = ts + LOOP_PAUSE_MS;
+        if(loopOn){
+          pausedUntil = ts + LOOP_PAUSE_MS;
+        } else {
+          setAutoScroll(false);
+          return;
+        }
       }
     }
     lastTs = ts;
@@ -316,7 +510,7 @@
       window.cancelAnimationFrame(rafId);
       rafId = null;
     }
-    scrollToggleBtn.textContent = autoOn ? '⏸ Auto-scroll (loop)' : '▶ Auto-scroll (loop)';
+    scrollToggleBtn.textContent = autoOn ? '⏸ Auto-scroll' : '▶ Auto-scroll';
     scrollToggleBtn.classList.toggle('active', autoOn);
   }
 
@@ -343,10 +537,12 @@
   });
 
   // ---------- Init ----------
+  applySavedOrder();
   renderSidebar();
   renderSong();
   applySongSpeed(SONGS[0] && SONGS[0].id);
   updateSpeedLabel();
+  updateLoopButton();
 })();
 </script>
 </body>
