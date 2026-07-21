@@ -110,13 +110,20 @@
     color:var(--fg);font-size:15px;line-height:1;padding:0;}
   #metronome-sound-toggle.muted{opacity:.45;}
 
-  /* Visual beat pulse - fixed in a corner so it stays put regardless of how
-     far down a song has been scrolled, only visible while the metronome is
-     actually running. Flashing to full brightness happens instantly
-     (transition:none on .beat) while fading back down uses the base rule's
-     eased transition, giving a quick "heartbeat" pulse rather than a smooth
-     fade in both directions. */
-  #metronome-dot{position:fixed;bottom:24px;right:24px;width:30px;height:30px;border-radius:50%;
+  /* Visual beat pulse - fixed near the top-right, just under the topbar, so
+     it stays put regardless of how far down a song has been scrolled and is
+     easy to keep an eye on without looking away from the lyrics (Mac wanted
+     it somewhere he'd actually see it "all the time", not tucked in a
+     bottom corner out of the natural eyeline). Only visible while the
+     metronome is actually running. `top` is set from JS (positionMetronomeDot)
+     rather than a fixed CSS value, since the topbar's own height changes
+     whenever its row of controls wraps onto two lines on a narrower window -
+     the fallback value below only matters for the brief instant before that
+     JS runs. Flashing to full brightness happens instantly (transition:none
+     on .beat) while fading back down uses the base rule's eased transition,
+     giving a quick "heartbeat" pulse rather than a smooth fade in both
+     directions. */
+  #metronome-dot{position:fixed;top:70px;right:24px;width:30px;height:30px;border-radius:50%;
     background:var(--bg-card);border:2px solid var(--line);opacity:0;pointer-events:none;z-index:30;
     transition:opacity .2s ease,transform .2s ease,background .2s ease,box-shadow .2s ease;}
   #metronome-dot.visible{opacity:.4;}
@@ -244,6 +251,13 @@
   function setSidebar(shown){
     sidebarEl.classList.toggle('collapsed', !shown);
     localStorage.setItem(SIDEBAR_KEY, shown ? 'shown' : 'hidden');
+    // Showing/hiding the sidebar changes how much width the topbar's row of
+    // controls has to work with, which can make it wrap onto a second line
+    // (or unwrap back to one) - reposition the metronome dot once right away
+    // and again after the sidebar's own width transition finishes, in case
+    // the wrap state changes partway through.
+    positionMetronomeDot();
+    window.setTimeout(positionMetronomeDot, 220);
   }
   (function initSidebar(){
     var saved = localStorage.getItem(SIDEBAR_KEY);
@@ -833,9 +847,30 @@
     window.setTimeout(flashMetronomeDot, delayMs);
   }
 
+  // Browsers (especially iOS/macOS Safari) will opportunistically suspend an
+  // AudioContext - screen lock, a brief interruption from another app, power
+  // saving, even just sitting idle for a while - and a suspended context's
+  // currentTime freezes. That's almost certainly what Mac heard as the click
+  // "coming and going": once nextNoteTime catches up to a frozen currentTime,
+  // the scheduler above would just quietly stop doing anything, with no
+  // error, until something else happened to resume it. Re-checking the
+  // context's state on every scheduler tick and resuming it as soon as it's
+  // suspended fixes that, rather than only ever resuming once at the moment
+  // the metronome is first started.
   function metronomeScheduler(){
     var ctx = metronomeAudioCtx;
     if(!ctx) return;
+    if(ctx.state === 'suspended'){
+      try{ ctx.resume(); }catch(e){}
+      return; // wait for the resume to actually take effect before scheduling against a frozen clock
+    }
+    // If we've fallen well behind (e.g. the context was suspended for a
+    // while and has just resumed), don't try to fire a burst of "missed"
+    // beats all at once - that would sound like a stutter of rapid clicks.
+    // Just pick back up cleanly from right now.
+    if(metronomeNextNoteTime < ctx.currentTime - 0.5){
+      metronomeNextNoteTime = ctx.currentTime + 0.05;
+    }
     while(metronomeNextNoteTime < ctx.currentTime + METRONOME_SCHEDULE_AHEAD_SEC){
       scheduleMetronomeNote(metronomeNextNoteTime);
       metronomeNextNoteTime += 60 / metronomeBpm;
@@ -872,6 +907,16 @@
   metronomeSoundBtn.addEventListener('click', function(){ setMetronomeSound(!metronomeSoundOn); });
   updateMetronomeSoundButton();
 
+  // Keep the dot pinned just under the topbar rather than a hardcoded CSS
+  // offset - the topbar's row of controls can wrap onto a second line on a
+  // narrower window (more controls now that Loop, font size, and the
+  // metronome all live there too), which changes its height.
+  function positionMetronomeDot(){
+    var rect = document.getElementById('main-topbar').getBoundingClientRect();
+    metronomeDotEl.style.top = (rect.bottom + 12) + 'px';
+  }
+  window.addEventListener('resize', positionMetronomeDot);
+
   document.addEventListener('keydown', function(e){
     if(e.key === ' ' || e.key === 'Spacebar'){
       e.preventDefault();
@@ -891,6 +936,7 @@
   updateSpeedLabel();
   updateLoopButton();
   applyMetronomeSongBpm(SONGS[0] && SONGS[0].id);
+  positionMetronomeDot();
 })();
 </script>
 </body>
