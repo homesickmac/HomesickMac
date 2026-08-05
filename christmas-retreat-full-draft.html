@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Christmas Guitar Retreat 2026 — a first-edition winter gathering at Idea Farm, Bonnarp, Skåne. December 5–6, 2026. Guitar, community and a recording studio for a room.">
+  <title>Christmas Guitar Retreat 2026 — Homesick Mac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .info-card {
+      background: var(--cream);
+      border: 1px solid rgba(200,164,100,0.3);
+      border-top: 4px solid var(--amber);
+      border-radius: 4px;
+      padding: 2rem;
+    }
+    .info-card h3 {
+      color: var(--brown);
+      margin-bottom: 1rem;
+      font-size: 1.15rem;
+    }
+    .info-card ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--warm-muted);
+      font-size: 0.95rem;
+      line-height: 1.9;
+    }
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(200,164,100,0.2);
+      gap: 1rem;
+    }
+    .price-row:last-child { border-bottom: none; }
+    .price-label { color: var(--warm-muted); font-size: 0.9rem; }
+    .price-amount { color: var(--brown); font-weight: 600; white-space: nowrap; }
+    .price-sub { color: var(--warm-muted); font-size: 0.75rem; }
+    .availability-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+      font-family: var(--font-label);
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-left: 0.5rem;
+      background: rgba(193,123,24,0.15);
+      border: 1px solid rgba(193,123,24,0.4);
+      color: var(--amber);
+    }
+    @media (max-width: 700px) {
+      .info-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav class="site-nav nav-solid" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Homesick Mac</a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li class="nav-dropdown">
+          <a href="about.html">About</a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-has-sub">
+              <a>Collaborations</a>
+              <ul class="dropdown-sub">
+                <li><a href="blues-trio.html">Blues Trio</a></li>
+                <li><a href="prohibition-jazz.html">Prohibition Jazz &amp; Blues</a></li>
+                <li><a href="delmore-sessions.html">Delmore Sessions</a></li>
+                <li><a href="sam-mitchell.html">Sam Mitchell</a></li>
+                <li><a href="collaborations.html">More Stories</a></li>
+              </ul>
+            </li>
+            <li><a href="discography.html">Discography</a></li>
+            <li><a href="guitars.html">Guitars &amp; Gear</a></li>
+            <li class="dropdown-has-sub">
+              <a>Gallery</a>
+              <ul class="dropdown-sub">
+                <li><a href="gallery-live.html">Live Photos</a></li>
+                <li><a href="gallery-35years.html">35th Anniversary Concert</a></li>
+              </ul>
+            </li>
+            <li><a href="press.html">Press</a></li>
+          </ul>
+        </li>
+        <li class="nav-dropdown">
+          <a href="retreat.html">Guitar Retreats</a>
+          <ul class="dropdown-menu">
+            <li><a href="retreat.html">Summer Retreat — Ven</a></li>
+            <li><a href="christmas-retreat.html" class="active">Christmas Retreat — Idea Farm</a></li>
+          </ul>
+        </li>
+        <li><a href="testimonials.html">Testimonials</a></li>
+        <li class="nav-cta"><a href="contact.html" class="btn btn-primary">Join the Retreat</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Page Hero ── -->
+  <!-- TODO(Mac): swap this solid background for a real Idea Farm photo once you have one (hero-bg + background-image, same pattern as retreat.html) -->
+  <section style="background:var(--mahogany);padding:calc(var(--nav-height) + 3.5rem) 2rem 3.5rem;text-align:center;">
+    <div style="max-width:640px;margin:0 auto;">
+      <div class="hero-eyebrow" style="justify-content:center;color:var(--amber);">Christmas Guitar Retreat &middot; Idea Farm &middot; Bonnarp, Skåne</div>
+      <h1 style="color:var(--cream-text);font-size:clamp(1.8rem,4vw,2.8rem);margin:1.2rem 0 0.8rem;">A Christmas Retreat,<br>In a New Home</h1>
+      <p style="color:rgba(251,244,224,0.7);font-size:1.05rem;line-height:1.8;margin-bottom:0.6rem;">
+        First Edition &nbsp;&middot;&nbsp; December 5&ndash;6, 2026
+      </p>
+      <p style="color:rgba(251,244,224,0.7);font-size:1rem;line-height:1.8;">
+        I've done a Christmas gathering before — twice, years ago, on the Island of Ven, before the
+        island went quiet for winter and that door closed. This December the Retreat comes back for
+        the colder months, in a place built for exactly this kind of gathering.
+      </p>
+      <div style="margin-top:1.6rem;">
+        <a href="#get-in-touch" class="btn btn-primary">Get in Touch</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Why Idea Farm ── -->
+  <section>
+    <div class="container">
+      <div class="split" style="align-items:start;">
+        <div class="bio-text fade-in">
+          <span class="section-label">The Venue</span>
+          <h2 style="text-align:center;">A Recording Studio<br>Becomes Our Room</h2>
+          <p>
+            I found Idea Farm through a stroke of good luck, and an immediate connection with the
+            people who run it — Robbie and Elsa. Robbie is English, Elsa is Swedish; the two of them
+            spent years running a studio together in Germany before settling into an old Skåne
+            <span style="color:var(--brown);">gård</span> and turning it into something rather
+            remarkable: a working recording studio, event space and creative home built into a
+            cluster of century-old barns, on the edge of Söderåsen.
+          </p>
+          <p>
+            The studio itself becomes our room for the Retreat. And Robbie doesn't just lend us the
+            space — he's with us as sound engineer, and as camera operator if we want to record or
+            film anything we play together. That possibility alone has given me more ideas than I
+            know what to do with yet.
+          </p>
+          <p>
+            There's also a stage. If the mood is right on Saturday evening, we might put something
+            together — completely optional, completely low-pressure. Playing Together for the sake
+            of it, nothing to prepare, nothing to prove. The village around Idea Farm shows up for
+            what Robbie and Elsa do, and the kitchen is already planning a Christmas blues menu for
+            us.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── The Details ── -->
+  <section class="section-cream">
+    <div class="container">
+      <div class="text-center mb-4 fade-in">
+        <span class="section-label">December 5&ndash;6, 2026</span>
+        <h2>What to Expect</h2>
+      </div>
+      <div class="info-grid fade-in">
+        <div class="info-card">
+          <h3>When</h3>
+          <ul>
+            <li>Saturday, December 5 — arrival from 12:00 noon</li>
+            <li>Sunday, December 6 — we finish by 15:00</li>
+            <li>Roughly 12 hours of guitar, spread across a day and a half</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3>What's Included</h3>
+          <div class="price-row">
+            <span class="price-label">Tuition, Playing Together sessions &amp; all meals</span>
+            <div style="text-align:right;">
+              <div class="price-amount">SEK 2.695</div>
+              <div class="price-sub">incl. VAT</div>
+            </div>
+          </div>
+          <p style="color:var(--warm-muted);font-size:0.85rem;line-height:1.7;margin-top:1rem;">
+            Food is included in the fee — including a proper Christmas blues dinner. Accommodation is
+            separate (see below).
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Accommodation ── -->
+  <section>
+    <div class="container">
+      <div class="text-center mb-4 fade-in">
+        <span class="section-label">Accommodation</span>
+        <h2>Simple, On-Site, First Come First Served</h2>
+      </div>
+      <div class="info-card fade-in" style="max-width:720px;margin:0 auto;">
+        <div class="price-row">
+          <span class="price-label">On-site at Idea Farm &nbsp;<span class="availability-badge">13 spots</span></span>
+          <div style="text-align:right;">
+            <div class="price-amount">~SEK 150</div>
+            <div class="price-sub">per person</div>
+          </div>
+        </div>
+        <p style="color:var(--warm-muted);font-size:0.95rem;line-height:1.8;margin-top:1rem;margin-bottom:0;">
+          Idea Farm can house 13 of us right on site. Please don't compare it to Ven — this is
+          intentionally simple and affordable; Robbie and Elsa aren't running the accommodation side
+          as a business, they're just making it easy for us to stay together. Once those 13 spots
+          are taken, there are AirBnBs and hotels nearby for anyone else joining.
+        </p>
+      </div>
+      <p class="fade-in" style="color:var(--warm-muted);font-size:0.9rem;text-align:center;max-width:640px;margin:1.5rem auto 0;">
+        Participants from my Summer Retreat get first right to the on-site spots — I'll always give
+        you the heads-up before anyone else.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Get in Touch ── -->
+  <section class="section-cream" id="get-in-touch">
+    <div class="container" style="max-width:640px;">
+      <div class="text-center mb-4 fade-in">
+        <span class="section-label">First Edition &middot; Limited Spots</span>
+        <h2>Get in Touch</h2>
+        <p style="color:var(--warm-muted);margin:0 auto 1.5rem;">
+          If you'd like to come, or you're just curious and want to know more before deciding, reach
+          out. No pressure, no obligation — I'm happy to answer anything.
+        </p>
+        <a href="contact.html" class="btn btn-primary">Contact Me</a>
+        <p style="text-align:center;color:var(--warm-muted);font-size:0.82rem;margin-top:1.5rem;">
+          Prefer email? Write directly to <a href="mailto:homesickmac@gmail.com" style="color:var(--amber);">homesickmac@gmail.com</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-logo-area">
+          <img src="Mac-Logo_FINAL_transparent-bg.svg" alt="Homesick Mac" style="height:130px;width:auto;display:block;margin:0 auto 1rem;">
+          <div class="footer-logo-text">Homesick Mac</div>
+        </div>
+        <div class="footer-brand">
+          <p>Blues, country, folk and slide guitar from southern Sweden. Performer, Teacher and host of the annual Homesick Mac's Guitar Retreat on the Island of Ven since 2012.</p>
+          <div class="social-links mt-3" style="display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;">
+            <a href="https://www.facebook.com/homesickmac" target="_blank" rel="noopener">Facebook</a>
+            <a href="https://www.instagram.com/draganhomesickmacruzicmacan/" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.linkedin.com/in/homesickmac/" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://www.youtube.com/@HomesickMac" target="_blank" rel="noopener">YouTube</a>
+          </div>
+        </div>
+        <nav class="footer-nav" aria-label="Footer navigation">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Mac</a></li>
+            <li><a href="retreat.html">Guitar Retreats</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="footer-nav">
+          <h4>About Mac</h4>
+          <ul>
+            <li class="dropdown-has-sub">
+              <a>Collaborations</a>
+              <ul class="dropdown-sub">
+                <li><a href="blues-trio.html">Blues Trio</a></li>
+                <li><a href="prohibition-jazz.html">Prohibition Jazz &amp; Blues</a></li>
+                <li><a href="delmore-sessions.html">Delmore Sessions</a></li>
+                <li><a href="sam-mitchell.html">Sam Mitchell</a></li>
+                <li><a href="collaborations.html">More Stories</a></li>
+              </ul>
+            </li>
+            <li><a href="discography.html">Discography</a></li>
+            <li><a href="guitars.html">Guitars &amp; Gear</a></li>
+            <li class="dropdown-has-sub">
+              <a>Gallery</a>
+              <ul class="dropdown-sub">
+                <li><a href="gallery-live.html">Live Photos</a></li>
+                <li><a href="gallery-35years.html">35th Anniversary Concert</a></li>
+              </ul>
+            </li>
+            <li><a href="press.html">Press</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Mac's Acoustics &nbsp;·&nbsp; All Rights Reserved</p>
+        <p>homesickmac@gmail.com</p>
+        <p style="color:rgba(251,244,224,0.25);">Graphics: Lari Niehl &copy;</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
