@@ -3,12 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Christmas Guitar Retreat 2026 — a winter gathering, location to be announced. Full details open August 10th.">
+  <meta name="description" content="Christmas Guitar Retreat 2026 — a winter gathering at Idea Farm, Bonnarp, Skåne. December 5–6, 2026. Guitar, community and a recording studio for a room.">
   <title>Christmas Guitar Retreat 2026 — Homesick Mac</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Winter dusk palette — scoped to this page only */
+    :root {
+      --winter-navy:      #131C2E;
+      --winter-navy-mid:  #1E2B45;
+      --winter-frost:     rgba(196,214,232,0.16);
+    }
+    .winter-dusk {
+      background:
+        radial-gradient(ellipse at 50% -10%, rgba(193,123,24,0.10) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 100%, var(--winter-frost) 0%, transparent 45%),
+        var(--winter-navy);
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .info-card {
+      background: var(--cream);
+      border: 1px solid rgba(200,164,100,0.3);
+      border-top: 4px solid var(--amber);
+      border-radius: 4px;
+      padding: 2rem;
+    }
+    .info-card h3 {
+      color: var(--brown);
+      margin-bottom: 1rem;
+      font-size: 1.15rem;
+    }
+    .info-card ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--warm-muted);
+      font-size: 0.95rem;
+      line-height: 1.9;
+    }
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(200,164,100,0.2);
+      gap: 1rem;
+    }
+    .price-row:last-child { border-bottom: none; }
+    .price-label { color: var(--warm-muted); font-size: 0.9rem; }
+    .price-amount { color: var(--brown); font-weight: 600; white-space: nowrap; }
+    .price-sub { color: var(--warm-muted); font-size: 0.75rem; }
+    .availability-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+      font-family: var(--font-label);
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-left: 0.5rem;
+      background: rgba(193,123,24,0.15);
+      border: 1px solid rgba(193,123,24,0.4);
+      color: var(--amber);
+    }
+    .lodging-card {
+      background: var(--cream);
+      border: 1px solid rgba(200,164,100,0.3);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .lodging-photo {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+      background: rgba(200,164,100,0.15);
+    }
+    .lodging-photo-placeholder {
+      width: 100%;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: repeating-linear-gradient(135deg, rgba(200,164,100,0.12), rgba(200,164,100,0.12) 10px, rgba(200,164,100,0.05) 10px, rgba(200,164,100,0.05) 20px);
+      font-family: var(--font-label);
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--warm-muted);
+      text-align: center;
+      padding: 1rem;
+    }
+    .lodging-body { padding: 1.5rem; }
+    .lodging-body h3 { color: var(--brown); margin-bottom: 0.5rem; font-size: 1.05rem; }
+    .lodging-body p { color: var(--warm-muted); font-size: 0.9rem; line-height: 1.7; margin: 0; }
+    @media (max-width: 700px) {
+      .info-grid { grid-template-columns: 1fr; }
+    }
+    /* Form — same structure as retreat-info.html's, recolored for the dark winter-dusk background */
+    .form-section { max-width: 680px; margin: 0 auto; }
+    .form-group { margin-bottom: 1.4rem; }
+    .form-label {
+      font-family: var(--font-label);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--amber-light);
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid rgba(196,214,232,0.25);
+      border-radius: 3px;
+      background: rgba(251,244,224,0.95);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--brown);
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--amber); }
+    .form-textarea { resize: vertical; }
+    .radio-group { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.3rem; }
+    .radio-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: rgba(251,244,224,0.75);
+      line-height: 1.4;
+    }
+    .radio-option input[type="radio"] { margin-top: 0.15rem; accent-color: var(--amber); flex-shrink: 0; }
+  </style>
 </head>
 <body>
 
@@ -59,20 +194,334 @@
     </div>
   </nav>
 
-  <!-- ── Coming Soon ── -->
-  <section style="background:var(--mahogany);min-height:70vh;display:flex;align-items:center;padding:calc(var(--nav-height) + 3rem) 2rem 4rem;">
-    <div style="max-width:560px;margin:0 auto;text-align:center;">
-      <div class="hero-eyebrow" style="justify-content:center;color:var(--amber);">Christmas Guitar Retreat &middot; Sweden</div>
-      <h1 style="color:var(--cream-text);font-size:clamp(1.8rem,4vw,2.6rem);margin:1.2rem 0 1rem;">Please Stay in Tune</h1>
-      <p style="color:rgba(251,244,224,0.75);font-size:1.05rem;line-height:1.85;margin-bottom:1rem;">
-        I'm putting together a Christmas edition of the Homesick Mac's Guitar Retreat — a new home for it,
-        a working recording studio for a room, and a proper winter gathering. The full story,
-        photos and how to join open here on <strong style="color:var(--amber);">August 10th</strong>.
+  <!-- ── Page Hero ── -->
+  <!-- TODO(Mac): swap this gradient for a real Idea Farm exterior/dusk photo once you have one (hero-bg + background-image, same pattern as retreat.html) -->
+  <section class="winter-dusk" style="padding:calc(var(--nav-height) + 3.5rem) 2rem 3.5rem;text-align:center;">
+    <div style="max-width:640px;margin:0 auto;">
+      <div class="hero-eyebrow" style="justify-content:center;color:var(--amber);">Christmas Guitar Retreat &middot; Idea Farm &middot; Bonnarp, Skåne</div>
+      <h1 style="color:var(--cream-text);font-size:clamp(1.8rem,4vw,2.8rem);margin:1.2rem 0 0.8rem;">A Christmas Retreat,<br>In a New Home</h1>
+      <p style="color:rgba(251,244,224,0.7);font-size:1.05rem;line-height:1.8;margin-bottom:0.6rem;">
+        December 5&ndash;6, 2026
       </p>
-      <p style="color:rgba(251,244,224,0.55);font-size:0.9rem;line-height:1.8;margin-bottom:2rem;">
-        Save the date in the meantime: December 5&ndash;6, 2026.
+      <p style="color:rgba(251,244,224,0.7);font-size:1rem;line-height:1.8;">
+        I've done a Christmas gathering before — twice, years ago, on the Island of Ven, before the
+        island went quiet for winter and that door closed. This December the Retreat comes back for
+        the colder months, in a place built for exactly this kind of gathering — and it's booked.
       </p>
-      <a href="contact.html" class="btn btn-primary">Get in Touch Early</a>
+      <div style="margin-top:1.6rem;">
+        <a href="#apply" class="btn btn-primary">Show Your Interest</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Why Idea Farm ── -->
+  <section>
+    <div class="container">
+      <div class="split" style="align-items:start;">
+        <div class="bio-text fade-in">
+          <span class="section-label">The Venue</span>
+          <h2 style="text-align:center;">A Recording Studio<br>Becomes Our Room</h2>
+          <p>
+            I found Idea Farm through a stroke of good luck, and an immediate connection with the
+            people who run it — Robbie and Elsa. Robbie is English, Elsa is Swedish; the two of them
+            spent years running a studio together in Germany before settling into an old Skåne
+            <span style="color:var(--brown);">gård</span> and turning it into something rather
+            remarkable: a working recording studio, event space and creative home built into a
+            cluster of century-old barns, on the edge of Söderåsen.
+          </p>
+          <p>
+            The studio itself becomes our room for the Retreat. And Robbie doesn't just lend us the
+            space — he's with us as sound engineer, and as camera operator if we want to record or
+            film anything we play together. That possibility alone has given me more ideas than I
+            know what to do with yet.
+          </p>
+          <p>
+            There's also a stage. If the mood is right on Saturday evening, we might put something
+            together — completely optional, completely low-pressure. Playing Together for the sake
+            of it, nothing to prepare, nothing to prove. The village around Idea Farm shows up for
+            what Robbie and Elsa do, and the kitchen is already planning a Christmas blues menu for
+            us.
+          </p>
+        </div>
+        <div class="fade-in" style="display:flex;flex-direction:column;gap:1.5rem;height:100%;">
+          <img src="images/Christmas-retreat/IdeaFarm-1.jpeg" alt="Idea Farm, Bonnarp, Skåne"
+               style="width:100%;height:auto;display:block;border-radius:2px;
+                      box-shadow:8px 8px 0 var(--amber), 16px 16px 0 rgba(193,123,24,0.2);" loading="lazy">
+
+          <a href="https://ideafarm.se/recording" target="_blank" rel="noopener" class="studio-link-card"
+             style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+                    padding:1.8rem 1.5rem;border-radius:2px;text-decoration:none;
+                    background:var(--cream);border:1px solid rgba(200,164,100,0.3);border-top:4px solid var(--amber);">
+            <span class="section-label" style="margin-bottom:0.8rem;">Idea Farm</span>
+            <p style="color:var(--brown);font-family:var(--font-display);font-size:1.1rem;line-height:1.5;margin:0 0 0.6rem;">
+              See the studio and the space for yourself
+            </p>
+            <p style="color:var(--warm-muted);font-size:0.85rem;margin:0;">
+              Visit Idea Farm's own Recording page &#8599;
+            </p>
+          </a>
+
+          <img src="images/Christmas-retreat/IdeaFarm-studio.jpeg" alt="Inside the recording studio at Idea Farm"
+               style="width:100%;height:auto;display:block;border-radius:2px;
+                      box-shadow:8px 8px 0 var(--amber), 16px 16px 0 rgba(193,123,24,0.2);" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── The Details ── -->
+  <section class="section-cream">
+    <div class="container">
+      <div class="text-center mb-4 fade-in">
+        <span class="section-label">December 5&ndash;6, 2026</span>
+        <h2>What to Expect</h2>
+      </div>
+      <div class="info-grid fade-in">
+        <div class="info-card">
+          <h3>When</h3>
+          <ul>
+            <li>Saturday, December 5 — arrival from 12:00 noon</li>
+            <li>Sunday, December 6 — we finish by 15:00</li>
+            <li>Roughly 12 hours of guitar, spread across a day and a half</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3>What's Included</h3>
+          <div class="price-row">
+            <span class="price-label">Tuition, Playing Together sessions &amp; all meals</span>
+            <div style="text-align:right;">
+              <div class="price-amount">SEK 2.695</div>
+              <div class="price-sub">incl. VAT</div>
+            </div>
+          </div>
+          <p style="color:var(--warm-muted);font-size:0.85rem;line-height:1.7;margin-top:1rem;">
+            Food is included in the fee — including a proper Christmas blues dinner. Accommodation is
+            separate (see below).
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Accommodation ── -->
+  <section>
+    <div class="container">
+      <div class="text-center mb-4 fade-in">
+        <span class="section-label">Accommodation</span>
+        <h2>Two Buildings, Two Tiers, First Come First Served</h2>
+        <p style="color:var(--warm-muted);max-width:640px;margin:0.8rem auto 0;">
+          There are two places to sleep on the property, and I'm filling them in order — once the
+          first is full, the second opens up. No one needs to book anything themselves; just apply
+          below and I'll confirm your spot in the order interest comes in.
+        </p>
+      </div>
+
+      <div class="info-grid fade-in" style="margin-bottom:1.5rem;">
+        <div class="lodging-card">
+          <div class="lodging-body">
+            <span class="availability-badge" style="margin-left:0;margin-bottom:0.6rem;display:inline-block;">Tier One &middot; 8 spots</span>
+            <h3>The Guest House</h3>
+            <p>
+              Four double rooms in Idea Farm's own guest house — the early-bird option, a short walk
+              from the studio.
+            </p>
+            <p style="margin-top:0.8rem;">
+              <a href="https://www.airbnb.com/rooms/1165889476225381967" target="_blank" rel="noopener" style="color:var(--amber);">See the space on Airbnb &#8599;</a>
+              <span style="display:block;color:var(--warm-muted);font-size:0.78rem;margin-top:0.4rem;">
+                For a look only — book through this page, not Airbnb. Rooms go <em style="font-style:italic;">"först till kvarn"</em>, first come, first served.
+              </span>
+            </p>
+          </div>
+        </div>
+        <div class="lodging-card">
+          <div class="lodging-body">
+            <span class="availability-badge" style="margin-left:0;margin-bottom:0.6rem;display:inline-block;">Tier Two &middot; 5&ndash;6 spots</span>
+            <h3>Above the Studio</h3>
+            <p>
+              One large room with four beds, plus a second room with a large double bed — a couple's
+              room if you're bringing someone, or a twin room for two participants if we bring in an
+              extra bed. Same building as the studio and live venue — fall out of bed and you're
+              already there. Opens once the Guest House is full.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Studio building photo tour — click to enlarge -->
+      <div class="text-center fade-in" style="margin-bottom:1rem;">
+        <span class="section-label">A Look Inside</span>
+        <p style="color:var(--warm-muted);font-size:0.9rem;margin:0.3rem 0 0;">Above the Studio, Tier Two</p>
+      </div>
+      <div class="photo-grid fade-in" style="margin-bottom:2rem;">
+        <div class="photo-item">
+          <img src="images/Christmas-retreat/1-Room1-entrance-DSC02760.jpeg" alt="Entrance to the four-bed room above the studio" class="lb-trigger" loading="lazy">
+        </div>
+        <div class="photo-item">
+          <img src="images/Christmas-retreat/2-Room1-view-DSC02761.jpeg" alt="Inside the four-bed room above the studio" class="lb-trigger" loading="lazy">
+        </div>
+        <div class="photo-item">
+          <img src="images/Christmas-retreat/3Common-space-studio-DSC02769.jpeg" alt="Common space by the studio" class="lb-trigger" loading="lazy">
+        </div>
+        <div class="photo-item">
+          <img src="images/Christmas-retreat/4-Stairs-room2-DSC02768.jpeg" alt="Stairs up to the double room" class="lb-trigger" loading="lazy">
+        </div>
+        <div class="photo-item">
+          <img src="images/Christmas-retreat/5-Room2-DSC02772.jpeg" alt="The double room above the studio" class="lb-trigger" loading="lazy">
+        </div>
+        <div class="photo-item">
+          <img src="images/Christmas-retreat/6-Room2-1-DSC02773.jpeg" alt="The double room above the studio, another view" class="lb-trigger" loading="lazy">
+        </div>
+        <div class="photo-item">
+          <img src="images/Christmas-retreat/7-Bathroom-DSC02759.jpeg" alt="Bathroom for the studio accommodation" class="lb-trigger" loading="lazy">
+        </div>
+      </div>
+
+      <div class="fade-in" style="max-width:720px;margin:0 auto 2rem;">
+        <video
+          src="images/Christmas-retreat/above-studio-idea-farm.mp4"
+          autoplay
+          loop
+          muted
+          playsinline
+          style="width:100%;height:auto;border-radius:2px;display:block;">
+        </video>
+        <p style="color:var(--warm-muted);font-size:0.85rem;text-align:center;margin:0.6rem 0 0;">A quick look around the studio-building rooms.</p>
+      </div>
+
+      <div class="info-card fade-in" style="max-width:720px;margin:0 auto 1.5rem;">
+        <div class="price-row">
+          <span class="price-label">Accommodation, per person</span>
+          <div style="text-align:right;">
+            <div class="price-amount">~SEK 150</div>
+            <div class="price-sub">total for the stay</div>
+          </div>
+        </div>
+        <p style="color:var(--warm-muted);font-size:0.95rem;line-height:1.8;margin-top:1rem;margin-bottom:0;">
+          Please don't compare it to Ven — this is intentionally simple and affordable.
+          Robbie and Elsa aren't running this side as a business; they're just making it easy for us
+          to stay together.
+        </p>
+      </div>
+
+      <div class="info-card fade-in" style="max-width:720px;margin:0 auto;">
+        <h3>If Both Buildings Are Full — or Simply Not Your Thing</h3>
+        <p style="color:var(--warm-muted);font-size:0.95rem;line-height:1.8;margin-bottom:0.8rem;">
+          There's no shame in wanting a proper bed and a private bathroom over a shared farmhouse
+          room — I want to be upfront that both options exist. Close by, there's a proper hotel — a
+          <span style="color:var(--brown);">gästgivaregård</span> called Spången — and a handful of
+          other BnBs in the area. Robbie knows everyone around Idea Farm, so if Spången isn't for
+          you, just ask and we'll point you to something else nearby.
+        </p>
+        <p style="margin:0;">
+          <a href="https://www.booking.com/hotel/se/spangens-gastgivaregard-ljungbyhed1.sv.html" target="_blank" rel="noopener" style="color:var(--amber);">Spångens Gästgivaregård on Booking.com &#8599;</a>
+        </p>
+      </div>
+
+      <p class="fade-in" style="color:var(--warm-muted);font-size:0.9rem;text-align:center;max-width:640px;margin:1.5rem auto 0;">
+        Participants from my Summer Retreat get first right to the on-site spots — I'll always give
+        you the heads-up before anyone else.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Show Your Interest / Apply ── -->
+  <!-- No accommodation or group choice here on purpose — Christmas is one single date, and rooms are
+       assigned "först till kvarn" in the order interest comes in, not chosen by the applicant. -->
+  <section class="winter-dusk" id="apply">
+    <div class="container" style="max-width:640px;">
+      <div class="text-center mb-4 fade-in">
+        <span class="section-label" style="color:var(--amber-light);">Idea Farm &middot; No Commitment Required</span>
+        <h2 style="color:var(--cream-text);">Show Your Interest</h2>
+        <p style="color:rgba(251,244,224,0.75);margin:0 auto 1.5rem;">
+          Fill in the form below and I'll be in touch. Choosing "Just curious" is perfectly fine — we
+          can talk through everything before you decide. No payment, no obligation.
+        </p>
+      </div>
+
+      <div class="form-section fade-in">
+        <!-- Uses the same Formspree inbox as the Summer Retreat form; the hidden _subject field
+             below is what tells them apart in your inbox. If you'd rather keep the two fully
+             separate in your Formspree dashboard, create a new form at formspree.io and swap the
+             action URL below for its endpoint. -->
+        <form action="https://formspree.io/f/mlgkrezd" method="POST" id="christmas-form">
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+            <div class="form-group">
+              <label class="form-label">Your name *</label>
+              <input type="text" name="name" required placeholder="Your name" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email *</label>
+              <input type="email" name="email" required placeholder="your@email.com" class="form-input">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Phone (optional)</label>
+            <input type="tel" name="phone" placeholder="Your phone number" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Are you booking? *</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="booking_status" value="YES — I want to come!" required>
+                YES — I want to come!
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="booking_status" value="Just curious — need to think a little more">
+                Just curious — need to think a little more
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Food preferences or allergies</label>
+            <textarea name="food_preferences" rows="3" placeholder="Any dietary requirements, allergies or things I should know about food during your stay…" class="form-textarea"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Questions or comments</label>
+            <textarea name="message" rows="4" placeholder="Anything you'd like to know or tell me before deciding…" class="form-textarea"></textarea>
+          </div>
+
+          <!-- Hidden field to identify this as a Christmas Retreat submission -->
+          <input type="hidden" name="_subject" value="Christmas Guitar Retreat 2026 — Interest Form">
+
+          <div style="text-align:center;margin-top:2rem;">
+            <button type="submit" class="btn btn-primary" style="min-width:220px;">SEND</button>
+          </div>
+
+          <div id="christmas-form-success" style="display:none;text-align:center;padding:1.2rem;background:rgba(193,123,24,0.1);border:1px solid rgba(193,123,24,0.3);border-radius:3px;margin-top:1.5rem;">
+            <p style="color:var(--brown);margin:0;font-family:var(--font-display);font-size:1.05rem;">Thanks — I'll be in touch soon!</p>
+          </div>
+
+        </form>
+
+        <script>
+          const cForm = document.getElementById('christmas-form');
+          if (cForm) {
+            cForm.addEventListener('submit', async function(e) {
+              e.preventDefault();
+              const data = new FormData(cForm);
+              const response = await fetch(cForm.action, {
+                method: 'POST',
+                body: data,
+                headers: { 'Accept': 'application/json' }
+              });
+              if (response.ok) {
+                cForm.reset();
+                document.getElementById('christmas-form-success').style.display = 'block';
+                window.scrollTo({ top: document.getElementById('christmas-form-success').offsetTop - 100, behavior: 'smooth' });
+              }
+            });
+          }
+        </script>
+
+        <p style="text-align:center;color:rgba(251,244,224,0.65);font-size:0.82rem;margin-top:1.5rem;">
+          Prefer email? Write directly to <a href="mailto:homesickmac@gmail.com" style="color:var(--amber);">homesickmac@gmail.com</a>
+        </p>
+      </div>
     </div>
   </section>
 
