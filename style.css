@@ -927,6 +927,15 @@ section { padding: var(--section-pad); }
   .skill-card { text-align: center; align-items: center; }
 }
 
+/* Hero button stack — center as a column on phones/tablets rather than
+   leaving a lopsided two-up row when button labels are different lengths */
+@media (max-width: 900px) {
+  .hero-content-left .btn-group {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 /* Solo practice panel — stack on mobile, image first */
 @media (max-width: 700px) {
   .solo-practice-panel {
@@ -996,8 +1005,8 @@ section { padding: var(--section-pad); }
     margin: 0.3rem 0 0.3rem 1rem;
   }
   .dropdown-menu li a {
-    padding: 0.4rem 1rem;
-    font-size: 0.6rem;
+    padding: 0.85rem 1.2rem;
+    font-size: 0.75rem;
   }
 }
 
@@ -1615,6 +1624,10 @@ section { padding: var(--section-pad); }
     background: transparent;
     padding: 0.2rem 0;
     margin: 0.2rem 0 0.3rem 1.8rem;
+  }
+  .dropdown-sub li a {
+    padding: 0.75rem 1rem;
+    font-size: 0.7rem;
   }
   .dropdown-has-sub > a::after { display: none; }
 }

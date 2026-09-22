@@ -12,8 +12,8 @@
   <style>
     .contact-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2.5rem;
       align-items: start;
     }
     .contact-card {
@@ -109,6 +109,19 @@
   <section>
     <div class="container">
       <div class="contact-grid">
+
+        <div class="contact-card fade-in">
+          <span class="section-label">Christmas Guitar Retreat</span>
+          <h3>Show Your Interest</h3>
+          <p>
+            A new December gathering at Idea Farm in Skåne — December 5–6, 2026. Small, first-come-first-served,
+            all skill levels welcome.
+          </p>
+          <div class="btn-group">
+            <a href="christmas-retreat.html#apply"
+               class="btn btn-primary">Show Your Interest</a>
+          </div>
+        </div>
 
         <div class="contact-card fade-in">
           <span class="section-label">Guitar Retreat 2027</span>
