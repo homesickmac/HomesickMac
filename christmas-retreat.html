@@ -142,7 +142,7 @@
       color: rgba(251,244,224,0.75);
       line-height: 1.4;
     }
-    .radio-option input[type="radio"] { margin-top: 0.15rem; accent-color: var(--amber); flex-shrink: 0; }
+    .radio-option input[type="radio"], .radio-option input[type="checkbox"] { margin-top: 0.15rem; accent-color: var(--amber); flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -460,7 +460,7 @@
         <h2 style="color:var(--cream-text);">Sign Up</h2>
         <p style="color:rgba(251,244,224,0.75);margin:0 auto 1.5rem;">
           Fill in the form below by Friday, November 27, and I'll be in touch to confirm your place.
-          If you'd like to talk it through first, choose "Just curious" and I'll get back to you.
+          Questions before you book? Write them in the form or send me a message.
         </p>
       </div>
 
@@ -488,15 +488,11 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Are you booking? *</label>
+            <label class="form-label">Your booking *</label>
             <div class="radio-group">
               <label class="radio-option">
-                <input type="radio" name="booking_status" value="YES — I want to come!" required>
+                <input type="checkbox" name="booking_status" value="YES — I want to come!" required>
                 YES — I want to come!
-              </label>
-              <label class="radio-option">
-                <input type="radio" name="booking_status" value="Just curious — need to think a little more">
-                Just curious — need to think a little more
               </label>
             </div>
           </div>
